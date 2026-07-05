@@ -2,14 +2,24 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Menu, X, Search, Heart, ShoppingCart, User } from "lucide-react";
+import { Menu, X, Search, Heart, ShoppingCart, User, LayoutDashboard, Package, LogOut } from "lucide-react";
 import { NAVIGATION } from "@/constants/navigation";
 import { ROUTES } from "@/constants";
 import { IconButton } from "@/components/ui";
-import { NavLink } from "./nav-link";
 import { ThemeToggle } from "./theme-toggle";
+import { logoutAction } from "@/actions/auth";
+import type { UserRole } from "@/types/auth";
 
-export function MobileNav() {
+interface MobileNavProps {
+  user: {
+    name?: string | null;
+    email?: string | null;
+    image?: string | null;
+    role: UserRole;
+  } | null;
+}
+
+export function MobileNav({ user }: MobileNavProps) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -57,10 +67,81 @@ export function MobileNav() {
 
               <hr className="my-4 border-base-200" />
 
+              {user ? (
+                <div className="space-y-2">
+                  <div className="flex items-center gap-3 px-1 py-2">
+                    <div className="flex size-8 items-center justify-center rounded-full bg-base-300 text-sm font-medium">
+                      {(user.name || "U").charAt(0).toUpperCase()}
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium truncate">{user.name}</p>
+                      <p className="text-xs text-base-content/60 truncate">{user.email}</p>
+                    </div>
+                  </div>
+                  <ul className="flex flex-col gap-2">
+                    <li>
+                      <Link
+                        href={ROUTES.dashboard as unknown as any}
+                        className="flex items-center gap-3 py-2 text-base"
+                        onClick={() => setOpen(false)}
+                      >
+                        <LayoutDashboard size={18} />
+                        Dashboard
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        href={ROUTES.dashboardOrders as unknown as any}
+                        className="flex items-center gap-3 py-2 text-base"
+                        onClick={() => setOpen(false)}
+                      >
+                        <Package size={18} />
+                        Orders
+                      </Link>
+                    </li>
+                  </ul>
+                  <hr className="my-4 border-base-200" />
+                  <form action={logoutAction}>
+                    <button
+                      type="submit"
+                      className="flex w-full items-center gap-3 py-2 text-base"
+                      onClick={() => setOpen(false)}
+                    >
+                      <LogOut size={18} />
+                      Sign Out
+                    </button>
+                  </form>
+                </div>
+              ) : (
+                <ul className="flex flex-col gap-2">
+                  <li>
+                    <Link
+                      href={ROUTES.login as unknown as any}
+                      className="flex items-center gap-3 py-2 text-base"
+                      onClick={() => setOpen(false)}
+                    >
+                      <User size={18} />
+                      Sign In
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      href={ROUTES.register as unknown as any}
+                      className="flex items-center gap-3 py-2 text-base font-medium text-primary"
+                      onClick={() => setOpen(false)}
+                    >
+                      Register
+                    </Link>
+                  </li>
+                </ul>
+              )}
+
+              <hr className="my-4 border-base-200" />
+
               <ul className="flex flex-col gap-2">
                 <li>
                   <Link
-                      href={ROUTES.search as unknown as any}
+                    href={ROUTES.search as unknown as any}
                     className="flex items-center gap-3 py-2 text-base"
                     onClick={() => setOpen(false)}
                   >
@@ -86,16 +167,6 @@ export function MobileNav() {
                   >
                     <ShoppingCart size={18} />
                     Cart
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href={ROUTES.login as unknown as any}
-                    className="flex items-center gap-3 py-2 text-base"
-                    onClick={() => setOpen(false)}
-                  >
-                    <User size={18} />
-                    Sign In
                   </Link>
                 </li>
               </ul>

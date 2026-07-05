@@ -1,13 +1,16 @@
 import Link from "next/link";
-import { Search, Heart, ShoppingCart, User } from "lucide-react";
+import { Search, Heart, ShoppingCart } from "lucide-react";
 import { SITE, ROUTES } from "@/constants";
 import { NAVIGATION } from "@/constants/navigation";
-import { cn } from "@/utils/cn";
+import { auth } from "@/lib/auth";
 import { NavLink } from "./nav-link";
 import { ThemeToggle } from "./theme-toggle";
 import { MobileNav } from "./mobile-nav";
+import { UserMenu } from "../auth/user-menu";
 
-export function Header() {
+export async function Header() {
+  const session = await auth();
+
   return (
     <header className="sticky top-0 z-30 border-b border-base-200 bg-base-100/95 backdrop-blur supports-[backdrop-filter]:bg-base-100/80">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
@@ -51,19 +54,13 @@ export function Header() {
             <ShoppingCart size={18} />
           </Link>
 
-          <Link
-            href={ROUTES.login as unknown as any}
-            className="btn btn-ghost btn-square"
-            aria-label="Sign in"
-          >
-            <User size={18} />
-          </Link>
+          <UserMenu user={session?.user ?? null} />
 
           <span className="hidden md:inline-flex">
             <ThemeToggle />
           </span>
 
-          <MobileNav />
+          <MobileNav user={session?.user ?? null} />
         </div>
       </div>
     </header>

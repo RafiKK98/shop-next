@@ -1,14 +1,14 @@
 import type { Metadata } from "next";
 import { Container, Section } from "@/components/ui";
-import { LoginForm, GoogleButton } from "@/components/auth";
-import { AuthPageShell } from "./auth-shell";
+import { RegisterForm, GoogleButton } from "@/components/auth";
+import { AuthPageShell } from "../login/auth-shell";
 
 export const metadata: Metadata = {
-  title: "Sign In",
-  description: "Sign in to your ShopNext account",
+  title: "Create Account",
+  description: "Create your ShopNext account",
 };
 
-export default async function LoginPage(props: {
+export default async function RegisterPage(props: {
   searchParams: Promise<{ callbackUrl?: string }>;
 }) {
   const searchParams = await props.searchParams;
@@ -18,7 +18,7 @@ export default async function LoginPage(props: {
     <Section>
       <Container className="max-w-md">
         <AuthPageShell>
-          <LoginForm callbackUrl={callbackUrl} />
+          <RegisterForm callbackUrl={callbackUrl} />
           <div className="relative my-6">
             <div className="absolute inset-0 flex items-center">
               <span className="w-full border-t border-base-300" />
