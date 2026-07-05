@@ -2,13 +2,21 @@
 
 import { Pagination } from "@/components/ui";
 
-export function CatalogPagination() {
+interface CatalogPaginationProps {
+  currentPage: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
+}
+
+export function CatalogPagination({ currentPage, totalPages, onPageChange }: CatalogPaginationProps) {
+  if (totalPages <= 1) return null;
+
   return (
     <div className="mt-10">
       <Pagination
-        currentPage={1}
-        totalPages={3}
-        onPageChange={() => {}}
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={onPageChange}
       />
     </div>
   );

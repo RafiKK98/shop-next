@@ -1,11 +1,12 @@
 "use client";
 
 import { SORT_OPTIONS } from "@/constants";
+import type { PaginationInfo } from "@/lib/pagination";
 
 interface ToolbarProps {
   totalProducts: number;
-  filteredCount: number;
   activeFilterCount: number;
+  pagination: PaginationInfo;
   sortKey: string;
   mobileFilterButton: React.ReactNode;
   onSortChange: (key: string) => void;
@@ -14,26 +15,30 @@ interface ToolbarProps {
 
 export function Toolbar({
   totalProducts,
-  filteredCount,
   activeFilterCount,
+  pagination,
   sortKey,
   mobileFilterButton,
   onSortChange,
   onClearFilters,
 }: ToolbarProps) {
-  const isFiltered = activeFilterCount > 0;
+  const isPaginated = pagination.totalPages > 1;
 
   return (
     <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
       <div className="flex items-center gap-3">
         {mobileFilterButton}
         <p className="text-sm text-base-content/60">
-          <span className="font-medium text-base-content">
-            {isFiltered ? filteredCount : totalProducts}
-          </span>
-          {isFiltered && <span className="text-base-content/40"> / {totalProducts}</span>} products
+          {isPaginated ? (
+            <>Showing <span className="font-medium text-base-content">{pagination.rangeStart}–{pagination.rangeEnd}</span> of <span className="font-medium text-base-content">{pagination.total}</span></>
+          ) : (
+            <><span className="font-medium text-base-content">{pagination.total}</span></>
+          )} products
+          {activeFilterCount > 0 && (
+            <span className="text-base-content/40"> / {totalProducts} total</span>
+          )}
         </p>
-        {isFiltered && (
+        {activeFilterCount > 0 && (
           <button
             type="button"
             className="btn btn-ghost btn-xs text-primary"

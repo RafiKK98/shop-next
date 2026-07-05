@@ -6,14 +6,17 @@ import type { Product } from "@/types/product";
 import type { FilterState } from "@/lib/filters";
 import { parseFilterParams, applyFilters, getActiveFilterCount } from "@/lib/filters";
 import { sortProducts } from "@/lib/sort";
-import { DEFAULT_SORT } from "@/constants";
+import { paginateProducts, getPaginationInfo, type PaginationInfo } from "@/lib/pagination";
+import { DEFAULT_SORT, PAGINATION as PAGE_CONST } from "@/constants";
 
 interface UseFiltersReturn {
   filters: FilterState;
   displayedProducts: Product[];
   activeFilterCount: number;
   sortKey: string;
+  pagination: PaginationInfo;
   setSortKey: (key: string) => void;
+  setPage: (page: number) => void;
   setFilter: (key: string, value: string | string[] | null) => void;
   toggleFilter: (group: keyof Pick<FilterState, "categories" | "brands" | "availability">, value: string) => void;
   toggleRating: (value: number) => void;
@@ -33,17 +36,32 @@ export function useFilters(products: Product[]): UseFiltersReturn {
 
   const sortKey = searchParams.get("sort") || DEFAULT_SORT;
 
+  const pageFromUrl = Math.max(1, Number(searchParams.get("page")) || 1);
+
+  const pageSize = PAGE_CONST.defaultPageSize;
+
   const filteredProducts = useMemo(() => applyFilters(products, filters), [products, filters]);
 
-  const displayedProducts = useMemo(
+  const sortedProducts = useMemo(
     () => sortProducts(filteredProducts, sortKey),
     [filteredProducts, sortKey],
+  );
+
+  const pagination = useMemo(
+    () => getPaginationInfo(sortedProducts.length, pageFromUrl, pageSize),
+    [sortedProducts.length, pageFromUrl, pageSize],
+  );
+
+  const displayedProducts = useMemo(
+    () => paginateProducts(sortedProducts, pagination.currentPage, pageSize),
+    [sortedProducts, pagination.currentPage, pageSize],
   );
 
   const activeFilterCount = useMemo(() => getActiveFilterCount(filters), [filters]);
 
   const navigateWithParams = useCallback(
-    (newParams: URLSearchParams) => {
+    (newParams: URLSearchParams, options?: { resetPage?: boolean }) => {
+      if (options?.resetPage) newParams.delete("page");
       const qs = newParams.toString();
       router.replace((qs ? `${baseUrl}?${qs}` : baseUrl) as any, { scroll: false });
     },
@@ -60,7 +78,7 @@ export function useFilters(products: Product[]): UseFiltersReturn {
       } else {
         newParams.set(key, value);
       }
-      navigateWithParams(newParams);
+      navigateWithParams(newParams, { resetPage: true });
     },
     [searchParams, navigateWithParams],
   );
@@ -75,7 +93,7 @@ export function useFilters(products: Product[]): UseFiltersReturn {
       const newParams = new URLSearchParams(searchParams.toString());
       if (next.length > 0) newParams.set(urlKey, next.join(","));
       else newParams.delete(urlKey);
-      navigateWithParams(newParams);
+      navigateWithParams(newParams, { resetPage: true });
     },
     [filters, searchParams, navigateWithParams],
   );
@@ -83,25 +101,29 @@ export function useFilters(products: Product[]): UseFiltersReturn {
   const toggleRating = useCallback(
     (value: number) => {
       const current = filters.minRating;
+      const newParams = new URLSearchParams(searchParams.toString());
       if (current === value) {
-        setFilter("rating", null);
+        newParams.delete("rating");
       } else {
-        setFilter("rating", String(value));
+        newParams.set("rating", String(value));
       }
+      navigateWithParams(newParams, { resetPage: true });
     },
-    [filters.minRating, setFilter],
+    [filters.minRating, searchParams, navigateWithParams],
   );
 
   const toggleDiscount = useCallback(
     (value: number) => {
       const current = filters.minDiscount;
+      const newParams = new URLSearchParams(searchParams.toString());
       if (current === value) {
-        setFilter("discount", null);
+        newParams.delete("discount");
       } else {
-        setFilter("discount", String(value));
+        newParams.set("discount", String(value));
       }
+      navigateWithParams(newParams, { resetPage: true });
     },
-    [filters.minDiscount, setFilter],
+    [filters.minDiscount, searchParams, navigateWithParams],
   );
 
   const setPriceRange = useCallback(
@@ -111,7 +133,7 @@ export function useFilters(products: Product[]): UseFiltersReturn {
       else newParams.delete("minPrice");
       if (max != null) newParams.set("maxPrice", String(max));
       else newParams.delete("maxPrice");
-      navigateWithParams(newParams);
+      navigateWithParams(newParams, { resetPage: true });
     },
     [searchParams, navigateWithParams],
   );
@@ -129,6 +151,19 @@ export function useFilters(products: Product[]): UseFiltersReturn {
     [searchParams, navigateWithParams],
   );
 
+  const setPage = useCallback(
+    (page: number) => {
+      const newParams = new URLSearchParams(searchParams.toString());
+      if (page <= 1) {
+        newParams.delete("page");
+      } else {
+        newParams.set("page", String(page));
+      }
+      navigateWithParams(newParams);
+    },
+    [searchParams, navigateWithParams],
+  );
+
   const clearFilters = useCallback(() => {
     router.replace(baseUrl as any, { scroll: false });
   }, [baseUrl, router]);
@@ -138,7 +173,9 @@ export function useFilters(products: Product[]): UseFiltersReturn {
     displayedProducts,
     activeFilterCount,
     sortKey,
+    pagination,
     setSortKey,
+    setPage,
     setFilter,
     toggleFilter,
     toggleRating,

@@ -13,7 +13,9 @@ function CatalogContentInner() {
     displayedProducts,
     activeFilterCount,
     sortKey,
+    pagination,
     setSortKey,
+    setPage,
     toggleFilter,
     toggleRating,
     toggleDiscount,
@@ -53,8 +55,8 @@ function CatalogContentInner() {
           <div className="min-w-0 flex-1">
             <Toolbar
               totalProducts={catalogProducts.length}
-              filteredCount={displayedProducts.length}
               activeFilterCount={activeFilterCount}
+              pagination={pagination}
               sortKey={sortKey}
               mobileFilterButton={
                 <MobileFilterDrawer
@@ -75,7 +77,11 @@ function CatalogContentInner() {
             {displayedProducts.length > 0 ? (
               <>
                 <ProductGrid products={displayedProducts} />
-                <CatalogPagination />
+                <CatalogPagination
+                  currentPage={pagination.currentPage}
+                  totalPages={pagination.totalPages}
+                  onPageChange={setPage}
+                />
               </>
             ) : (
               <NoResults />
