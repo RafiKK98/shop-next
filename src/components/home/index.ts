@@ -1,0 +1,9 @@
+export { HeroBanner } from "./hero-banner";
+export { FeaturedCategories } from "./featured-categories";
+export { FeaturedProducts } from "./featured-products";
+export { PromotionalBanner } from "./promotional-banner";
+export { BestSellers } from "./best-sellers";
+export { NewArrivals } from "./new-arrivals";
+export { Testimonials } from "./testimonials";
+export { BrandLogos } from "./brand-logos";
+export { NewsletterCta } from "./newsletter-cta";

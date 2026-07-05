@@ -1,7 +1,27 @@
+import {
+  HeroBanner,
+  FeaturedCategories,
+  FeaturedProducts,
+  PromotionalBanner,
+  BestSellers,
+  NewArrivals,
+  Testimonials,
+  BrandLogos,
+  NewsletterCta,
+} from "@/components/home";
+
 export default function Home() {
   return (
-    <div className="flex flex-1 items-center justify-center">
-      <h1 className="text-4xl font-bold">E-Commerce Platform</h1>
-    </div>
+    <>
+      <HeroBanner />
+      <FeaturedCategories />
+      <FeaturedProducts />
+      <PromotionalBanner />
+      <BestSellers />
+      <NewArrivals />
+      <Testimonials />
+      <BrandLogos />
+      <NewsletterCta />
+    </>
   );
 }
