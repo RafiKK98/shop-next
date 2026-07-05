@@ -2,17 +2,34 @@ import { SORT_OPTIONS } from "@/constants";
 
 interface ToolbarProps {
   totalProducts: number;
+  filteredCount: number;
+  activeFilterCount: number;
   mobileFilterButton: React.ReactNode;
+  onClearFilters: () => void;
 }
 
-export function Toolbar({ totalProducts, mobileFilterButton }: ToolbarProps) {
+export function Toolbar({ totalProducts, filteredCount, activeFilterCount, mobileFilterButton, onClearFilters }: ToolbarProps) {
+  const isFiltered = activeFilterCount > 0;
+
   return (
     <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
       <div className="flex items-center gap-3">
         {mobileFilterButton}
         <p className="text-sm text-base-content/60">
-          <span className="font-medium text-base-content">{totalProducts}</span> products
+          <span className="font-medium text-base-content">
+            {isFiltered ? filteredCount : totalProducts}
+          </span>
+          {isFiltered && <span className="text-base-content/40"> / {totalProducts}</span>} products
         </p>
+        {isFiltered && (
+          <button
+            type="button"
+            className="btn btn-ghost btn-xs text-primary"
+            onClick={onClearFilters}
+          >
+            Clear filters
+          </button>
+        )}
       </div>
       <div className="flex items-center gap-3">
         <div className="hidden items-center gap-1 sm:flex">

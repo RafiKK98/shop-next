@@ -3,8 +3,29 @@
 import { useState } from "react";
 import { Drawer } from "@/components/ui";
 import { FilterSidebar } from "./filter-sidebar";
+import type { FilterState } from "@/lib/filters";
 
-export function MobileFilterDrawer() {
+interface MobileFilterDrawerProps {
+  filters: FilterState;
+  activeFilterCount: number;
+  onToggleCategory: (slug: string) => void;
+  onToggleBrand: (brand: string) => void;
+  onToggleRating: (rating: number) => void;
+  onToggleAvailability: (value: string) => void;
+  onToggleDiscount: (value: number) => void;
+  onPriceChange: (min: number | null, max: number | null) => void;
+}
+
+export function MobileFilterDrawer({
+  filters,
+  activeFilterCount,
+  onToggleCategory,
+  onToggleBrand,
+  onToggleRating,
+  onToggleAvailability,
+  onToggleDiscount,
+  onPriceChange,
+}: MobileFilterDrawerProps) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -19,6 +40,9 @@ export function MobileFilterDrawer() {
           <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-9.75 0h9.75" />
         </svg>
         Filters
+        {activeFilterCount > 0 && (
+          <span className="badge badge-neutral badge-sm ml-1">{activeFilterCount}</span>
+        )}
       </button>
       <Drawer
         open={open}
@@ -38,7 +62,15 @@ export function MobileFilterDrawer() {
                 </svg>
               </button>
             </div>
-            <FilterSidebar />
+            <FilterSidebar
+              filters={filters}
+              onToggleCategory={onToggleCategory}
+              onToggleBrand={onToggleBrand}
+              onToggleRating={onToggleRating}
+              onToggleAvailability={onToggleAvailability}
+              onToggleDiscount={onToggleDiscount}
+              onPriceChange={onPriceChange}
+            />
           </div>
         }
       >

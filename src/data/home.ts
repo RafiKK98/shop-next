@@ -31,6 +31,7 @@ function product(overrides: Partial<Product> & { title: string; slug: string; pr
     rating: 4.5,
     reviewCount: 0,
     brand: "Generic",
+    categorySlug: "electronics",
     stockStatus: "in_stock",
     isNew: false,
     isFeatured: false,
