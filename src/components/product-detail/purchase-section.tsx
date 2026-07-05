@@ -2,13 +2,15 @@
 
 import { useState } from "react";
 import { Button, IconButton } from "@/components/ui";
+import { AddToCartButton } from "@/components/cart";
 
 interface PurchaseSectionProps {
   title: string;
   stockStatus: string;
+  slug: string;
 }
 
-export function PurchaseSection({ title, stockStatus }: PurchaseSectionProps) {
+export function PurchaseSection({ title, stockStatus, slug }: PurchaseSectionProps) {
   const [quantity, setQuantity] = useState(1);
   const isOutOfStock = stockStatus === "out_of_stock";
 
@@ -41,14 +43,15 @@ export function PurchaseSection({ title, stockStatus }: PurchaseSectionProps) {
       </div>
 
       <div className="flex flex-col gap-3">
-        <Button
-          className="w-full"
+        <AddToCartButton
+          slug={slug}
+          quantity={quantity}
           size="lg"
+          className="w-full"
           disabled={isOutOfStock}
-          aria-label={isOutOfStock ? `${title} is out of stock` : `Add ${title} to cart`}
         >
           {isOutOfStock ? "Out of Stock" : "Add to Cart"}
-        </Button>
+        </AddToCartButton>
         <Button
           variant="outline"
           className="w-full"

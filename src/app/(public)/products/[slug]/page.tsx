@@ -48,7 +48,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
             <ProductGallery images={detail.gallery} title={product.title} />
             <div className="flex flex-col gap-6">
               <ProductInfo product={product} />
-              <PurchaseSection title={product.title} stockStatus={product.stockStatus} />
+              <PurchaseSection title={product.title} stockStatus={product.stockStatus} slug={product.slug} />
             </div>
           </div>
         </Container>

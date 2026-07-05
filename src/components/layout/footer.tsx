@@ -1,8 +1,8 @@
-import Link from "next/link";
-import { Globe, Hash, Camera, Play, Mail } from "lucide-react";
-import { SITE, ROUTES } from "@/constants";
-import { NAVIGATION } from "@/constants/navigation";
 import { Input } from "@/components/ui";
+import { ROUTES, SITE } from "@/constants";
+import { NAVIGATION } from "@/constants/navigation";
+import { Camera, Globe, Hash, Mail, Play } from "lucide-react";
+import Link from "next/link";
 
 const socialIcons: Record<string, React.ReactNode> = {
   Facebook: <Globe size={18} />,
@@ -69,16 +69,14 @@ export function Footer() {
               <Mail size={16} className="text-base-content/40" />
               <span className="text-sm text-base-content/60">Stay updated</span>
             </div>
-            <div className="flex gap-2">
+            <div className="flex items-center gap-2">
               <Input
                 type="email"
                 placeholder="Enter your email"
                 className="max-w-64"
                 aria-label="Email for newsletter"
               />
-              <button className="btn btn-primary btn-sm">
-                Subscribe
-              </button>
+              <button className="btn btn-primary btn-sm">Subscribe</button>
             </div>
           </div>
         </div>
