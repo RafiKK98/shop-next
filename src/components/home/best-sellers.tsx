@@ -1,6 +1,6 @@
 import { Container, Section } from "@/components/ui";
+import { ProductCard } from "@/components/product";
 import { bestSellers } from "@/data/home";
-import { HomeProductCard } from "./home-product-card";
 
 export function BestSellers() {
   return (
@@ -12,7 +12,7 @@ export function BestSellers() {
         </div>
         <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4 lg:gap-6">
           {bestSellers.map((product) => (
-            <HomeProductCard key={product.id} product={product} />
+            <ProductCard key={product.id} product={product} />
           ))}
         </div>
       </Container>

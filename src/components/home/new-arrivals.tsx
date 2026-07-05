@@ -1,6 +1,6 @@
 import { Container, Section, Badge } from "@/components/ui";
+import { ProductCard } from "@/components/product";
 import { newArrivals } from "@/data/home";
-import { HomeProductCard } from "./home-product-card";
 
 export function NewArrivals() {
   return (
@@ -15,7 +15,7 @@ export function NewArrivals() {
         </div>
         <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4 lg:gap-6">
           {newArrivals.map((product) => (
-            <HomeProductCard key={product.id} product={product} />
+            <ProductCard key={product.id} product={product} />
           ))}
         </div>
       </Container>

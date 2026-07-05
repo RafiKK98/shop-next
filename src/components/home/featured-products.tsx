@@ -1,6 +1,6 @@
 import { Container, Section } from "@/components/ui";
+import { ProductCard } from "@/components/product";
 import { featuredProducts } from "@/data/home";
-import { HomeProductCard } from "./home-product-card";
 
 export function FeaturedProducts() {
   return (
@@ -12,7 +12,7 @@ export function FeaturedProducts() {
         </div>
         <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4 lg:gap-6">
           {featuredProducts.map((product, i) => (
-            <HomeProductCard key={product.id} product={product} priority={i < 4} />
+            <ProductCard key={product.id} product={product} priority={i < 4} />
           ))}
         </div>
       </Container>
