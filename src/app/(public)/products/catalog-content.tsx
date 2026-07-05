@@ -14,6 +14,8 @@ function CatalogContentInner() {
     activeFilterCount,
     sortKey,
     pagination,
+    searchQuery,
+    setSearchQuery,
     setSortKey,
     setPage,
     toggleFilter,
@@ -58,6 +60,7 @@ function CatalogContentInner() {
               activeFilterCount={activeFilterCount}
               pagination={pagination}
               sortKey={sortKey}
+              searchQuery={searchQuery}
               mobileFilterButton={
                 <MobileFilterDrawer
                   filters={filters}
@@ -72,6 +75,7 @@ function CatalogContentInner() {
               }
               onSortChange={setSortKey}
               onClearFilters={clearFilters}
+              onSearchChange={setSearchQuery}
             />
 
             {displayedProducts.length > 0 ? (
@@ -84,7 +88,7 @@ function CatalogContentInner() {
                 />
               </>
             ) : (
-              <NoResults />
+              <NoResults query={searchQuery} />
             )}
           </div>
         </div>

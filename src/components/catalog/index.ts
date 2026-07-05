@@ -4,5 +4,6 @@ export { FilterCheckboxGroup } from "./filter-checkbox-group";
 export { FilterPriceRange } from "./filter-price-range";
 export { MobileFilterDrawer } from "./mobile-filter-drawer";
 export { Toolbar } from "./toolbar";
+export { SearchInput } from "./search-input";
 export { ProductGrid } from "./product-grid";
 export { CatalogPagination } from "./pagination-bar";

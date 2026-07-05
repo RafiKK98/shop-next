@@ -5,6 +5,7 @@ import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import type { Product } from "@/types/product";
 import type { FilterState } from "@/lib/filters";
 import { parseFilterParams, applyFilters, getActiveFilterCount } from "@/lib/filters";
+import { searchProducts } from "@/lib/search";
 import { sortProducts } from "@/lib/sort";
 import { paginateProducts, getPaginationInfo, type PaginationInfo } from "@/lib/pagination";
 import { DEFAULT_SORT, PAGINATION as PAGE_CONST } from "@/constants";
@@ -15,6 +16,8 @@ interface UseFiltersReturn {
   activeFilterCount: number;
   sortKey: string;
   pagination: PaginationInfo;
+  searchQuery: string;
+  setSearchQuery: (query: string) => void;
   setSortKey: (key: string) => void;
   setPage: (page: number) => void;
   setFilter: (key: string, value: string | string[] | null) => void;
@@ -36,11 +39,18 @@ export function useFilters(products: Product[]): UseFiltersReturn {
 
   const sortKey = searchParams.get("sort") || DEFAULT_SORT;
 
+  const searchQuery = searchParams.get("q") || "";
+
   const pageFromUrl = Math.max(1, Number(searchParams.get("page")) || 1);
 
   const pageSize = PAGE_CONST.defaultPageSize;
 
-  const filteredProducts = useMemo(() => applyFilters(products, filters), [products, filters]);
+  const searchedProducts = useMemo(
+    () => searchProducts(products, searchQuery),
+    [products, searchQuery],
+  );
+
+  const filteredProducts = useMemo(() => applyFilters(searchedProducts, filters), [searchedProducts, filters]);
 
   const sortedProducts = useMemo(
     () => sortProducts(filteredProducts, sortKey),
@@ -164,6 +174,19 @@ export function useFilters(products: Product[]): UseFiltersReturn {
     [searchParams, navigateWithParams],
   );
 
+  const setSearchQuery = useCallback(
+    (query: string) => {
+      const newParams = new URLSearchParams(searchParams.toString());
+      if (query) {
+        newParams.set("q", query);
+      } else {
+        newParams.delete("q");
+      }
+      navigateWithParams(newParams, { resetPage: true });
+    },
+    [searchParams, navigateWithParams],
+  );
+
   const clearFilters = useCallback(() => {
     router.replace(baseUrl as any, { scroll: false });
   }, [baseUrl, router]);
@@ -174,6 +197,8 @@ export function useFilters(products: Product[]): UseFiltersReturn {
     activeFilterCount,
     sortKey,
     pagination,
+    searchQuery,
+    setSearchQuery,
     setSortKey,
     setPage,
     setFilter,
