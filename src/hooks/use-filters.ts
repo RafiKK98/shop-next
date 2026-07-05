@@ -4,7 +4,7 @@ import { useCallback, useMemo } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import type { Product } from "@/types/product";
 import type { FilterState } from "@/lib/filters";
-import { parseFilterParams, applyFilters, buildFilterParams, getActiveFilterCount } from "@/lib/filters";
+import { parseFilterParams, applyFilters, getActiveFilterCount } from "@/lib/filters";
 
 interface UseFiltersReturn {
   filters: FilterState;
@@ -56,13 +56,17 @@ export function useFilters(products: Product[]): UseFiltersReturn {
 
   const toggleFilter = useCallback(
     (group: keyof Pick<FilterState, "categories" | "brands" | "availability">, value: string) => {
-      const current = filters[group];
-      const next = current.includes(value as never)
+      const current = filters[group] as string[];
+      const next = current.includes(value)
         ? current.filter((v) => v !== value)
         : [...current, value];
-      setFilter(group as string, next);
+      const urlKey = group === "categories" ? "category" : group === "brands" ? "brand" : "availability";
+      const newParams = new URLSearchParams(searchParams.toString());
+      if (next.length > 0) newParams.set(urlKey, next.join(","));
+      else newParams.delete(urlKey);
+      navigateWithParams(newParams);
     },
-    [filters, setFilter],
+    [filters, searchParams, navigateWithParams],
   );
 
   const toggleRating = useCallback(

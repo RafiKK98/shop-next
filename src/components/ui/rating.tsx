@@ -23,7 +23,6 @@ export function Rating({ value, max = 5, size = "sm", showValue = false, classNa
           <input
             key={i}
             type="radio"
-            name={`rating-${value}-${Math.random()}`}
             className="mask mask-star-2 bg-orange-400"
             aria-label={`${i + 1} star${i > 0 ? "s" : ""}`}
             checked={i + 1 === Math.round(value)}

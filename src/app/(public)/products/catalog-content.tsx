@@ -6,8 +6,6 @@ import { NoResults } from "@/components/ui/empty-state";
 import { FilterSidebar, MobileFilterDrawer, Toolbar, ProductGrid, CatalogPagination } from "@/components/catalog";
 import { useFilters } from "@/hooks/use-filters";
 import { catalogProducts } from "@/data/catalog";
-import type { Product } from "@/types/product";
-
 function CatalogContentInner() {
   const {
     filters,
@@ -18,7 +16,7 @@ function CatalogContentInner() {
     toggleDiscount,
     setPriceRange,
     clearFilters,
-  } = useFilters(catalogProducts as Product[]);
+  } = useFilters(catalogProducts);
 
   return (
     <Section>
