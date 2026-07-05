@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useActionState, useRef } from "react";
+import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff } from "lucide-react";
@@ -15,42 +15,39 @@ interface LoginFormProps {
 
 export function LoginForm({ callbackUrl = "/" }: LoginFormProps) {
   const [showPassword, setShowPassword] = useState(false);
-  const [state, formAction, isPending] = useActionState(
-    async (_prev: { error?: string } | null, formData: FormData) => {
-      return loginAction(formData);
-    },
-    null,
-  );
-
-  const formRef = useRef<HTMLFormElement>(null);
+  const [serverError, setServerError] = useState<string | null>(null);
+  const [isPending, startTransition] = useTransition();
 
   const form = useForm<LoginInput>({
     resolver: zodResolver(loginSchema),
     defaultValues: { email: "", password: "", rememberMe: false },
   });
 
+  const onSubmit = form.handleSubmit((data) => {
+    setServerError(null);
+    startTransition(async () => {
+      const fd = new FormData();
+      fd.set("email", data.email);
+      fd.set("password", data.password);
+      fd.set("callbackUrl", callbackUrl);
+
+      const result = await loginAction(fd);
+      if (result?.error) {
+        setServerError(result.error);
+      }
+    });
+  });
+
   return (
-    <form
-      ref={formRef}
-      action={formAction}
-      onSubmit={(e) => {
-        e.preventDefault();
-        form.handleSubmit(() => {
-          const formData = new FormData(formRef.current!);
-          formData.set("callbackUrl", callbackUrl);
-          formAction(formData);
-        })(e);
-      }}
-      className="space-y-5"
-    >
+    <form onSubmit={onSubmit} noValidate className="space-y-5">
       <h1 className="text-2xl font-bold tracking-tight">Sign in to your account</h1>
       <p className="text-sm text-base-content/60">
         Welcome back! Enter your credentials to continue.
       </p>
 
-      {state?.error && (
+      {serverError && (
         <div className="alert alert-error" role="alert">
-          <span>{state.error}</span>
+          <span>{serverError}</span>
         </div>
       )}
 

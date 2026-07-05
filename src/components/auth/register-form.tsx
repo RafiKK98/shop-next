@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useActionState, useRef } from "react";
+import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff } from "lucide-react";
@@ -15,42 +15,42 @@ interface RegisterFormProps {
 
 export function RegisterForm({ callbackUrl = "/" }: RegisterFormProps) {
   const [showPassword, setShowPassword] = useState(false);
-  const [state, formAction, isPending] = useActionState(
-    async (_prev: { error?: string } | null, formData: FormData) => {
-      return registerAction(formData);
-    },
-    null,
-  );
-
-  const formRef = useRef<HTMLFormElement>(null);
+  const [serverError, setServerError] = useState<string | null>(null);
+  const [isPending, startTransition] = useTransition();
 
   const form = useForm<RegisterInput>({
     resolver: zodResolver(registerSchema),
     defaultValues: { name: "", email: "", password: "", confirmPassword: "", terms: false },
   });
 
+  const onSubmit = form.handleSubmit((data) => {
+    setServerError(null);
+    startTransition(async () => {
+      const fd = new FormData();
+      fd.set("name", data.name);
+      fd.set("email", data.email);
+      fd.set("password", data.password);
+      fd.set("confirmPassword", data.confirmPassword);
+      fd.set("terms", data.terms ? "on" : "");
+      fd.set("callbackUrl", callbackUrl);
+
+      const result = await registerAction(fd);
+      if (result?.error) {
+        setServerError(result.error);
+      }
+    });
+  });
+
   return (
-    <form
-      ref={formRef}
-      action={formAction}
-      onSubmit={(e) => {
-        e.preventDefault();
-        form.handleSubmit(() => {
-          const formData = new FormData(formRef.current!);
-          formData.set("callbackUrl", callbackUrl);
-          formAction(formData);
-        })(e);
-      }}
-      className="space-y-5"
-    >
+    <form onSubmit={onSubmit} noValidate className="space-y-5">
       <h1 className="text-2xl font-bold tracking-tight">Create your account</h1>
       <p className="text-sm text-base-content/60">
         Join us today and start shopping!
       </p>
 
-      {state?.error && (
+      {serverError && (
         <div className="alert alert-error" role="alert">
-          <span>{state.error}</span>
+          <span>{serverError}</span>
         </div>
       )}
 
