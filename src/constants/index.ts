@@ -51,12 +51,17 @@ export const IMAGES = {
 } as const;
 
 export const SORT_OPTIONS = [
+  { label: "Featured", value: "featured" },
   { label: "Newest", value: "newest" },
+  { label: "Best Selling", value: "best-selling" },
+  { label: "Highest Rated", value: "rating" },
   { label: "Price: Low to High", value: "price-asc" },
   { label: "Price: High to Low", value: "price-desc" },
-  { label: "Best Selling", value: "best-selling" },
-  { label: "Rating", value: "rating" },
+  { label: "Name: A to Z", value: "name-asc" },
+  { label: "Name: Z to A", value: "name-desc" },
 ] as const;
+
+export const DEFAULT_SORT = "featured";
 
 export const RATING_OPTIONS = [4, 3, 2, 1] as const;
 

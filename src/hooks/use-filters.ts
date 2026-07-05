@@ -5,11 +5,15 @@ import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import type { Product } from "@/types/product";
 import type { FilterState } from "@/lib/filters";
 import { parseFilterParams, applyFilters, getActiveFilterCount } from "@/lib/filters";
+import { sortProducts } from "@/lib/sort";
+import { DEFAULT_SORT } from "@/constants";
 
 interface UseFiltersReturn {
   filters: FilterState;
-  filteredProducts: Product[];
+  displayedProducts: Product[];
   activeFilterCount: number;
+  sortKey: string;
+  setSortKey: (key: string) => void;
   setFilter: (key: string, value: string | string[] | null) => void;
   toggleFilter: (group: keyof Pick<FilterState, "categories" | "brands" | "availability">, value: string) => void;
   toggleRating: (value: number) => void;
@@ -27,7 +31,14 @@ export function useFilters(products: Product[]): UseFiltersReturn {
 
   const filters = useMemo(() => parseFilterParams(searchParams), [searchParams]);
 
+  const sortKey = searchParams.get("sort") || DEFAULT_SORT;
+
   const filteredProducts = useMemo(() => applyFilters(products, filters), [products, filters]);
+
+  const displayedProducts = useMemo(
+    () => sortProducts(filteredProducts, sortKey),
+    [filteredProducts, sortKey],
+  );
 
   const activeFilterCount = useMemo(() => getActiveFilterCount(filters), [filters]);
 
@@ -105,14 +116,29 @@ export function useFilters(products: Product[]): UseFiltersReturn {
     [searchParams, navigateWithParams],
   );
 
+  const setSortKey = useCallback(
+    (key: string) => {
+      const newParams = new URLSearchParams(searchParams.toString());
+      if (key === DEFAULT_SORT) {
+        newParams.delete("sort");
+      } else {
+        newParams.set("sort", key);
+      }
+      navigateWithParams(newParams);
+    },
+    [searchParams, navigateWithParams],
+  );
+
   const clearFilters = useCallback(() => {
     router.replace(baseUrl as any, { scroll: false });
   }, [baseUrl, router]);
 
   return {
     filters,
-    filteredProducts,
+    displayedProducts,
     activeFilterCount,
+    sortKey,
+    setSortKey,
     setFilter,
     toggleFilter,
     toggleRating,

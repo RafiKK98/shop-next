@@ -1,14 +1,26 @@
+"use client";
+
 import { SORT_OPTIONS } from "@/constants";
 
 interface ToolbarProps {
   totalProducts: number;
   filteredCount: number;
   activeFilterCount: number;
+  sortKey: string;
   mobileFilterButton: React.ReactNode;
+  onSortChange: (key: string) => void;
   onClearFilters: () => void;
 }
 
-export function Toolbar({ totalProducts, filteredCount, activeFilterCount, mobileFilterButton, onClearFilters }: ToolbarProps) {
+export function Toolbar({
+  totalProducts,
+  filteredCount,
+  activeFilterCount,
+  sortKey,
+  mobileFilterButton,
+  onSortChange,
+  onClearFilters,
+}: ToolbarProps) {
   const isFiltered = activeFilterCount > 0;
 
   return (
@@ -47,7 +59,8 @@ export function Toolbar({ totalProducts, filteredCount, activeFilterCount, mobil
         <select
           className="select select-sm w-auto"
           aria-label="Sort products"
-          defaultValue="newest"
+          value={sortKey}
+          onChange={(e) => onSortChange(e.target.value)}
         >
           {SORT_OPTIONS.map((opt) => (
             <option key={opt.value} value={opt.value}>

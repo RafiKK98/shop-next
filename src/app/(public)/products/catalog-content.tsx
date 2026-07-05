@@ -6,11 +6,14 @@ import { NoResults } from "@/components/ui/empty-state";
 import { FilterSidebar, MobileFilterDrawer, Toolbar, ProductGrid, CatalogPagination } from "@/components/catalog";
 import { useFilters } from "@/hooks/use-filters";
 import { catalogProducts } from "@/data/catalog";
+
 function CatalogContentInner() {
   const {
     filters,
-    filteredProducts,
+    displayedProducts,
     activeFilterCount,
+    sortKey,
+    setSortKey,
     toggleFilter,
     toggleRating,
     toggleDiscount,
@@ -50,8 +53,9 @@ function CatalogContentInner() {
           <div className="min-w-0 flex-1">
             <Toolbar
               totalProducts={catalogProducts.length}
-              filteredCount={filteredProducts.length}
+              filteredCount={displayedProducts.length}
               activeFilterCount={activeFilterCount}
+              sortKey={sortKey}
               mobileFilterButton={
                 <MobileFilterDrawer
                   filters={filters}
@@ -64,12 +68,13 @@ function CatalogContentInner() {
                   onPriceChange={setPriceRange}
                 />
               }
+              onSortChange={setSortKey}
               onClearFilters={clearFilters}
             />
 
-            {filteredProducts.length > 0 ? (
+            {displayedProducts.length > 0 ? (
               <>
-                <ProductGrid products={filteredProducts} />
+                <ProductGrid products={displayedProducts} />
                 <CatalogPagination />
               </>
             ) : (
