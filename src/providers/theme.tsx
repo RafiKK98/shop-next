@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
+import Script from "next/script";
 
 type Theme = "light" | "dark";
 
@@ -32,7 +33,13 @@ const FOUC_SCRIPT = `
 `;
 
 export function ThemeScript() {
-  return <script dangerouslySetInnerHTML={{ __html: FOUC_SCRIPT }} />;
+  return (
+    <Script
+      id="theme-init"
+      strategy="beforeInteractive"
+      dangerouslySetInnerHTML={{ __html: FOUC_SCRIPT }}
+    />
+  );
 }
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {

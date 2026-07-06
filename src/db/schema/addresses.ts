@@ -9,7 +9,10 @@ export const addresses = pgTable(
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
     label: text("label"),
+    fullName: text("full_name"),
+    phone: text("phone"),
     street: text("street").notNull(),
+    addressLine2: text("address_line_2"),
     city: text("city").notNull(),
     state: text("state"),
     postalCode: text("postal_code"),
