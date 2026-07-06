@@ -1,16 +1,16 @@
-import Link from "next/link";
-import { Search } from "lucide-react";
-import { SITE, ROUTES } from "@/constants";
+import { ROUTES, SITE } from "@/constants";
 import { NAVIGATION } from "@/constants/navigation";
 import { auth } from "@/lib/auth";
 import { getCartCount } from "@/lib/cart";
 import { getWishlistCount } from "@/lib/wishlist";
-import { NavLink } from "./nav-link";
-import { ThemeToggle } from "./theme-toggle";
-import { MobileNav } from "./mobile-nav";
+import { Search } from "lucide-react";
+import Link from "next/link";
 import { UserMenu } from "../auth/user-menu";
 import { CartCount } from "../cart/cart-count";
 import { WishlistCount } from "../wishlist/wishlist-count";
+import { MobileNav } from "./mobile-nav";
+import { NavLink } from "./nav-link";
+import { ThemeToggle } from "./theme-toggle";
 
 export async function Header() {
   const session = await auth();
@@ -23,7 +23,7 @@ export async function Header() {
   }
 
   return (
-    <header className="sticky top-0 z-30 border-b border-base-200 bg-base-100/95 backdrop-blur supports-[backdrop-filter]:bg-base-100/80">
+    <header className="sticky top-0 z-30 border-b border-base-200 bg-base-100/95 backdrop-blur supports-backdrop-filter:bg-base-100/80">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <Link
           href={ROUTES.home as unknown as any}

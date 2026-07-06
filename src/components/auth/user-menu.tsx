@@ -1,12 +1,12 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
-import Link from "next/link";
-import { User, LogOut, LayoutDashboard, Package, Heart } from "lucide-react";
+import { logoutAction } from "@/actions/auth";
 import { Avatar } from "@/components/ui";
 import { ROUTES } from "@/constants";
-import { logoutAction } from "@/actions/auth";
 import type { UserRole } from "@/types/auth";
+import { Heart, LayoutDashboard, LogOut, Package } from "lucide-react";
+import Link from "next/link";
+import { useEffect, useRef, useState } from "react";
 
 interface UserMenuProps {
   user: {
@@ -34,10 +34,16 @@ export function UserMenu({ user }: UserMenuProps) {
   if (!user) {
     return (
       <div className="hidden items-center gap-2 md:flex">
-        <Link href={ROUTES.login as unknown as any} className="btn btn-ghost btn-sm">
+        <Link
+          href={ROUTES.login as unknown as any}
+          className="btn btn-ghost btn-sm"
+        >
           Sign In
         </Link>
-        <Link href={ROUTES.register as unknown as any} className="btn btn-primary btn-sm">
+        <Link
+          href={ROUTES.register as unknown as any}
+          className="btn btn-primary btn-sm"
+        >
           Register
         </Link>
       </div>
@@ -59,14 +65,16 @@ export function UserMenu({ user }: UserMenuProps) {
           size="xs"
           fallback={(user.name || "U").charAt(0)}
         />
-        <span className="hidden max-w-[100px] truncate lg:inline">{user.name}</span>
+        <span className="hidden max-w-25 truncate lg:inline">{user.name}</span>
       </button>
 
       {open && (
         <div className="absolute right-0 top-full mt-2 w-56 rounded-box border border-base-200 bg-base-100 shadow-xl z-50">
           <div className="border-b border-base-200 px-4 py-3">
             <p className="text-sm font-medium truncate">{user.name}</p>
-            <p className="text-xs text-base-content/60 truncate">{user.email}</p>
+            <p className="text-xs text-base-content/60 truncate">
+              {user.email}
+            </p>
           </div>
           <div className="p-2">
             <Link
@@ -78,7 +86,7 @@ export function UserMenu({ user }: UserMenuProps) {
               Dashboard
             </Link>
             <Link
-              href={ROUTES.dashboardOrders as unknown as any}
+              href={ROUTES.accountOrders as unknown as any}
               className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm hover:bg-base-200"
               onClick={() => setOpen(false)}
             >
