@@ -3,6 +3,10 @@ import { Breadcrumb, Container, Section, Divider } from "@/components/ui";
 import { ProductGallery, ProductInfo, PurchaseSection, DescriptionSection, ReviewsList, RelatedProducts } from "@/components/product-detail";
 import { catalogProducts } from "@/data/catalog";
 import { getProductDetail } from "@/data/product-detail";
+import { auth } from "@/lib/auth";
+import { db } from "@/db";
+import { products, wishlistItems } from "@/db/schema";
+import { eq, and } from "drizzle-orm";
 import type { Product } from "@/types/product";
 
 interface PageProps {
@@ -22,6 +26,30 @@ export default async function ProductDetailPage({ params }: PageProps) {
 
   const detail = getProductDetail(slug);
   if (!detail) notFound();
+
+  const session = await auth();
+  let isWishlisted = false;
+  if (session?.user?.id) {
+    const dbProduct = await db
+      .select({ id: products.id })
+      .from(products)
+      .where(eq(products.slug, slug))
+      .then((r) => r[0] ?? null);
+
+    if (dbProduct) {
+      const wl = await db
+        .select({ id: wishlistItems.id })
+        .from(wishlistItems)
+        .where(
+          and(
+            eq(wishlistItems.userId, session.user.id),
+            eq(wishlistItems.productId, dbProduct.id),
+          ),
+        )
+        .then((r) => r[0] ?? null);
+      isWishlisted = !!wl;
+    }
+  }
 
   const related = (catalogProducts as Product[])
     .filter((p) => p.slug !== slug && p.categorySlug === product.categorySlug)
@@ -48,7 +76,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
             <ProductGallery images={detail.gallery} title={product.title} />
             <div className="flex flex-col gap-6">
               <ProductInfo product={product} />
-              <PurchaseSection title={product.title} stockStatus={product.stockStatus} slug={product.slug} />
+              <PurchaseSection title={product.title} stockStatus={product.stockStatus} slug={product.slug} isWishlisted={isWishlisted} />
             </div>
           </div>
         </Container>

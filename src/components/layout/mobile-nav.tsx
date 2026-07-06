@@ -151,7 +151,7 @@ export function MobileNav({ user }: MobileNavProps) {
                 </li>
                 <li>
                   <Link
-                    href={ROUTES.dashboardWishlist as unknown as any}
+                      href={ROUTES.wishlist as unknown as any}
                     className="flex items-center gap-3 py-2 text-base"
                     onClick={() => setOpen(false)}
                   >

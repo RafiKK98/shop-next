@@ -86,7 +86,7 @@ export function UserMenu({ user }: UserMenuProps) {
               Orders
             </Link>
             <Link
-              href={ROUTES.dashboardWishlist as unknown as any}
+              href={ROUTES.wishlist as unknown as any}
               className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm hover:bg-base-200"
               onClick={() => setOpen(false)}
             >

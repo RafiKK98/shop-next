@@ -69,7 +69,7 @@ export const NAVIGATION = {
   account: [
     { label: "My Account", href: ROUTES.dashboard },
     { label: "Orders", href: ROUTES.dashboardOrders },
-    { label: "Wishlist", href: ROUTES.dashboardWishlist },
+    { label: "Wishlist", href: ROUTES.wishlist },
     { label: "Sign Out", href: "#" },
   ] satisfies NavLink[],
 } as const;

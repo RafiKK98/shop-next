@@ -1,21 +1,25 @@
 import Link from "next/link";
-import { Search, Heart } from "lucide-react";
+import { Search } from "lucide-react";
 import { SITE, ROUTES } from "@/constants";
 import { NAVIGATION } from "@/constants/navigation";
 import { auth } from "@/lib/auth";
 import { getCartCount } from "@/lib/cart";
+import { getWishlistCount } from "@/lib/wishlist";
 import { NavLink } from "./nav-link";
 import { ThemeToggle } from "./theme-toggle";
 import { MobileNav } from "./mobile-nav";
 import { UserMenu } from "../auth/user-menu";
 import { CartCount } from "../cart/cart-count";
+import { WishlistCount } from "../wishlist/wishlist-count";
 
 export async function Header() {
   const session = await auth();
 
   let cartCount = 0;
+  let wishlistCount = 0;
   if (session?.user?.id) {
     cartCount = await getCartCount(session.user.id);
+    wishlistCount = await getWishlistCount(session.user.id);
   }
 
   return (
@@ -45,13 +49,7 @@ export async function Header() {
             <Search size={18} />
           </Link>
 
-          <Link
-            href={ROUTES.dashboardWishlist as unknown as any}
-            className="btn btn-ghost btn-square"
-            aria-label="Wishlist"
-          >
-            <Heart size={18} />
-          </Link>
+          <WishlistCount count={wishlistCount} href={ROUTES.wishlist} />
 
           <CartCount count={cartCount} />
 

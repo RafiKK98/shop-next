@@ -19,7 +19,7 @@ export const ROUTES = {
   dashboard: "/dashboard",
   dashboardOrders: "/dashboard/orders",
   dashboardProfile: "/dashboard/profile",
-  dashboardWishlist: "/dashboard/wishlist",
+  wishlist: "/wishlist",
   admin: "/admin",
   adminProducts: "/admin/products",
   adminCategories: "/admin/categories",
