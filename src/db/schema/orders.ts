@@ -35,6 +35,8 @@ export const orderItems = pgTable(
       .references(() => products.id, { onDelete: "restrict" }),
     quantity: integer("quantity").notNull(),
     price: numeric("price", { precision: 10, scale: 2 }).notNull(),
+    productName: text("product_name").notNull(),
+    productImage: text("product_image"),
   },
   (table) => ({
     orderIdIdx: index("order_items_order_id_idx").on(table.orderId),

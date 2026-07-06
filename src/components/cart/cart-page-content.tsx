@@ -1,14 +1,14 @@
 "use client";
 
-import { useTransition } from "react";
-import Link from "next/link";
-import { ShoppingCart, ArrowLeft, ArrowRight } from "lucide-react";
-import { Button, EmptyState } from "@/components/ui";
-import { CartItemRow } from "./cart-item-row";
 import { clearCart } from "@/actions/cart";
-import { formatCurrency } from "@/utils/format";
+import { Button, EmptyState } from "@/components/ui";
 import { ROUTES } from "@/constants";
 import type { CartItemWithProduct } from "@/lib/cart";
+import { formatCurrency } from "@/utils/format";
+import { ArrowLeft, ArrowRight, ShoppingCart } from "lucide-react";
+import Link from "next/link";
+import { useTransition } from "react";
+import { CartItemRow } from "./cart-item-row";
 
 interface CartPageContentProps {
   items: CartItemWithProduct[];
@@ -40,7 +40,7 @@ export function CartPageContent({ items }: CartPageContentProps) {
         <EmptyState
           icon={<ShoppingCart className="size-16" />}
           title="Your cart is empty"
-          description="Looks like you haven&apos;t added anything to your cart yet. Browse our products and find something you love!"
+          description="Looks like you haven't added anything to your cart yet. Browse our products and find something you love!"
           action={
             <Link href={ROUTES.products as unknown as any}>
               <Button variant="primary" size="lg">
@@ -113,10 +113,12 @@ export function CartPageContent({ items }: CartPageContentProps) {
             </div>
 
             <div className="space-y-3 pt-2">
-              <Button className="w-full" size="lg" disabled>
-                Proceed to Checkout
-                <ArrowRight className="ml-2 size-4" />
-              </Button>
+              <Link href={ROUTES.checkout as unknown as any}>
+                <Button className="w-full" size="lg">
+                  Proceed to Checkout
+                  <ArrowRight className="ml-2 size-4" />
+                </Button>
+              </Link>
               <Link
                 href={ROUTES.products as unknown as any}
                 className="btn btn-ghost btn-sm w-full gap-2"

@@ -14,6 +14,7 @@ export const ROUTES = {
   search: "/search",
   cart: "/cart",
   checkout: "/checkout",
+  checkoutSuccess: "/checkout/success",
   login: "/login",
   register: "/register",
   dashboard: "/dashboard",

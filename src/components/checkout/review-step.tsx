@@ -1,11 +1,13 @@
 "use client";
 
+import { useState, useTransition } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui";
 import { formatCurrency } from "@/utils/format";
 import { computeCartTotals } from "@/utils/checkout";
+import { placeOrder } from "@/actions/checkout";
 import { ROUTES } from "@/constants";
 import type { CartItemWithProduct } from "@/lib/cart";
 import type { Address } from "./checkout-page";
@@ -17,7 +19,21 @@ interface ReviewStepProps {
 }
 
 export function ReviewStep({ items, selectedAddress, onBack }: ReviewStepProps) {
+  const [serverError, setServerError] = useState<string | null>(null);
+  const [isPending, startTransition] = useTransition();
   const { subtotal, shipping, tax, total } = computeCartTotals(items);
+
+  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!selectedAddress) return;
+    setServerError(null);
+    startTransition(async () => {
+      const fd = new FormData();
+      fd.set("addressId", selectedAddress.id);
+      const result = await placeOrder(fd);
+      if (result?.error) setServerError(result.error);
+    });
+  };
 
   return (
     <div className="space-y-6">
@@ -139,19 +155,34 @@ export function ReviewStep({ items, selectedAddress, onBack }: ReviewStepProps) 
         </div>
       </div>
 
-      <div className="flex items-center justify-between border-t border-base-200 pt-4">
-        <button
-          type="button"
-          className="btn btn-ghost gap-2"
-          onClick={onBack}
-        >
-          <ArrowLeft className="size-4" />
-          Back to Shipping
-        </button>
-        <Button className="w-full sm:w-auto" size="lg" disabled>
-          Place Order
-        </Button>
-      </div>
+      {serverError && (
+        <div className="alert alert-error" role="alert">
+          {serverError}
+        </div>
+      )}
+
+      <form onSubmit={onSubmit} className="border-t border-base-200 pt-4">
+        <div className="flex items-center justify-between">
+          <button
+            type="button"
+            className="btn btn-ghost gap-2"
+            onClick={onBack}
+            disabled={isPending}
+          >
+            <ArrowLeft className="size-4" />
+            Back to Shipping
+          </button>
+          <Button
+            type="submit"
+            className="w-full sm:w-auto"
+            size="lg"
+            disabled={!selectedAddress || isPending}
+            loading={isPending}
+          >
+            Place Order
+          </Button>
+        </div>
+      </form>
     </div>
   );
 }

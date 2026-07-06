@@ -569,6 +569,7 @@ async function seedOrders(
         productId: product.id!,
         quantity,
         price: productPrice,
+        productName: product.title!,
       });
     }
 
