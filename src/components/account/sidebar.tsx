@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 
 const NAV_ITEMS = [
-  { label: "Dashboard", href: ROUTES.account, icon: LayoutDashboard },
+  { label: "Dashboard", href: ROUTES.accountDashboard, icon: LayoutDashboard },
   { label: "Profile", href: ROUTES.accountProfile, icon: User },
   { label: "Orders", href: ROUTES.accountOrders, icon: Package },
   { label: "Addresses", href: ROUTES.accountAddresses, icon: MapPin },
@@ -30,7 +30,7 @@ export function AccountSidebar() {
         <ul className="menu menu-md rounded-box gap-1">
           {NAV_ITEMS.map((item) => {
             const isActive = pathname === item.href ||
-              (item.href !== ROUTES.account && pathname.startsWith(item.href));
+              (item.href !== ROUTES.accountDashboard && pathname.startsWith(item.href));
 
             return (
               <li key={item.href}>
@@ -76,10 +76,10 @@ export function AccountMobileNav() {
       <div className="flex gap-1 overflow-x-auto pb-2">
         {NAV_ITEMS.map((item) => {
           const isActive = pathname === item.href ||
-            (item.href !== ROUTES.account && pathname.startsWith(item.href));
+            (item.href !== ROUTES.accountDashboard && pathname.startsWith(item.href));
 
-          return (
-            <Link
+            return (
+              <Link
               key={item.href}
               href={item.href}
               className={cn(
