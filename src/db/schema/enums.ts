@@ -21,3 +21,10 @@ export const paymentStatusEnum = pgEnum("payment_status", [
 ]);
 
 export const couponTypeEnum = pgEnum("coupon_type", ["percentage", "fixed"]);
+
+export const reviewStatusEnum = pgEnum("review_status", [
+  "pending",
+  "approved",
+  "rejected",
+  "hidden",
+]);

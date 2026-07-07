@@ -1,6 +1,7 @@
 import { pgTable, uuid, text, integer, timestamp, uniqueIndex, index } from "drizzle-orm/pg-core";
 import { users } from "./users";
 import { products } from "./products";
+import { reviewStatusEnum } from "./enums";
 
 export const reviews = pgTable(
   "reviews",
@@ -13,7 +14,9 @@ export const reviews = pgTable(
       .notNull()
       .references(() => products.id, { onDelete: "cascade" }),
     rating: integer("rating").notNull(),
+    title: text("title"),
     comment: text("comment"),
+    status: reviewStatusEnum("status").default("pending").notNull(),
     createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
     updatedAt: timestamp("updated_at", { mode: "date" }).defaultNow().notNull(),
   },
@@ -21,5 +24,6 @@ export const reviews = pgTable(
     userProductUnique: uniqueIndex("reviews_user_product_unique").on(table.userId, table.productId),
     productIdIdx: index("reviews_product_id_idx").on(table.productId),
     userIdIdx: index("reviews_user_id_idx").on(table.userId),
+    statusIdx: index("reviews_status_idx").on(table.status),
   }),
 );
