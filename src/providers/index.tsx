@@ -16,4 +16,3 @@ export function Providers({ children }: { children: React.ReactNode }) {
 
 export { ThemeScript } from "./theme";
 export { useTheme } from "./theme";
-export { useToast } from "./toast";

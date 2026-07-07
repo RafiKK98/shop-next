@@ -6,6 +6,7 @@ import {
   productFormSchema,
   type ProductFormValues,
 } from "@/lib/validations/product";
+import { notify, crud } from "@/lib/notifications";
 import { slugify } from "@/utils/slug";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Plus, Trash2 } from "lucide-react";
@@ -96,7 +97,9 @@ export function ProductForm({
 
       if ("error" in result) {
         setServerError(result.error);
+        notify.error(result.error);
       } else if (result.success) {
+        notify.success(crud[mode === "create" ? "created" : "updated"]("Product"));
         router.push("/admin/products");
         router.refresh();
       }

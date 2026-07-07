@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Trash2 } from "lucide-react";
 import { Button, Modal, ModalBody, ModalActions } from "@/components/ui";
 import { deleteProduct } from "@/actions/admin/products";
+import { notify, crud, errors } from "@/lib/notifications";
 
 interface DeleteProductButtonProps {
   productId: string;
@@ -14,19 +15,20 @@ interface DeleteProductButtonProps {
 export function DeleteProductButton({ productId, productTitle }: DeleteProductButtonProps) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [isPending, startTransition] = useTransition();
 
   const handleDelete = () => {
-    setError(null);
-    startTransition(async () => {
-      const result = await deleteProduct(productId);
-      if ("error" in result) {
-        setError(result.error);
-      } else {
-        setOpen(false);
-        router.refresh();
-      }
+    setOpen(false);
+
+    const promise = deleteProduct(productId).then((result) => {
+      if ("error" in result) throw new Error(result.error);
+      router.refresh();
+      return result;
+    });
+
+    notify.promise(promise, {
+      loading: "Deleting product...",
+      success: crud.deleted("Product"),
+      error: (err) => (err as Error).message || errors.unexpected,
     });
   };
 
@@ -50,20 +52,14 @@ export function DeleteProductButton({ productId, productTitle }: DeleteProductBu
           <p className="mt-2 text-sm text-base-content/50">
             This action cannot be undone. Products referenced by orders cannot be deleted.
           </p>
-          {error && (
-            <div className="mt-3 rounded-lg border border-error/30 bg-error/5 px-3 py-2 text-sm text-error" role="alert">
-              {error}
-            </div>
-          )}
         </ModalBody>
         <ModalActions>
-          <Button variant="outline" onClick={() => setOpen(false)} disabled={isPending}>
+          <Button variant="outline" onClick={() => setOpen(false)}>
             Cancel
           </Button>
           <Button
             variant="primary"
             onClick={handleDelete}
-            loading={isPending}
             className="btn-error"
           >
             Delete

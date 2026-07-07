@@ -1,10 +1,10 @@
 "use client";
 
-import { Menu, ChevronDown } from "lucide-react";
-import { cn } from "@/utils/cn";
-import { AdminBreadcrumbs } from "./admin-breadcrumbs";
+import { logoutAction } from "@/actions/auth";
 import { Dropdown } from "@/components/ui";
+import { ChevronDown, Menu } from "lucide-react";
 import Link from "next/link";
+import { AdminBreadcrumbs } from "./admin-breadcrumbs";
 
 interface AdminHeaderProps {
   user: {
@@ -22,7 +22,7 @@ export function AdminHeader({ user }: AdminHeaderProps) {
         .join("")
         .toUpperCase()
         .slice(0, 2)
-    : user.email?.slice(0, 2).toUpperCase() ?? "A";
+    : (user.email?.slice(0, 2).toUpperCase() ?? "A");
 
   return (
     <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b border-base-200 bg-base-100/80 px-4 backdrop-blur-sm sm:px-6">
@@ -66,8 +66,11 @@ export function AdminHeader({ user }: AdminHeaderProps) {
             </Link>
           </li>
           <li>
-            <form action="/api/auth/signout" method="POST">
-              <button type="submit" className="w-full text-left text-sm text-error">
+            <form action={logoutAction}>
+              <button
+                type="submit"
+                className="w-full text-left text-sm text-error"
+              >
                 Sign Out
               </button>
             </form>
