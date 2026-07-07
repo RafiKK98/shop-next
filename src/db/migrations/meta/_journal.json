@@ -22,6 +22,13 @@
       "when": 1783333027825,
       "tag": "0002_broad_shaman",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1783335311070,
+      "tag": "0003_thankful_red_skull",
+      "breakpoints": true
     }
   ]
 }
