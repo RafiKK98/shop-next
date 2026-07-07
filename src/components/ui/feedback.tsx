@@ -28,7 +28,7 @@ export function Alert({ className, variant, children, ...props }: AlertProps) {
 /* ── Badge ── */
 
 interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
-  variant?: "neutral" | "primary" | "secondary" | "accent" | "ghost" | "outline";
+  variant?: "neutral" | "primary" | "secondary" | "accent" | "ghost" | "outline" | "success" | "error" | "warning" | "info";
   size?: "xs" | "sm" | "md" | "lg";
 }
 
@@ -39,6 +39,10 @@ const badgeVariantClass: Record<string, string> = {
   accent: "badge-accent",
   ghost: "badge-ghost",
   outline: "badge-outline",
+  success: "badge-success",
+  error: "badge-error",
+  warning: "badge-warning",
+  info: "badge-info",
 };
 
 const badgeSizeClass: Record<string, string> = {
