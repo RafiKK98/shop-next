@@ -59,6 +59,17 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     }),
   ],
   callbacks: {
+    async signIn({ user }) {
+      if (user.email) {
+        const dbUser = await db
+          .select({ status: users.status })
+          .from(users)
+          .where(eq(users.email, user.email))
+          .then((r) => r[0] ?? null);
+        if (dbUser && dbUser.status !== "active") return false;
+      }
+      return true;
+    },
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id!;

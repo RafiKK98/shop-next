@@ -36,6 +36,13 @@
       "when": 1783414212346,
       "tag": "0004_hard_warlock",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1783415715367,
+      "tag": "0005_absurd_colleen_wing",
+      "breakpoints": true
     }
   ]
 }

@@ -1,5 +1,5 @@
 import { pgTable, uuid, text, timestamp } from "drizzle-orm/pg-core";
-import { userRoleEnum } from "./enums";
+import { userRoleEnum, userStatusEnum } from "./enums";
 
 export const users = pgTable("users", {
   id: uuid("id").defaultRandom().primaryKey(),
@@ -10,6 +10,7 @@ export const users = pgTable("users", {
   image: text("image"),
   phone: text("phone"),
   role: userRoleEnum("role").default("customer").notNull(),
+  status: userStatusEnum("status").default("active").notNull(),
   createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
   updatedAt: timestamp("updated_at", { mode: "date" }).defaultNow().notNull(),
 });
