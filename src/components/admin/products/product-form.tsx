@@ -1,0 +1,309 @@
+"use client";
+
+import { createProduct, updateProduct } from "@/actions/admin/products";
+import { Button, Checkbox, FormError, Label, Select } from "@/components/ui";
+import {
+  productFormSchema,
+  type ProductFormValues,
+} from "@/lib/validations/product";
+import { slugify } from "@/utils/slug";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Plus, Trash2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useCallback, useState, useTransition } from "react";
+import { useFieldArray, useForm } from "react-hook-form";
+
+interface CategoryOption {
+  id: string;
+  name: string;
+}
+
+interface ProductFormProps {
+  defaultValues?: ProductFormValues;
+  categories: CategoryOption[];
+  mode: "create" | "edit";
+  productId?: string;
+}
+
+export function ProductForm({
+  defaultValues,
+  categories,
+  mode,
+  productId,
+}: ProductFormProps) {
+  const router = useRouter();
+  const [serverError, setServerError] = useState<string | null>(null);
+  const [isPending, startTransition] = useTransition();
+
+  const form = useForm<ProductFormValues>({
+    resolver: zodResolver(productFormSchema) as any,
+    defaultValues: defaultValues ?? {
+      title: "",
+      slug: "",
+      description: "",
+      categoryId: "",
+      brand: "",
+      price: 0,
+      discount: 0,
+      stock: 0,
+      featured: false,
+      images: [],
+    },
+  });
+
+  const { fields, append, remove } = useFieldArray({
+    control: form.control,
+    name: "images",
+  });
+
+  const handleTitleChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const title = e.target.value;
+      if (
+        !form.getValues("slug") ||
+        form.getValues("slug") ===
+          slugify(form.formState.defaultValues?.title ?? "")
+      ) {
+        form.setValue("slug", slugify(title));
+      }
+    },
+    [form],
+  );
+
+  const onSubmit = form.handleSubmit((data) => {
+    setServerError(null);
+    startTransition(async () => {
+      const fd = new FormData();
+      fd.set("title", data.title);
+      fd.set("slug", data.slug);
+      fd.set("description", data.description ?? "");
+      fd.set("categoryId", data.categoryId ?? "");
+      fd.set("brand", data.brand ?? "");
+      fd.set("price", String(data.price));
+      fd.set("discount", String(data.discount ?? 0));
+      fd.set("stock", String(data.stock ?? 0));
+      fd.set("featured", data.featured ? "true" : "false");
+
+      for (const img of data.images ?? []) {
+        fd.append("imageUrl", img.url);
+        fd.append("imageAlt", img.alt ?? "");
+      }
+
+      const result =
+        mode === "create"
+          ? await createProduct(fd)
+          : await updateProduct(productId!, fd);
+
+      if ("error" in result) {
+        setServerError(result.error);
+      } else if (result.success) {
+        router.push("/admin/products");
+        router.refresh();
+      }
+    });
+  });
+
+  return (
+    <form onSubmit={onSubmit} noValidate className="space-y-8">
+      {serverError && (
+        <div
+          className="rounded-lg border border-error/30 bg-error/5 px-4 py-3 text-sm text-error"
+          role="alert"
+        >
+          {serverError}
+        </div>
+      )}
+
+      <div className="rounded-xl border border-base-200 bg-base-100 p-5">
+        <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-base-content/50">
+          General
+        </h2>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div>
+            <Label>Name</Label>
+            <input
+              {...form.register("title")}
+              className="input w-full"
+              placeholder="Product name"
+              onChange={handleTitleChange}
+            />
+            <FormError>{form.formState.errors.title?.message}</FormError>
+          </div>
+          <div>
+            <Label>Slug</Label>
+            <input
+              {...form.register("slug")}
+              className="input w-full"
+              placeholder="product-slug"
+            />
+            <FormError>{form.formState.errors.slug?.message}</FormError>
+          </div>
+          <div>
+            <Label>Brand</Label>
+            <input
+              {...form.register("brand")}
+              className="input w-full"
+              placeholder="Brand name"
+            />
+            <FormError>{form.formState.errors.brand?.message}</FormError>
+          </div>
+          <div>
+            <Select
+              label="Category"
+              options={[
+                { value: "", label: "No category" },
+                ...categories.map((c) => ({ value: c.id, label: c.name })),
+              ]}
+              {...form.register("categoryId")}
+            />
+          </div>
+        </div>
+        <div className="mt-4">
+          <Label>Description</Label>
+          <textarea
+            {...form.register("description")}
+            className="textarea textarea-bordered w-full"
+            rows={4}
+            placeholder="Product description"
+          />
+          <FormError>{form.formState.errors.description?.message}</FormError>
+        </div>
+      </div>
+
+      <div className="rounded-xl border border-base-200 bg-base-100 p-5">
+        <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-base-content/50">
+          Pricing
+        </h2>
+        <div className="grid gap-4 sm:grid-cols-3">
+          <div>
+            <Label required>Price ($)</Label>
+            <input
+              type="number"
+              step="0.01"
+              min="0"
+              {...form.register("price", { valueAsNumber: true })}
+              className="input w-full"
+              placeholder="0.00"
+            />
+            <FormError>{form.formState.errors.price?.message}</FormError>
+          </div>
+          <div>
+            <Label>Discount (%)</Label>
+            <input
+              type="number"
+              step="0.01"
+              min="0"
+              max="100"
+              {...form.register("discount", { valueAsNumber: true })}
+              className="input w-full"
+              placeholder="0"
+            />
+            <FormError>{form.formState.errors.discount?.message}</FormError>
+          </div>
+        </div>
+      </div>
+
+      <div className="rounded-xl border border-base-200 bg-base-100 p-5">
+        <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-base-content/50">
+          Inventory
+        </h2>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div>
+            <Label>Stock</Label>
+            <input
+              type="number"
+              step="1"
+              min="0"
+              {...form.register("stock", { valueAsNumber: true })}
+              className="input w-full"
+              placeholder="0"
+            />
+            <FormError>{form.formState.errors.stock?.message}</FormError>
+          </div>
+        </div>
+      </div>
+
+      <div className="rounded-xl border border-base-200 bg-base-100 p-5">
+        <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-base-content/50">
+          Organization
+        </h2>
+        <div className="flex flex-wrap gap-6">
+          <Checkbox label="Featured product" {...form.register("featured")} />
+        </div>
+      </div>
+
+      <div className="rounded-xl border border-base-200 bg-base-100 p-5">
+        <div className="flex items-center justify-between">
+          <h2 className="text-sm font-semibold uppercase tracking-wider text-base-content/50">
+            Images
+          </h2>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => append({ url: "", alt: "" })}
+          >
+            <Plus className="mr-1 size-3.5" />
+            Add Image
+          </Button>
+        </div>
+
+        {fields.length === 0 && (
+          <p className="mt-4 text-sm text-base-content/40">
+            No images added yet. Click &quot;Add Image&quot; to add image URLs.
+          </p>
+        )}
+
+        <div className="mt-4 space-y-3">
+          {fields.map((field, index) => (
+            <div
+              key={field.id}
+              className="flex items-start gap-3 rounded-lg border border-base-200 p-3"
+            >
+              <div className="flex flex-1 flex-col gap-2 sm:flex-row">
+                <div className="flex-1">
+                  <input
+                    {...form.register(`images.${index}.url`)}
+                    className="input input-sm w-full"
+                    placeholder="https://example.com/image.jpg"
+                  />
+                  <FormError>
+                    {form.formState.errors.images?.[index]?.url?.message}
+                  </FormError>
+                </div>
+                <div className="flex-1">
+                  <input
+                    {...form.register(`images.${index}.alt`)}
+                    className="input input-sm w-full"
+                    placeholder="Alt text (optional)"
+                  />
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => remove(index)}
+                className="btn btn-ghost btn-square btn-sm shrink-0 text-error"
+                aria-label="Remove image"
+              >
+                <Trash2 className="size-4" />
+              </button>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="flex items-center justify-end gap-3">
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() => router.push("/admin/products")}
+        >
+          Cancel
+        </Button>
+        <Button type="submit" loading={isPending}>
+          {mode === "create" ? "Create Product" : "Save Changes"}
+        </Button>
+      </div>
+    </form>
+  );
+}
