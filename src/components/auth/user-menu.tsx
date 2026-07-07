@@ -78,7 +78,7 @@ export function UserMenu({ user }: UserMenuProps) {
           </div>
           <div className="p-2">
             <Link
-              href={ROUTES.dashboard as unknown as any}
+              href={ROUTES.accountDashboard as unknown as any}
               className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm hover:bg-base-200"
               onClick={() => setOpen(false)}
             >
