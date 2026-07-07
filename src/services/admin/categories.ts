@@ -225,3 +225,12 @@ export async function deleteCategoryDb(id: string): Promise<{ productCount: numb
   await db.delete(categories).where(eq(categories.id, id));
   return { productCount: 0 };
 }
+
+export async function getCategoryImageUrl(id: string): Promise<string | null> {
+  const row = await db
+    .select({ image: categories.image })
+    .from(categories)
+    .where(eq(categories.id, id))
+    .then((r) => r[0] ?? null);
+  return row?.image ?? null;
+}

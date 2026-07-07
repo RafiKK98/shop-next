@@ -40,10 +40,7 @@ export default async function EditProductPage({ params }: PageProps) {
           discount: Number(product.discount ?? 0),
           stock: product.stock ?? 0,
           featured: product.featured ?? false,
-          images: product.images.map((img) => ({
-            url: img.url,
-            alt: img.alt ?? "",
-          })),
+          images: product.images.map((img) => img.url),
         }}
         categories={categories}
         mode="edit"

@@ -7,6 +7,7 @@ import { productFormServerSchema } from "@/lib/validations/product";
 import { slugify } from "@/utils/slug";
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
+import { getRemovedImageUrls } from "@/lib/upload";
 
 interface ActionSuccess {
   success: true;
@@ -35,15 +36,43 @@ function parseDbError(err: unknown): string {
   return "An unexpected database error occurred";
 }
 
+/**
+ * Diff old and new image URL sets to find removed Cloudinary assets.
+ *
+ * ── Architecture for old-asset cleanup ──
+ *
+ * When replacing product images, the old Cloudinary URLs are orphaned.
+ * To clean them up:
+ *
+ *   1. Before the DB transaction, call getProductImageUrls(productId) to
+ *      fetch the current image set.
+ *   2. After computing the new set, call getRemovedImageUrls(old, new)
+ *      to find URLs that were removed.
+ *   3. After the DB transaction succeeds, call
+ *      deleteImageFromCloudinary(url) for each removed URL.
+ *
+ * The deleteImageFromCloudinary() utility (src/lib/cloudinary-upload.ts)
+ * extracts the Cloudinary public ID and calls cloudinary.uploader.destroy().
+ *
+ * For now, these utilities are available but NOT wired into the mutation
+ * flow. To enable, uncomment the cleanup blocks below.
+ */
+
+async function getProductImageUrls(productId: string): Promise<string[]> {
+  const rows = await db
+    .select({ url: productImages.imageUrl })
+    .from(productImages)
+    .where(eq(productImages.productId, productId));
+  return rows.map((r) => r.url);
+}
+
 export async function createProduct(formData: FormData): Promise<ActionResult> {
   await requireAdmin();
 
   const raw = Object.fromEntries(formData);
-  const imagesRaw = formData.getAll("imageUrl") as string[];
-  const altsRaw = formData.getAll("imageAlt") as string[];
-  const images = imagesRaw
-    .map((url, i) => ({ url, alt: altsRaw[i] ?? "" }))
-    .filter((img) => img.url.trim().length > 0);
+  const images = (formData.getAll("imageUrl") as string[]).filter(
+    (url) => url.trim().length > 0,
+  );
 
   const parsed = productFormServerSchema.safeParse({
     ...raw,
@@ -75,14 +104,12 @@ export async function createProduct(formData: FormData): Promise<ActionResult> {
 
       if (data.images && data.images.length > 0) {
         await tx.insert(productImages).values(
-          data.images
-            .filter((img) => img.url.trim().length > 0)
-            .map((img, i) => ({
-              productId: p.id,
-              imageUrl: img.url,
-              alt: img.alt || null,
-              order: i,
-            })),
+          data.images.map((url, i) => ({
+            productId: p.id,
+            imageUrl: url,
+            alt: null,
+            order: i,
+          })),
         );
       }
 
@@ -111,11 +138,9 @@ export async function updateProduct(
   if (!existing) return { error: "Product not found" };
 
   const raw = Object.fromEntries(formData);
-  const imagesRaw = formData.getAll("imageUrl") as string[];
-  const altsRaw = formData.getAll("imageAlt") as string[];
-  const images = imagesRaw
-    .map((url, i) => ({ url, alt: altsRaw[i] ?? "" }))
-    .filter((img) => img.url.trim().length > 0);
+  const images = (formData.getAll("imageUrl") as string[]).filter(
+    (url) => url.trim().length > 0,
+  );
 
   const parsed = productFormServerSchema.safeParse({
     ...raw,
@@ -148,20 +173,33 @@ export async function updateProduct(
         })
         .where(eq(products.id, productId));
 
+      /*
+       * ── Cloudinary cleanup hook point ──
+       *
+       * To remove orphaned Cloudinary images when they are replaced:
+       *
+       *   const oldUrls = await getProductImageUrls(productId);
+       *   const removedUrls = getRemovedImageUrls(oldUrls, data.images ?? []);
+       *
+       * Then after the transaction:
+       *
+       *   for (const url of removedUrls) {
+       *     await deleteImageFromCloudinary(url);
+       *   }
+       */
+
       await tx
         .delete(productImages)
         .where(eq(productImages.productId, productId));
 
       if (data.images && data.images.length > 0) {
         await tx.insert(productImages).values(
-          data.images
-            .filter((img) => img.url.trim().length > 0)
-            .map((img, i) => ({
-              productId,
-              imageUrl: img.url,
-              alt: img.alt || null,
-              order: i,
-            })),
+          data.images.map((url, i) => ({
+            productId,
+            imageUrl: url,
+            alt: null,
+            order: i,
+          })),
         );
       }
     });
@@ -187,6 +225,19 @@ export async function deleteProduct(productId: string): Promise<ActionResult> {
   if (!existing) return { error: "Product not found" };
 
   try {
+    /*
+     * ── Cloudinary cleanup hook point ──
+     *
+     * Before deleting DB records, fetch product image URLs and call
+     * deleteImageFromCloudinary() on each to remove Cloudinary assets:
+     *
+     *   const urls = await getProductImageUrls(productId);
+     *   // ... delete from DB ...
+     *   for (const url of urls) {
+     *     await deleteImageFromCloudinary(url);
+     *   }
+     */
+
     await db.transaction(async (tx) => {
       await tx
         .delete(productImages)

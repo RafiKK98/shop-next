@@ -10,15 +10,7 @@ export const productFormSchema = z.object({
   discount: z.coerce.number().min(0).max(100).optional().default(0),
   stock: z.coerce.number().int().min(0).optional().default(0),
   featured: z.coerce.boolean().optional().default(false),
-  images: z
-    .array(
-      z.object({
-        url: z.string().url("Must be a valid URL").or(z.literal("")),
-        alt: z.string().optional().default(""),
-      }),
-    )
-    .optional()
-    .default([]),
+  images: z.array(z.string()).optional().default([]),
 });
 
 export type ProductFormValues = z.infer<typeof productFormSchema>;

@@ -16,3 +16,4 @@ export { Rating } from "./rating";
 export { ProductImage } from "./product-image";
 export { Price } from "./price";
 export { EmptyState, NoResults } from "./empty-state";
+export { ImageUpload } from "./image-upload";

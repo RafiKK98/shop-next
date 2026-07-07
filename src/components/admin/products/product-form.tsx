@@ -1,7 +1,7 @@
 "use client";
 
 import { createProduct, updateProduct } from "@/actions/admin/products";
-import { Button, Checkbox, FormError, Label, Select } from "@/components/ui";
+import { Button, Checkbox, FormError, Label, Select, ImageUpload } from "@/components/ui";
 import {
   productFormSchema,
   type ProductFormValues,
@@ -9,10 +9,9 @@ import {
 import { notify, crud } from "@/lib/notifications";
 import { slugify } from "@/utils/slug";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Plus, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useCallback, useState, useTransition } from "react";
-import { useFieldArray, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 
 interface CategoryOption {
   id: string;
@@ -52,11 +51,6 @@ export function ProductForm({
     },
   });
 
-  const { fields, append, remove } = useFieldArray({
-    control: form.control,
-    name: "images",
-  });
-
   const handleTitleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const title = e.target.value;
@@ -85,9 +79,8 @@ export function ProductForm({
       fd.set("stock", String(data.stock ?? 0));
       fd.set("featured", data.featured ? "true" : "false");
 
-      for (const img of data.images ?? []) {
-        fd.append("imageUrl", img.url);
-        fd.append("imageAlt", img.alt ?? "");
+      for (const url of data.images ?? []) {
+        fd.append("imageUrl", url);
       }
 
       const result =
@@ -105,6 +98,8 @@ export function ProductForm({
       }
     });
   });
+
+  const images = form.watch("images");
 
   return (
     <form onSubmit={onSubmit} noValidate className="space-y-8">
@@ -236,63 +231,14 @@ export function ProductForm({
       </div>
 
       <div className="rounded-xl border border-base-200 bg-base-100 p-5">
-        <div className="flex items-center justify-between">
-          <h2 className="text-sm font-semibold uppercase tracking-wider text-base-content/50">
-            Images
-          </h2>
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            onClick={() => append({ url: "", alt: "" })}
-          >
-            <Plus className="mr-1 size-3.5" />
-            Add Image
-          </Button>
-        </div>
-
-        {fields.length === 0 && (
-          <p className="mt-4 text-sm text-base-content/40">
-            No images added yet. Click &quot;Add Image&quot; to add image URLs.
-          </p>
-        )}
-
-        <div className="mt-4 space-y-3">
-          {fields.map((field, index) => (
-            <div
-              key={field.id}
-              className="flex items-start gap-3 rounded-lg border border-base-200 p-3"
-            >
-              <div className="flex flex-1 flex-col gap-2 sm:flex-row">
-                <div className="flex-1">
-                  <input
-                    {...form.register(`images.${index}.url`)}
-                    className="input input-sm w-full"
-                    placeholder="https://example.com/image.jpg"
-                  />
-                  <FormError>
-                    {form.formState.errors.images?.[index]?.url?.message}
-                  </FormError>
-                </div>
-                <div className="flex-1">
-                  <input
-                    {...form.register(`images.${index}.alt`)}
-                    className="input input-sm w-full"
-                    placeholder="Alt text (optional)"
-                  />
-                </div>
-              </div>
-              <button
-                type="button"
-                onClick={() => remove(index)}
-                className="btn btn-ghost btn-square btn-sm shrink-0 text-error"
-                aria-label="Remove image"
-              >
-                <Trash2 className="size-4" />
-              </button>
-            </div>
-          ))}
-        </div>
+        <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-base-content/50">
+          Images
+        </h2>
+        <ImageUpload
+          value={images}
+          onChange={(urls) => form.setValue("images", urls, { shouldDirty: true })}
+          maxFiles={10}
+        />
       </div>
 
       <div className="flex items-center justify-end gap-3">

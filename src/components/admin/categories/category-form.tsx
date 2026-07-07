@@ -1,12 +1,13 @@
 "use client";
 
 import { createCategory, updateCategory } from "@/actions/admin/categories";
-import { Button, Checkbox, FormError, Label } from "@/components/ui";
+import { Button, Checkbox, FormError, Label, ImageUpload } from "@/components/ui";
 import {
   categoryFormSchema,
   type CategoryFormValues,
 } from "@/lib/validations/category";
 import { notify, crud } from "@/lib/notifications";
+import { UPLOAD_FOLDERS } from "@/lib/upload";
 import { slugify } from "@/utils/slug";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
@@ -40,6 +41,10 @@ export function CategoryForm({
     },
   });
 
+  const [categoryImage, setCategoryImage] = useState<string>(
+    defaultValues?.image ?? "",
+  );
+
   const handleNameChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const name = e.target.value;
@@ -61,7 +66,7 @@ export function CategoryForm({
       fd.set("name", data.name);
       fd.set("slug", data.slug);
       fd.set("description", data.description ?? "");
-      fd.set("image", data.image ?? "");
+      fd.set("image", categoryImage);
       fd.set("featured", data.featured ? "true" : "false");
       fd.set("active", data.active ? "true" : "false");
 
@@ -133,15 +138,12 @@ export function CategoryForm({
         <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-base-content/50">
           Media
         </h2>
-        <div>
-          <Label>Image URL</Label>
-          <input
-            {...form.register("image")}
-            className="input w-full"
-            placeholder="https://example.com/image.jpg"
-          />
-          <FormError>{form.formState.errors.image?.message}</FormError>
-        </div>
+        <ImageUpload
+          value={categoryImage ? [categoryImage] : []}
+          onChange={(urls) => setCategoryImage(urls[0] ?? "")}
+          maxFiles={1}
+          folder={UPLOAD_FOLDERS.categories}
+        />
       </div>
 
       <div className="rounded-xl border border-base-200 bg-base-100 p-5">
