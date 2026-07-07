@@ -1,19 +1,22 @@
 import { requireAdmin } from "@/lib/auth/guards";
-import { getAdminDashboardStats } from "@/lib/admin/dashboard";
+import { getDashboardAnalytics } from "@/services/admin/analytics";
 import { SITE } from "@/constants";
 import { AdminPageHeader } from "@/components/admin/admin-page-header";
 import { StatCard } from "@/components/admin/stat-card";
 import { DashboardSection } from "@/components/admin/dashboard-section";
-import { Badge, Button } from "@/components/ui";
+import { RevenueChart } from "@/components/admin/charts/revenue-chart";
+import { OrderStatusChart } from "@/components/admin/charts/order-status-chart";
+import { Badge, Avatar, Button } from "@/components/ui";
 import { formatCurrency, formatDate } from "@/utils/format";
 import {
-  ShoppingBag,
-  ShoppingCart,
   DollarSign,
-  Users,
+  ShoppingCart,
   Package,
+  Layers,
+  Users,
+  Clock,
+  TrendingUp,
   AlertTriangle,
-  UserPlus,
 } from "lucide-react";
 import Link from "next/link";
 import type { Metadata } from "next";
@@ -24,7 +27,7 @@ export const metadata: Metadata = {
 
 export default async function AdminDashboardPage() {
   await requireAdmin();
-  const stats = await getAdminDashboardStats();
+  const stats = await getDashboardAnalytics();
 
   return (
     <>
@@ -33,19 +36,8 @@ export default async function AdminDashboardPage() {
         description="Overview of your store performance"
       />
 
+      {/* ── Overview Metrics ── */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard
-          label="Total Products"
-          value={stats.totalProducts}
-          icon={ShoppingBag}
-          variant="primary"
-        />
-        <StatCard
-          label="Total Orders"
-          value={stats.totalOrders}
-          icon={ShoppingCart}
-          variant="success"
-        />
         <StatCard
           label="Total Revenue"
           value={formatCurrency(stats.totalRevenue)}
@@ -53,14 +45,100 @@ export default async function AdminDashboardPage() {
           variant="warning"
         />
         <StatCard
-          label="Total Users"
-          value={stats.totalUsers}
-          icon={Users}
+          label="Total Orders"
+          value={stats.totalOrders}
+          icon={ShoppingCart}
+          variant="primary"
+        />
+        <StatCard
+          label="Total Products"
+          value={stats.totalProducts}
+          icon={Package}
           variant="default"
+        />
+        <StatCard
+          label="Total Categories"
+          value={stats.totalCategories}
+          icon={Layers}
+          variant="default"
+        />
+        <StatCard
+          label="Total Customers"
+          value={stats.totalCustomers}
+          icon={Users}
+          variant="success"
+        />
+        <StatCard
+          label="Pending Orders"
+          value={stats.pendingOrders}
+          icon={Clock}
+          variant="warning"
+        />
+        <StatCard
+          label="Processing"
+          value={stats.processingOrders}
+          icon={TrendingUp}
+          variant="primary"
+        />
+        <StatCard
+          label="Low Stock Items"
+          value={stats.lowStockCount}
+          icon={AlertTriangle}
+          variant="danger"
         />
       </div>
 
+      {/* ── Revenue Analytics (with trends) ── */}
+      <div className="mt-6 grid gap-4 sm:grid-cols-3">
+        <StatCard
+          label="Revenue Today"
+          value={formatCurrency(stats.revenueToday.current)}
+          icon={DollarSign}
+          variant="success"
+          trend={{
+            direction: stats.revenueToday.changePercent >= 0 ? "up" : "down",
+            value: `${Math.abs(stats.revenueToday.changePercent)}% vs yesterday`,
+          }}
+        />
+        <StatCard
+          label="Last 7 Days"
+          value={formatCurrency(stats.revenueLast7Days.current)}
+          icon={DollarSign}
+          variant="primary"
+          trend={{
+            direction: stats.revenueLast7Days.changePercent >= 0 ? "up" : "down",
+            value: `${Math.abs(stats.revenueLast7Days.changePercent)}% vs previous week`,
+          }}
+        />
+        <StatCard
+          label="Last 30 Days"
+          value={formatCurrency(stats.revenueLast30Days.current)}
+          icon={DollarSign}
+          variant="warning"
+          trend={{
+            direction: stats.revenueLast30Days.changePercent >= 0 ? "up" : "down",
+            value: `${Math.abs(stats.revenueLast30Days.changePercent)}% vs previous month`,
+          }}
+        />
+      </div>
+
+      {/* ── Charts Row ── */}
+      <div className="mt-6 grid gap-6 lg:grid-cols-3">
+        <div className="lg:col-span-2">
+          <DashboardSection title="Revenue (Last 30 Days)">
+            <RevenueChart data={stats.dailyRevenue} />
+          </DashboardSection>
+        </div>
+        <div>
+          <DashboardSection title="Order Status">
+            <OrderStatusChart data={stats.orderStatusBreakdown} />
+          </DashboardSection>
+        </div>
+      </div>
+
+      {/* ── Lists Row 1 ── */}
       <div className="mt-6 grid gap-6 lg:grid-cols-2">
+        {/* Recent Orders */}
         <DashboardSection
           title="Recent Orders"
           action={
@@ -72,18 +150,30 @@ export default async function AdminDashboardPage() {
           }
         >
           {stats.recentOrders.length === 0 ? (
-            <p className="py-8 text-center text-sm text-base-content/50">No orders yet</p>
+            <p className="py-8 text-center text-sm text-base-content/50">
+              No orders yet
+            </p>
           ) : (
             <ul className="divide-y divide-base-200">
               {stats.recentOrders.map((order) => (
-                <li key={order.id} className="flex items-center justify-between py-3 first:pt-0 last:pb-0">
-                  <div className="min-w-0">
-                    <p className="text-sm font-medium">#{order.orderNumber}</p>
+                <li
+                  key={order.id}
+                  className="flex items-center justify-between py-3 first:pt-0 last:pb-0"
+                >
+                  <Link
+                    href={`/admin/orders/${order.id}`}
+                    className="group min-w-0"
+                  >
+                    <p className="text-sm font-medium group-hover:text-primary">
+                      #{order.orderNumber}
+                    </p>
                     <p className="truncate text-xs text-base-content/50">
                       {order.userName || order.userEmail}
                     </p>
-                    <p className="text-xs text-base-content/40">{formatDate(order.createdAt)}</p>
-                  </div>
+                    <p className="text-xs text-base-content/40">
+                      {formatDate(order.createdAt)}
+                    </p>
+                  </Link>
                   <div className="flex shrink-0 items-center gap-3">
                     <span className="text-sm font-semibold">
                       {formatCurrency(order.total)}
@@ -93,8 +183,10 @@ export default async function AdminDashboardPage() {
                         order.status === "cancelled"
                           ? "neutral"
                           : order.status === "delivered"
-                            ? "primary"
-                            : "secondary"
+                            ? "success"
+                            : order.status === "processing"
+                              ? "primary"
+                              : "warning"
                       }
                     >
                       {order.status}
@@ -106,9 +198,46 @@ export default async function AdminDashboardPage() {
           )}
         </DashboardSection>
 
+        {/* Top Selling Products */}
+        <DashboardSection title="Top Selling Products">
+          {stats.topSellingProducts.length === 0 ? (
+            <p className="py-8 text-center text-sm text-base-content/50">
+              No sales data yet
+            </p>
+          ) : (
+            <ul className="divide-y divide-base-200">
+              {stats.topSellingProducts.map((product) => (
+                <li
+                  key={product.productId}
+                  className="flex items-center justify-between py-3 first:pt-0 last:pb-0"
+                >
+                  <Link
+                    href={`/admin/products/${product.productId}`}
+                    className="group min-w-0 flex-1"
+                  >
+                    <p className="truncate text-sm font-medium group-hover:text-primary">
+                      {product.productName}
+                    </p>
+                    <p className="text-xs text-base-content/50">
+                      {product.unitsSold} unit{product.unitsSold !== 1 ? "s" : ""} sold
+                    </p>
+                  </Link>
+                  <span className="shrink-0 text-sm font-semibold">
+                    {formatCurrency(product.revenue)}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </DashboardSection>
+      </div>
+
+      {/* ── Lists Row 2 ── */}
+      <div className="mt-6 grid gap-6 lg:grid-cols-2">
+        {/* Low Stock Products */}
         <DashboardSection
           title="Low Stock Products"
-          description="Products with less than 10 units in stock"
+          description={`Products with less than ${10} units`}
           action={
             <Link href="/admin/products">
               <Button variant="ghost" size="sm">
@@ -118,28 +247,37 @@ export default async function AdminDashboardPage() {
           }
         >
           {stats.lowStockProducts.length === 0 ? (
-            <p className="py-8 text-center text-sm text-base-content/50">All products are well stocked</p>
+            <p className="py-8 text-center text-sm text-base-content/50">
+              All products are well stocked
+            </p>
           ) : (
             <ul className="divide-y divide-base-200">
               {stats.lowStockProducts.map((product) => (
-                <li key={product.id} className="flex items-center justify-between py-3 first:pt-0 last:pb-0">
-                  <div className="flex min-w-0 items-center gap-3">
-                    <span className="flex size-8 items-center justify-center rounded-lg bg-warning/10 text-warning">
+                <li
+                  key={product.id}
+                  className="flex items-center justify-between py-3 first:pt-0 last:pb-0"
+                >
+                  <Link
+                    href={`/admin/products/${product.id}/edit`}
+                    className="group flex min-w-0 flex-1 items-center gap-3"
+                  >
+                    <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-warning/10 text-warning">
                       <AlertTriangle className="size-4" />
                     </span>
                     <div className="min-w-0">
-                      <p className="truncate text-sm font-medium">{product.title}</p>
+                      <p className="truncate text-sm font-medium group-hover:text-primary">
+                        {product.title}
+                      </p>
                       <p className="text-xs text-base-content/50">
                         {formatCurrency(product.price)}
                       </p>
                     </div>
-                  </div>
-                  <div className="shrink-0">
-                    <span className="text-sm font-semibold text-error">{product.stock}</span>
-                    <span className="text-xs text-base-content/50">
-                      {" "}
-                      left
+                  </Link>
+                  <div className="shrink-0 text-right">
+                    <span className="text-sm font-semibold text-error">
+                      {product.stock}
                     </span>
+                    <span className="text-xs text-base-content/50"> left</span>
                   </div>
                 </li>
               ))}
@@ -147,53 +285,54 @@ export default async function AdminDashboardPage() {
           )}
         </DashboardSection>
 
-        <div className="lg:col-span-2">
-          <DashboardSection
-            title="Recent Users"
-            action={
-              <Link href="/admin/users">
-                <Button variant="ghost" size="sm">
-                  View All
-                </Button>
-              </Link>
-            }
-          >
-            {stats.recentUsers.length === 0 ? (
-              <p className="py-8 text-center text-sm text-base-content/50">No users yet</p>
-            ) : (
-              <ul className="divide-y divide-base-200">
-                {stats.recentUsers.map((user) => (
-                  <li key={user.id} className="flex items-center justify-between py-3 first:pt-0 last:pb-0">
-                    <div className="flex items-center gap-3">
-                      <span className="flex size-8 items-center justify-center rounded-full bg-base-200 text-xs font-medium text-base-content/60">
-                        {user.name
-                          ? user.name
-                              .split(" ")
-                              .map((n) => n[0])
-                              .join("")
-                              .toUpperCase()
-                              .slice(0, 2)
-                          : user.email.slice(0, 2).toUpperCase()}
-                      </span>
-                      <div>
-                        <p className="text-sm font-medium">{user.name || "No name"}</p>
-                        <p className="text-xs text-base-content/50">{user.email}</p>
-                      </div>
+        {/* Recent Customers */}
+        <DashboardSection
+          title="Recent Customers"
+          action={
+            <Link href="/admin/users">
+              <Button variant="ghost" size="sm">
+                View All
+              </Button>
+            </Link>
+          }
+        >
+          {stats.recentCustomers.length === 0 ? (
+            <p className="py-8 text-center text-sm text-base-content/50">
+              No users yet
+            </p>
+          ) : (
+            <ul className="divide-y divide-base-200">
+              {stats.recentCustomers.map((user) => (
+                <li
+                  key={user.id}
+                  className="flex items-center justify-between py-3 first:pt-0 last:pb-0"
+                >
+                  <Link
+                    href={`/admin/users/${user.id}`}
+                    className="group flex items-center gap-3"
+                  >
+                    <Avatar
+                      src={user.image}
+                      alt={user.name ?? user.email}
+                      size="sm"
+                    />
+                    <div>
+                      <p className="text-sm font-medium group-hover:text-primary">
+                        {user.name || "No name"}
+                      </p>
+                      <p className="text-xs text-base-content/50">
+                        {user.email}
+                      </p>
                     </div>
-                    <div className="flex shrink-0 items-center gap-3">
-                      <Badge variant={user.role === "admin" ? "primary" : "ghost"}>
-                        {user.role}
-                      </Badge>
-                      <span className="text-xs text-base-content/40">
-                        {formatDate(user.createdAt)}
-                      </span>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </DashboardSection>
-        </div>
+                  </Link>
+                  <span className="shrink-0 text-xs text-base-content/40">
+                    {formatDate(user.createdAt)}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </DashboardSection>
       </div>
     </>
   );
