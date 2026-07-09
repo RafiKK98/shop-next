@@ -57,6 +57,13 @@
       "when": 1730000000000,
       "tag": "0007_certain_boom",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1730100000000,
+      "tag": "0008_big_solo",
+      "breakpoints": true
     }
   ]
 }

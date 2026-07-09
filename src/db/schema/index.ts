@@ -9,4 +9,5 @@ export * from "./wishlists";
 export * from "./orders";
 export * from "./coupons";
 export * from "./addresses";
+export * from "./store-settings";
 export * from "./relations";

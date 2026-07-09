@@ -14,6 +14,7 @@ export const UPLOAD_FOLDERS = {
   products: "ecommerce/products",
   categories: "ecommerce/categories",
   avatars: "ecommerce/avatars",
+  branding: "ecommerce/branding",
 } as const;
 
 export type UploadFolder = (typeof UPLOAD_FOLDERS)[keyof typeof UPLOAD_FOLDERS];
