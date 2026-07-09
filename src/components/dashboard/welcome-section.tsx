@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { User } from "lucide-react";
 import { formatDate } from "@/utils/format";
 
@@ -20,7 +21,7 @@ export function WelcomeSection({
     <div className="flex flex-col items-start gap-4 rounded-xl border border-base-200 bg-base-100 p-6 sm:flex-row sm:items-center sm:gap-5">
       <div className="flex size-16 items-center justify-center overflow-hidden rounded-full bg-base-200">
         {image ? (
-          <img src={image} alt={name || "Avatar"} className="size-full object-cover" />
+          <Image src={image} alt={name || "Avatar"} fill className="object-cover" />
         ) : (
           <User className="size-7 text-base-content/30" />
         )}

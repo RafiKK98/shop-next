@@ -6,7 +6,8 @@ import { requireAdmin } from "@/lib/auth/guards";
 import { productFormServerSchema } from "@/lib/validations/product";
 import { slugify } from "@/utils/slug";
 import { eq } from "drizzle-orm";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
+import { CACHE_TAGS } from "@/lib/cache";
 import { getRemovedImageUrls } from "@/lib/upload";
 
 interface ActionSuccess {
@@ -35,28 +36,6 @@ function parseDbError(err: unknown): string {
   if (e.message) return e.message;
   return "An unexpected database error occurred";
 }
-
-/**
- * Diff old and new image URL sets to find removed Cloudinary assets.
- *
- * ── Architecture for old-asset cleanup ──
- *
- * When replacing product images, the old Cloudinary URLs are orphaned.
- * To clean them up:
- *
- *   1. Before the DB transaction, call getProductImageUrls(productId) to
- *      fetch the current image set.
- *   2. After computing the new set, call getRemovedImageUrls(old, new)
- *      to find URLs that were removed.
- *   3. After the DB transaction succeeds, call
- *      deleteImageFromCloudinary(url) for each removed URL.
- *
- * The deleteImageFromCloudinary() utility (src/lib/cloudinary-upload.ts)
- * extracts the Cloudinary public ID and calls cloudinary.uploader.destroy().
- *
- * For now, these utilities are available but NOT wired into the mutation
- * flow. To enable, uncomment the cleanup blocks below.
- */
 
 async function getProductImageUrls(productId: string): Promise<string[]> {
   const rows = await db
@@ -117,6 +96,7 @@ export async function createProduct(formData: FormData): Promise<ActionResult> {
     });
 
     revalidatePath("/admin/products");
+    updateTag(CACHE_TAGS.PRODUCTS);
     return { success: true, productId: product.id };
   } catch (err) {
     return { error: parseDbError(err) };
@@ -173,21 +153,6 @@ export async function updateProduct(
         })
         .where(eq(products.id, productId));
 
-      /*
-       * ── Cloudinary cleanup hook point ──
-       *
-       * To remove orphaned Cloudinary images when they are replaced:
-       *
-       *   const oldUrls = await getProductImageUrls(productId);
-       *   const removedUrls = getRemovedImageUrls(oldUrls, data.images ?? []);
-       *
-       * Then after the transaction:
-       *
-       *   for (const url of removedUrls) {
-       *     await deleteImageFromCloudinary(url);
-       *   }
-       */
-
       await tx
         .delete(productImages)
         .where(eq(productImages.productId, productId));
@@ -207,6 +172,7 @@ export async function updateProduct(
     revalidatePath("/admin/products");
     revalidatePath(`/admin/products/${productId}`);
     revalidatePath(`/admin/products/${productId}/edit`);
+    updateTag(CACHE_TAGS.PRODUCTS);
     return { success: true, productId };
   } catch (err) {
     return { error: parseDbError(err) };
@@ -225,19 +191,6 @@ export async function deleteProduct(productId: string): Promise<ActionResult> {
   if (!existing) return { error: "Product not found" };
 
   try {
-    /*
-     * ── Cloudinary cleanup hook point ──
-     *
-     * Before deleting DB records, fetch product image URLs and call
-     * deleteImageFromCloudinary() on each to remove Cloudinary assets:
-     *
-     *   const urls = await getProductImageUrls(productId);
-     *   // ... delete from DB ...
-     *   for (const url of urls) {
-     *     await deleteImageFromCloudinary(url);
-     *   }
-     */
-
     await db.transaction(async (tx) => {
       await tx
         .delete(productImages)
@@ -246,6 +199,7 @@ export async function deleteProduct(productId: string): Promise<ActionResult> {
     });
 
     revalidatePath("/admin/products");
+    updateTag(CACHE_TAGS.PRODUCTS);
     return { success: true, productId };
   } catch (err) {
     const e = err as Record<string, unknown> & {

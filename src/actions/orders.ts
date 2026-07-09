@@ -2,7 +2,8 @@
 
 import { auth } from "@/lib/auth";
 import { cancelOrderById } from "@/services/orders";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
+import { CACHE_TAGS } from "@/lib/cache";
 
 export async function cancelOrder(formData: FormData) {
   const session = await auth();
@@ -25,6 +26,8 @@ export async function cancelOrder(formData: FormData) {
   revalidatePath("/account/orders");
   revalidatePath(`/account/orders/${orderId}`);
   revalidatePath("/products");
+  updateTag(CACHE_TAGS.ORDERS);
+  updateTag(CACHE_TAGS.PRODUCTS);
 
   return { success: true };
 }

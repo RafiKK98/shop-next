@@ -3,7 +3,8 @@
 import { requireAdmin } from "@/lib/auth/guards";
 import { updateOrderStatusDb, updatePaymentStatusDb } from "@/services/admin/orders";
 import type { OrderStatus, PaymentStatus } from "@/services/admin/order-types";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
+import { CACHE_TAGS } from "@/lib/cache";
 
 interface ActionSuccess {
   success: true;
@@ -25,6 +26,7 @@ export async function updateOrderStatus(
     await updateOrderStatusDb(orderId, newStatus);
     revalidatePath("/admin/orders");
     revalidatePath(`/admin/orders/${orderId}`);
+    updateTag(CACHE_TAGS.ORDERS);
     return { success: true };
   } catch (err) {
     return {
@@ -46,6 +48,7 @@ export async function updatePaymentStatus(
     await updatePaymentStatusDb(orderId, newStatus);
     revalidatePath("/admin/orders");
     revalidatePath(`/admin/orders/${orderId}`);
+    updateTag(CACHE_TAGS.ORDERS);
     return { success: true };
   } catch (err) {
     return {

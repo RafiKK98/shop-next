@@ -1,5 +1,8 @@
 import "server-only";
 
+import { cache } from "react";
+import { cacheLife, cacheTag } from "next/cache";
+import { CACHE_TAGS } from "@/lib/cache";
 import { db } from "@/db";
 import { products, productImages, categories, reviews } from "@/db/schema";
 import { eq, sql, desc, asc, and, count } from "drizzle-orm";
@@ -128,7 +131,9 @@ export async function getAdminProducts(params: {
   };
 }
 
-export async function getAdminProductById(id: string): Promise<ProductDetail | null> {
+export const getAdminProductById = cache(async function getAdminProductById(
+  id: string,
+): Promise<ProductDetail | null> {
   const product = await db
     .select({
       id: products.id,
@@ -179,9 +184,13 @@ export async function getAdminProductById(id: string): Promise<ProductDetail | n
     reviewCount: reviewStats?.count ?? 0,
     avgRating: reviewStats?.avg ? parseFloat(reviewStats.avg) : null,
   };
-}
+});
 
 export async function getAdminCategories(): Promise<CategoryOption[]> {
+  "use cache";
+  cacheLife("hours");
+  cacheTag(CACHE_TAGS.CATEGORIES);
+
   return db
     .select({
       id: categories.id,

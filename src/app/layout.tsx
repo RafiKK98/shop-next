@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import { Providers, ThemeScript } from "@/providers";
@@ -47,7 +48,9 @@ export default function RootLayout({
         <ThemeScript />
       </head>
       <body>
-        <Providers>{children}</Providers>
+        <Suspense fallback={null}>
+          <Providers>{children}</Providers>
+        </Suspense>
       </body>
     </html>
   );

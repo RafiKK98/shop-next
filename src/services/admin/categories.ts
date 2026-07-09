@@ -1,5 +1,6 @@
 import "server-only";
 
+import { cache } from "react";
 import { db } from "@/db";
 import { categories, products } from "@/db/schema";
 import { and, asc, count, desc, eq, or, sql } from "drizzle-orm";
@@ -131,7 +132,9 @@ export async function getAdminCategories(params: {
   }
 }
 
-export async function getAdminCategoryById(id: string): Promise<CategoryListItem | null> {
+export const getAdminCategoryById = cache(async function getAdminCategoryById(
+  id: string,
+): Promise<CategoryListItem | null> {
   try {
     const row = await db
       .select(categoryListColumns)
@@ -143,7 +146,7 @@ export async function getAdminCategoryById(id: string): Promise<CategoryListItem
   } catch (err) {
     logDbError(err, "getAdminCategoryById");
   }
-}
+});
 
 export async function getCategoryProductCount(id: string): Promise<number> {
   const result = await db

@@ -5,8 +5,6 @@ import { CartPageContent } from "@/components/cart";
 import { createMetadata } from "@/lib/seo";
 import type { Metadata } from "next";
 
-export const dynamic = "force-dynamic";
-
 export async function generateMetadata(): Promise<Metadata> {
   return createMetadata({ title: "Cart", description: "Review your shopping cart", noIndex: true });
 }

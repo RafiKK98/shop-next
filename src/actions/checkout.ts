@@ -3,7 +3,8 @@
 import { auth } from "@/lib/auth";
 import { createOrder } from "@/services/checkout";
 import { redirect } from "next/navigation";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
+import { CACHE_TAGS } from "@/lib/cache";
 
 export async function placeOrder(formData: FormData) {
   const session = await auth();
@@ -28,6 +29,8 @@ export async function placeOrder(formData: FormData) {
   revalidatePath("/cart");
   revalidatePath("/checkout");
   revalidatePath("/products");
+  updateTag(CACHE_TAGS.ORDERS);
+  updateTag(CACHE_TAGS.PRODUCTS);
 
   redirect(`/checkout/success?orderId=${result.orderId}`);
 }

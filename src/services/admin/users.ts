@@ -1,5 +1,6 @@
 import "server-only";
 
+import { cache } from "react";
 import { db } from "@/db";
 import { users, orders, orderItems, wishlistItems, addresses } from "@/db/schema";
 import { and, asc, count, desc, eq, or, sql, desc as descFn } from "drizzle-orm";
@@ -104,7 +105,9 @@ export async function getAdminUsers(params: {
   }
 }
 
-export async function getAdminUserById(id: string): Promise<UserDetail | null> {
+export const getAdminUserById = cache(async function getAdminUserById(
+  id: string,
+): Promise<UserDetail | null> {
   try {
     const [user, defaultAddress] = await Promise.all([
       db
@@ -153,7 +156,7 @@ export async function getAdminUserById(id: string): Promise<UserDetail | null> {
     console.error("[DB ERROR] getAdminUserById:", e.code ?? "", e.message ?? "");
     throw err;
   }
-}
+});
 
 export async function getUserRecentOrders(
   userId: string,

@@ -10,8 +10,6 @@ import { CheckoutPage } from "@/components/checkout";
 import { createMetadata } from "@/lib/seo";
 import type { Metadata } from "next";
 
-export const dynamic = "force-dynamic";
-
 export async function generateMetadata(): Promise<Metadata> {
   return createMetadata({ title: "Checkout", description: "Complete your purchase", noIndex: true });
 }

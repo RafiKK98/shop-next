@@ -1,5 +1,8 @@
 import "server-only";
 
+import { cache } from "react";
+import { cacheLife, cacheTag } from "next/cache";
+import { CACHE_TAGS } from "@/lib/cache";
 import { db } from "@/db";
 import {
   orders,
@@ -119,7 +122,9 @@ export async function getAdminOrders(params: {
   };
 }
 
-export async function getAdminOrderById(id: string): Promise<OrderDetail | null> {
+export const getAdminOrderById = cache(async function getAdminOrderById(
+  id: string,
+): Promise<OrderDetail | null> {
   const order = await db
     .select({
       id: orders.id,
@@ -191,9 +196,13 @@ export async function getAdminOrderById(id: string): Promise<OrderDetail | null>
     items,
     subtotal,
   };
-}
+});
 
 export async function getOrderStats(): Promise<OrderStats> {
+  "use cache";
+  cacheLife("minutes");
+  cacheTag(CACHE_TAGS.ORDERS);
+
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 

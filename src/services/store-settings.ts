@@ -1,11 +1,11 @@
 import "server-only";
 
+import { cacheLife, cacheTag } from "next/cache";
+import { CACHE_TAGS } from "@/lib/cache";
 import { db } from "@/db";
 import { storeSettings } from "@/db/schema";
-import { eq } from "drizzle-orm";
 
 export interface StoreSettings {
-  // General
   storeName: string;
   storeDescription: string;
   supportEmail: string;
@@ -15,26 +15,22 @@ export interface StoreSettings {
   currency: string;
   defaultLanguage: string;
 
-  // Branding
   storeLogo: string;
   favicon: string;
   primaryColor: string;
   secondaryColor: string;
 
-  // Commerce
   taxRate: number;
   freeShippingThreshold: number;
   defaultShippingCost: number;
   lowStockThreshold: number;
   currencySymbol: string;
 
-  // SEO
   metaTitle: string;
   metaDescription: string;
   ogImage: string;
   defaultKeywords: string;
 
-  // Maintenance
   maintenanceMode: boolean;
   maintenanceMessage: string;
 }
@@ -81,6 +77,10 @@ function parseBoolean(val: string | null | undefined, fallback: boolean): boolea
 }
 
 export async function getStoreSettings(): Promise<StoreSettings> {
+  "use cache";
+  cacheLife("hours");
+  cacheTag(CACHE_TAGS.STORE_SETTINGS);
+
   const rows = await db.select().from(storeSettings);
 
   const map = new Map<string, string>();

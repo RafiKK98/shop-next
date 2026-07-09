@@ -1,8 +1,19 @@
+import { cacheLife } from "next/cache";
 import { Input } from "@/components/ui";
 import { ROUTES, SITE } from "@/constants";
 import { NAVIGATION } from "@/constants/navigation";
 import { Camera, Globe, Hash, Mail, Play } from "lucide-react";
 import Link from "next/link";
+
+async function Copyright() {
+  "use cache";
+  cacheLife("days");
+  return (
+    <p className="text-center text-xs text-base-content/40">
+      &copy; {new Date().getFullYear()} {SITE.name}. All rights reserved.
+    </p>
+  );
+}
 
 const socialIcons: Record<string, React.ReactNode> = {
   Facebook: <Globe size={18} />,
@@ -82,9 +93,7 @@ export function Footer() {
         </div>
 
         <div className="mt-8 border-t border-base-200 pt-6">
-          <p className="text-center text-xs text-base-content/40">
-            &copy; {new Date().getFullYear()} {SITE.name}. All rights reserved.
-          </p>
+          <Copyright />
         </div>
       </div>
     </footer>

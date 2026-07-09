@@ -7,7 +7,8 @@ import {
   toggleCouponActive,
   updateCoupon,
 } from "@/services/admin/coupons";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
+import { CACHE_TAGS } from "@/lib/cache";
 import { redirect } from "next/navigation";
 
 export async function createCouponAction(formData: FormData) {
@@ -48,6 +49,7 @@ export async function createCouponAction(formData: FormData) {
   }
 
   revalidatePath("/admin/coupons");
+  updateTag(CACHE_TAGS.COUPONS);
   redirect("/admin/coupons");
 }
 
@@ -93,6 +95,7 @@ export async function updateCouponAction(id: string, formData: FormData) {
   }
 
   revalidatePath("/admin/coupons");
+  updateTag(CACHE_TAGS.COUPONS);
   redirect("/admin/coupons");
 }
 
@@ -102,4 +105,5 @@ export async function toggleCouponAction(id: string, isActive: boolean) {
   await toggleCouponActive(id, isActive);
 
   revalidatePath("/admin/coupons");
+  updateTag(CACHE_TAGS.COUPONS);
 }

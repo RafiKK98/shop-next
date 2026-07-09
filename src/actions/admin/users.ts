@@ -4,7 +4,8 @@ import { requireAdmin } from "@/lib/auth/guards";
 import { auth } from "@/lib/auth/config";
 import { updateUserDb, type UpdateUserData } from "@/services/admin/users";
 import { userRoleEnum, userStatusEnum } from "@/db/schema";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
+import { CACHE_TAGS } from "@/lib/cache";
 
 interface ActionSuccess {
   success: true;
@@ -47,6 +48,7 @@ export async function updateUser(formData: FormData): Promise<ActionResult> {
 
     revalidatePath("/admin/users");
     revalidatePath(`/admin/users/${userId}`);
+    updateTag(CACHE_TAGS.USERS);
     return { success: true };
   } catch (err) {
     return {

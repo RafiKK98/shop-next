@@ -6,7 +6,8 @@ import { requireAuth } from "@/lib/auth/guards";
 import { reviewFormServerSchema } from "@/lib/validations/review";
 import { hasVerifiedPurchase, getUserReviewForProduct } from "@/services/reviews";
 import { eq, and } from "drizzle-orm";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
+import { CACHE_TAGS } from "@/lib/cache";
 
 interface ActionSuccess {
   success: true;
@@ -64,6 +65,7 @@ export async function createReview(formData: FormData): Promise<ActionResult> {
       .returning({ id: reviews.id });
 
     revalidatePath(`/products/${productId}`);
+    updateTag(CACHE_TAGS.REVIEWS);
     return { success: true, reviewId: review.id };
   } catch (err) {
     const message = err instanceof Error ? err.message : "Failed to submit review";
@@ -118,6 +120,7 @@ export async function updateReview(formData: FormData): Promise<ActionResult> {
       .where(eq(reviews.id, reviewId));
 
     revalidatePath(`/products/${productId}`);
+    updateTag(CACHE_TAGS.REVIEWS);
     return { success: true, reviewId };
   } catch (err) {
     const message = err instanceof Error ? err.message : "Failed to update review";

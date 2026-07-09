@@ -1,5 +1,7 @@
 import "server-only";
 
+import { cacheLife, cacheTag } from "next/cache";
+import { CACHE_TAGS } from "@/lib/cache";
 import { db } from "@/db";
 import { categories, orderItems, orders, products, users } from "@/db/schema";
 import { and, count, desc, eq, gte, ne, sql } from "drizzle-orm";
@@ -130,6 +132,10 @@ function computeRevenuePeriod(
 // ── Main query ───────────────────────────────────────────────────────────
 
 export async function getDashboardAnalytics(): Promise<DashboardAnalytics> {
+  "use cache";
+  cacheLife("minutes");
+  cacheTag(CACHE_TAGS.ADMIN_ANALYTICS);
+
   const sixtyDaysAgo = daysAgo(60);
   const thirtyDaysAgo = daysAgo(30);
   const sevenDaysAgo = daysAgo(7);

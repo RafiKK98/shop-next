@@ -1,5 +1,6 @@
 import "server-only";
 
+import { cache } from "react";
 import { db } from "@/db";
 import { coupons } from "@/db/schema";
 import { and, asc, count, desc, eq, sql } from "drizzle-orm";
@@ -117,7 +118,7 @@ export async function getAdminCoupons(params: {
   };
 }
 
-export async function getAdminCouponById(
+export const getAdminCouponById = cache(async function getAdminCouponById(
   id: string,
 ): Promise<AdminCouponDetail | null> {
   const row = await db
@@ -127,7 +128,7 @@ export async function getAdminCouponById(
     .then((r) => r[0] ?? null);
 
   return row as AdminCouponDetail | null;
-}
+});
 
 export type CreateCouponInput = {
   code: string;

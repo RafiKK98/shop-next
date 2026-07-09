@@ -2,7 +2,8 @@
 
 import { requireAdmin } from "@/lib/auth/guards";
 import { updateReviewStatus } from "@/services/admin/reviews";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
+import { CACHE_TAGS } from "@/lib/cache";
 
 interface ActionSuccess {
   success: true;
@@ -29,6 +30,7 @@ export async function moderateReview(
   try {
     await updateReviewStatus(reviewId, status);
     revalidatePath("/admin/reviews");
+    updateTag(CACHE_TAGS.REVIEWS);
     return { success: true };
   } catch (err) {
     const message = err instanceof Error ? err.message : "Failed to moderate review";

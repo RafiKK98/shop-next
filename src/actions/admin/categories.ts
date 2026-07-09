@@ -8,7 +8,8 @@ import {
   deleteCategoryDb,
   getCategoryImageUrl,
 } from "@/services/admin/categories";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
+import { CACHE_TAGS } from "@/lib/cache";
 import { extractPublicId } from "@/lib/upload";
 
 interface ActionSuccess {
@@ -42,6 +43,7 @@ export async function createCategory(formData: FormData): Promise<ActionResult> 
   try {
     await createCategoryDb(parsed.data);
     revalidatePath("/admin/categories");
+    updateTag(CACHE_TAGS.CATEGORIES);
     return { success: true };
   } catch (err) {
     return {
@@ -63,27 +65,11 @@ export async function updateCategory(
   }
 
   try {
-    /*
-     * ── Cloudinary cleanup hook point ──
-     *
-     * When the category image is replaced, the old Cloudinary URL becomes
-     * orphaned. To clean it up:
-     *
-     *   const oldImageUrl = await getCategoryImageUrl(categoryId);
-     *   const newImageUrl = parsed.data.image;
-     *   if (oldImageUrl && newImageUrl && oldImageUrl !== newImageUrl && extractPublicId(oldImageUrl)) {
-     *     // Store oldImageUrl to delete after the update succeeds
-     *   }
-     *
-     * Then after updateCategoryDb() succeeds:
-     *
-     *   await deleteImageFromCloudinary(oldImageUrl);
-     */
-
     await updateCategoryDb(categoryId, parsed.data);
     revalidatePath("/admin/categories");
     revalidatePath(`/admin/categories/${categoryId}`);
     revalidatePath(`/admin/categories/${categoryId}/edit`);
+    updateTag(CACHE_TAGS.CATEGORIES);
     return { success: true };
   } catch (err) {
     return {
@@ -96,26 +82,9 @@ export async function deleteCategory(categoryId: string): Promise<ActionResult> 
   await requireAdmin();
 
   try {
-    /*
-     * ── Cloudinary cleanup hook point ──
-     *
-     * Before deleting the category DB record, fetch the image URL and
-     * delete the Cloudinary asset:
-     *
-     *   const imageUrl = await getCategoryImageUrl(categoryId);
-     *   if (imageUrl && extractPublicId(imageUrl)) {
-     *     // Will delete after DB deletion
-     *   }
-     */
-
     await deleteCategoryDb(categoryId);
-
-    /*
-     * Then call:
-     *   await deleteImageFromCloudinary(imageUrl);
-     */
-
     revalidatePath("/admin/categories");
+    updateTag(CACHE_TAGS.CATEGORIES);
     return { success: true };
   } catch (err) {
     return {

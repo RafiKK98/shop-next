@@ -8,7 +8,8 @@ import {
   seoSettingsSchema,
   maintenanceSettingsSchema,
 } from "@/lib/validations/store-settings";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
+import { CACHE_TAGS } from "@/lib/cache";
 import { z } from "zod";
 
 const validators = {
@@ -78,4 +79,5 @@ export async function saveSettingsAction(tab: string, formData: FormData) {
   await updateStoreSettings(input);
 
   revalidatePath("/admin/settings");
+  updateTag(CACHE_TAGS.STORE_SETTINGS);
 }
