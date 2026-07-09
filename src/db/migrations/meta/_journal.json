@@ -50,6 +50,13 @@
       "when": 1783419264574,
       "tag": "0006_next_reptil",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1730000000000,
+      "tag": "0007_certain_boom",
+      "breakpoints": true
     }
   ]
 }

@@ -105,7 +105,13 @@ export default async function CheckoutSuccessPage({ searchParams }: Props) {
               ))}
             </ul>
 
-            <div className="border-t border-base-200 px-4 py-3">
+            <div className="border-t border-base-200 px-4 py-3 space-y-2">
+              {order.couponCode && order.discountAmount && (
+                <div className="flex justify-between text-sm text-success">
+                  <span>Discount ({order.couponCode})</span>
+                  <span>-{formatCurrency(order.discountAmount)}</span>
+                </div>
+              )}
               <div className="flex justify-between text-base font-semibold">
                 <span>Total</span>
                 <span>{formatCurrency(order.total)}</span>

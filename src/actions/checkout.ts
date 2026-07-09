@@ -16,7 +16,9 @@ export async function placeOrder(formData: FormData) {
     return { error: "Please select a shipping address" };
   }
 
-  const result = await createOrder(session.user.id, addressId);
+  const couponId = (formData.get("couponId") as string) || undefined;
+
+  const result = await createOrder(session.user.id, addressId, couponId);
 
   if ("error" in result) {
     return { error: result.error };

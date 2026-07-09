@@ -62,3 +62,11 @@ export const errors = {
   unexpected: "Something went wrong. Please try again.",
   permissionDenied: "You don't have permission to perform this action.",
 };
+
+export const couponMessages = {
+  applied: "Coupon applied successfully",
+  removed: "Coupon removed",
+  invalid: "Invalid coupon code",
+  expired: "This coupon has expired",
+  exhausted: "This coupon has reached its usage limit",
+};

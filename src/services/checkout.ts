@@ -1,7 +1,8 @@
 import { db } from "@/db";
-import { orders, orderItems, cartItems, carts, products, addresses } from "@/db/schema";
+import { orders, orderItems, cartItems, carts, products, addresses, coupons, couponUsages } from "@/db/schema";
 import { eq, and, sql } from "drizzle-orm";
 import { productImages } from "@/db/schema";
+import { validateCoupon, computeDiscount } from "./coupons";
 
 export interface CreateOrderResult {
   orderId: string;
@@ -81,21 +82,24 @@ async function getFirstProductImage(productId: string): Promise<string | null> {
 
 function computeOrderTotals(
   items: { product: ProductForOrder; quantity: number }[],
+  discountAmount: number = 0,
 ) {
   const subtotal = items.reduce((sum, item) => {
     return sum + computeUnitPrice(item.product) * item.quantity;
   }, 0);
 
-  const shipping = subtotal >= 100 ? 0 : 9.99;
-  const tax = subtotal * 0.08;
-  const total = subtotal + shipping + tax;
+  const discountedSubtotal = Math.max(0, subtotal - discountAmount);
+  const shipping = discountedSubtotal >= 100 ? 0 : 9.99;
+  const tax = discountedSubtotal * 0.08;
+  const total = discountedSubtotal + shipping + tax;
 
-  return { subtotal, shipping, tax, total };
+  return { subtotal, discountAmount, discountedSubtotal, shipping, tax, total };
 }
 
 export async function createOrder(
   userId: string,
   addressId: string,
+  couponId?: string,
 ): Promise<CreateOrderResult | CreateOrderError> {
   // 1. Validate the address
   const address = await db
@@ -156,10 +160,42 @@ export async function createOrder(
     validatedItems.push({ cartItemId: item.id, product, quantity: item.quantity });
   }
 
-  // 5. Recalculate all prices server-side
-  const totals = computeOrderTotals(validatedItems);
+  // 5. Calculate base totals
+  const subtotal = validatedItems.reduce((sum, vi) => {
+    return sum + computeUnitPrice(vi.product) * vi.quantity;
+  }, 0);
 
-  // 6. Execute the order in a single transaction
+  // 6. Validate coupon if provided
+  let discountAmount = 0;
+  let couponCode: string | null = null;
+  let resolvedCouponId: string | null = null;
+
+  if (couponId) {
+    const coupon = await db
+      .select()
+      .from(coupons)
+      .where(eq(coupons.id, couponId))
+      .then((r) => r[0] ?? null);
+
+    if (!coupon) {
+      return { error: "Coupon not found" };
+    }
+
+    const validation = await validateCoupon(coupon.code, subtotal);
+
+    if (!validation.valid) {
+      return { error: validation.error };
+    }
+
+    discountAmount = validation.discountAmount;
+    couponCode = validation.coupon.code;
+    resolvedCouponId = validation.coupon.id;
+  }
+
+  // 7. Compute final totals
+  const totals = computeOrderTotals(validatedItems, discountAmount);
+
+  // 8. Execute the order in a single transaction
   let result: { orderId: string } | undefined;
 
   try {
@@ -170,6 +206,9 @@ export async function createOrder(
         .values({
           userId,
           total: totals.total.toFixed(2),
+          couponId: resolvedCouponId,
+          couponCode,
+          discountAmount: discountAmount > 0 ? discountAmount.toFixed(2) : null,
           status: "pending",
           paymentStatus: "pending",
         })
@@ -211,6 +250,23 @@ export async function createOrder(
           tx.rollback();
           return;
         }
+      }
+
+      // Track coupon usage
+      if (resolvedCouponId) {
+        await tx
+          .update(coupons)
+          .set({
+            currentUsage: sql`${coupons.currentUsage} + 1`,
+            updatedAt: new Date(),
+          })
+          .where(eq(coupons.id, resolvedCouponId));
+
+        await tx.insert(couponUsages).values({
+          couponId: resolvedCouponId,
+          userId,
+          orderId: order.id,
+        });
       }
 
       // Remove all cart items (keep the cart)

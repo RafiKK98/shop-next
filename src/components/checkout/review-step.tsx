@@ -8,20 +8,26 @@ import { Button } from "@/components/ui";
 import { formatCurrency } from "@/utils/format";
 import { computeCartTotals } from "@/utils/checkout";
 import { placeOrder } from "@/actions/checkout";
+import { CouponInput } from "./coupon-input";
 import { ROUTES } from "@/constants";
 import type { CartItemWithProduct } from "@/lib/cart";
-import type { Address } from "./checkout-page";
+import type { Address, CouponState } from "./checkout-page";
 
 interface ReviewStepProps {
   items: CartItemWithProduct[];
   selectedAddress: Address | null;
   onBack: () => void;
+  appliedCoupon: CouponState | null;
+  onCouponChange: (coupon: CouponState | null) => void;
 }
 
-export function ReviewStep({ items, selectedAddress, onBack }: ReviewStepProps) {
+export function ReviewStep({ items, selectedAddress, onBack, appliedCoupon, onCouponChange }: ReviewStepProps) {
   const [serverError, setServerError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
-  const { subtotal, shipping, tax, total } = computeCartTotals(items);
+  const { subtotal, discountAmount, discountedSubtotal, shipping, tax, total } = computeCartTotals(
+    items,
+    appliedCoupon?.discountAmount ?? 0,
+  );
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -30,6 +36,9 @@ export function ReviewStep({ items, selectedAddress, onBack }: ReviewStepProps) 
     startTransition(async () => {
       const fd = new FormData();
       fd.set("addressId", selectedAddress.id);
+      if (appliedCoupon) {
+        fd.set("couponId", appliedCoupon.couponId);
+      }
       const result = await placeOrder(fd);
       if (result?.error) setServerError(result.error);
     });
@@ -64,6 +73,13 @@ export function ReviewStep({ items, selectedAddress, onBack }: ReviewStepProps) 
           </div>
         </div>
       )}
+
+      {/* Coupon */}
+      <CouponInput
+        subtotal={subtotal}
+        onCouponApplied={onCouponChange}
+        appliedCoupon={appliedCoupon}
+      />
 
       {/* Cart items */}
       <div className="rounded-xl border border-base-200 bg-base-100">
@@ -128,6 +144,12 @@ export function ReviewStep({ items, selectedAddress, onBack }: ReviewStepProps) 
           <span className="text-base-content/60">Subtotal</span>
           <span>{formatCurrency(subtotal)}</span>
         </div>
+        {discountAmount > 0 && (
+          <div className="flex justify-between text-success">
+            <span>Discount ({appliedCoupon?.code})</span>
+            <span>-{formatCurrency(discountAmount)}</span>
+          </div>
+        )}
         <div className="flex justify-between">
           <span className="text-base-content/60">Shipping</span>
           <span>

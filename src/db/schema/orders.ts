@@ -1,6 +1,7 @@
 import { pgTable, uuid, text, integer, timestamp, numeric, index } from "drizzle-orm/pg-core";
 import { users } from "./users";
 import { products } from "./products";
+import { coupons } from "./coupons";
 import { orderStatusEnum, paymentStatusEnum } from "./enums";
 
 export const orders = pgTable(
@@ -11,6 +12,9 @@ export const orders = pgTable(
       .notNull()
       .references(() => users.id, { onDelete: "restrict" }),
     total: numeric("total", { precision: 12, scale: 2 }).notNull(),
+    couponId: uuid("coupon_id").references(() => coupons.id, { onDelete: "set null" }),
+    couponCode: text("coupon_code"),
+    discountAmount: numeric("discount_amount", { precision: 10, scale: 2 }),
     status: orderStatusEnum("status").default("pending").notNull(),
     paymentStatus: paymentStatusEnum("payment_status").default("pending").notNull(),
     createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),

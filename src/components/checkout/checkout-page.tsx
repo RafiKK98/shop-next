@@ -20,6 +20,12 @@ export interface Address {
   isDefault: boolean | null;
 }
 
+export interface CouponState {
+  code: string;
+  discountAmount: number;
+  couponId: string;
+}
+
 interface CheckoutPageProps {
   items: CartItemWithProduct[];
   addresses: Address[];
@@ -33,6 +39,7 @@ export function CheckoutPage({ items, addresses, cartValidation }: CheckoutPageP
   const [selectedAddressId, setSelectedAddressId] = useState<string | null>(
     () => addresses.find((a) => a.isDefault)?.id || addresses[0]?.id || null,
   );
+  const [appliedCoupon, setAppliedCoupon] = useState<CouponState | null>(null);
 
   const selectedAddress = addresses.find((a) => a.id === selectedAddressId) ?? null;
 
@@ -73,6 +80,8 @@ export function CheckoutPage({ items, addresses, cartValidation }: CheckoutPageP
           items={items}
           selectedAddress={selectedAddress}
           onBack={handleBack}
+          appliedCoupon={appliedCoupon}
+          onCouponChange={setAppliedCoupon}
         />
       )}
     </div>
