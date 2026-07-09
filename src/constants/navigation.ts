@@ -15,6 +15,8 @@ export const NAVIGATION = {
     { label: "Home", href: ROUTES.home },
     { label: "Products", href: ROUTES.products },
     { label: "Categories", href: ROUTES.categories },
+    { label: "About", href: "/about" },
+    { label: "FAQ", href: "/faq" },
   ] satisfies NavLink[],
 
   footer: {
@@ -22,7 +24,7 @@ export const NAVIGATION = {
       title: "Company",
       links: [
         { label: "About Us", href: "/about" },
-        { label: "Careers", href: "#" },
+        { label: "Contact Us", href: "/contact" },
         { label: "Press", href: "#" },
         { label: "Blog", href: "#" },
       ],
@@ -33,15 +35,15 @@ export const NAVIGATION = {
       links: [
         { label: "All Products", href: ROUTES.products },
         { label: "Categories", href: ROUTES.categories },
-        { label: "Best Sellers", href: "#" },
-        { label: "New Arrivals", href: "#" },
+        { label: "Best Sellers", href: ROUTES.products + "?sort=best-selling" },
+        { label: "New Arrivals", href: ROUTES.products + "?sort=newest" },
       ],
     } satisfies FooterSection,
 
     customerService: {
       title: "Customer Service",
       links: [
-        { label: "Contact Us", href: "#" },
+        { label: "Contact Us", href: "/contact" },
         { label: "FAQs", href: "/faq" },
         { label: "Shipping Info", href: "#" },
         { label: "Returns & Exchanges", href: "#" },

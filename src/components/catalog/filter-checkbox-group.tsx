@@ -15,9 +15,14 @@ interface FilterCheckboxGroupProps {
   onToggle: (value: string) => void;
 }
 
-export function FilterCheckboxGroup({ options, name, selectedValues, onToggle }: FilterCheckboxGroupProps) {
+export function FilterCheckboxGroup({
+  options,
+  name,
+  selectedValues,
+  onToggle,
+}: FilterCheckboxGroupProps) {
   return (
-    <div className="space-y-1">
+    <div className="flex flex-wrap gap-2">
       {options.map((option) => (
         <Checkbox
           key={option.value}
@@ -25,7 +30,11 @@ export function FilterCheckboxGroup({ options, name, selectedValues, onToggle }:
           value={option.value}
           checked={selectedValues.includes(option.value)}
           onChange={() => onToggle(option.value)}
-          label={option.count != null ? `${option.label} (${option.count})` : option.label}
+          label={
+            option.count != null
+              ? `${option.label} (${option.count})`
+              : option.label
+          }
         />
       ))}
     </div>

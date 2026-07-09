@@ -15,7 +15,13 @@ const starSize: Record<string, string> = {
   lg: "rating-lg",
 };
 
-export function Rating({ value, max = 5, size = "sm", showValue = false, className }: RatingProps) {
+export function Rating({
+  value,
+  max = 5,
+  size = "sm",
+  showValue = false,
+  className,
+}: RatingProps) {
   return (
     <div className={cn("flex items-center gap-1", className)}>
       <div className={cn("rating", starSize[size])}>

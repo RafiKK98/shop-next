@@ -3,12 +3,19 @@
 import { Suspense } from "react";
 import { Container, Breadcrumb, Section } from "@/components/ui";
 import { NoResults } from "@/components/ui/empty-state";
-import { FilterSidebar, MobileFilterDrawer, Toolbar, ProductGrid, ProductListView, CatalogPagination } from "@/components/catalog";
+import { FilterSidebar, MobileFilterDrawer, Toolbar, ProductGrid, CatalogPagination } from "@/components/catalog";
+import { ProductListView } from "@/components/catalog/product-list-view";
 import { useFilters } from "@/hooks/use-filters";
-import { catalogProducts } from "@/data/catalog";
 import { useSearchParams } from "next/navigation";
+import type { Product } from "@/types/product";
+import type { FilterCategory } from "@/data/catalog";
 
-function CatalogContentInner() {
+interface Props {
+  category: FilterCategory;
+  products: Product[];
+}
+
+function CategoryInner({ category, products }: Props) {
   const searchParams = useSearchParams();
   const view = searchParams.get("view") || "grid";
 
@@ -27,7 +34,7 @@ function CatalogContentInner() {
     toggleDiscount,
     setPriceRange,
     clearFilters,
-  } = useFilters(catalogProducts);
+  } = useFilters(products);
 
   return (
     <Section>
@@ -36,13 +43,14 @@ function CatalogContentInner() {
           className="mb-6"
           items={[
             { label: "Home", href: "/" },
-            { label: "Products" },
+            { label: "Categories", href: "/categories" },
+            { label: category.name },
           ]}
         />
 
         <div className="mb-6">
-          <h1 className="text-3xl font-bold tracking-tight md:text-4xl">Products</h1>
-          <p className="mt-1 text-base-content/60">Browse our complete collection</p>
+          <h1 className="text-3xl font-bold tracking-tight md:text-4xl">{category.name}</h1>
+          <p className="mt-1 text-base-content/60">{category.count} products</p>
         </div>
 
         <div className="flex gap-8">
@@ -60,7 +68,7 @@ function CatalogContentInner() {
 
           <div className="min-w-0 flex-1">
             <Toolbar
-              totalProducts={catalogProducts.length}
+              totalProducts={products.length}
               activeFilterCount={activeFilterCount}
               pagination={pagination}
               sortKey={sortKey}
@@ -105,15 +113,15 @@ function CatalogContentInner() {
   );
 }
 
-export function CatalogContent() {
+export function CategoryDetailContent({ category, products }: Props) {
   return (
-    <Suspense fallback={<ProductsPageSkeleton />}>
-      <CatalogContentInner />
+    <Suspense fallback={<CategorySkeleton />}>
+      <CategoryInner category={category} products={products} />
     </Suspense>
   );
 }
 
-function ProductsPageSkeleton() {
+function CategorySkeleton() {
   return (
     <Section>
       <Container>

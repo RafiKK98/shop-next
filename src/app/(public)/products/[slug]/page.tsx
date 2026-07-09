@@ -1,24 +1,38 @@
-import { notFound } from "next/navigation";
-import { Breadcrumb, Container, Section, Divider, Button } from "@/components/ui";
-import { ProductGallery, ProductInfo, PurchaseSection, DescriptionSection, ReviewsList, ReviewSummary, ReviewForm } from "@/components/product-detail";
-import { auth } from "@/lib/auth";
+import {
+  DescriptionSection,
+  ProductGallery,
+  ProductInfo,
+  PurchaseSection,
+  ReviewForm,
+  ReviewsList,
+  ReviewSummary,
+} from "@/components/product-detail";
+import { ReviewSortSelect } from "@/components/reviews/review-sort-select";
+import { Breadcrumb, Container, Divider, Section } from "@/components/ui";
 import { db } from "@/db";
-import { products, wishlistItems } from "@/db/schema";
-import { eq, and } from "drizzle-orm";
-import { getProductReviews, getUserReviewForProduct, hasVerifiedPurchase } from "@/services/reviews";
-import type { Product } from "@/types/product";
-import Link from "next/link";
+import { productImages, products, wishlistItems } from "@/db/schema";
+import { auth } from "@/lib/auth";
+import { BreadcrumbJsonLd, ProductJsonLd } from "@/lib/json-ld";
 import { createMetadata, type SeoParams } from "@/lib/seo";
-import { ProductJsonLd, BreadcrumbJsonLd } from "@/lib/json-ld";
-import { productImages } from "@/db/schema";
+import {
+  getProductReviews,
+  getUserReviewForProduct,
+  hasVerifiedPurchase,
+} from "@/services/reviews";
+import type { Product, StockStatus } from "@/types/product";
+import { and, eq } from "drizzle-orm";
 import type { Metadata } from "next";
+import Link from "next/link";
+import { notFound } from "next/navigation";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
   const { slug } = await params;
   const dbProduct = await db
     .select()
@@ -47,11 +61,15 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return createMetadata(seo);
 }
 
-export default async function ProductDetailPage({ params, searchParams }: PageProps) {
+export default async function ProductDetailPage({
+  params,
+  searchParams,
+}: PageProps) {
   const { slug } = await params;
   const sp = await searchParams;
   const reviewPage = Number(sp.reviewPage) || 1;
-  const reviewSort = (sp.reviewSort as "newest" | "highest" | "lowest") ?? "newest";
+  const reviewSort =
+    (sp.reviewSort as "newest" | "highest" | "lowest") ?? "newest";
 
   const dbProduct = await db
     .select()
@@ -92,13 +110,32 @@ export default async function ProductDetailPage({ params, searchParams }: PagePr
     sort: reviewSort,
   });
 
-  const firstImage = await db
+  const productImagesList = await db
     .select({ url: productImages.imageUrl })
     .from(productImages)
     .where(eq(productImages.productId, dbProduct.id))
     .orderBy(productImages.order)
-    .limit(1)
-    .then((r) => r[0]?.url ?? null);
+    .then((r) => r.map((img) => img.url));
+
+  const firstImage = productImagesList[0] ?? null;
+
+  const product: Product = {
+    id: dbProduct.id,
+    title: dbProduct.title,
+    slug: dbProduct.slug,
+    images: productImagesList,
+    price: Number(dbProduct.price),
+    compareAtPrice: null,
+    rating: reviewsData.aggregate.average ?? 0,
+    reviewCount: reviewsData.aggregate.total ?? 0,
+    brand: dbProduct.brand ?? "",
+    categorySlug: "",
+    stockStatus: (dbProduct.stock != null && dbProduct.stock > 0
+      ? "in_stock"
+      : "out_of_stock") as StockStatus,
+    isNew: false,
+    isFeatured: dbProduct.featured ?? false,
+  };
 
   return (
     <>
@@ -133,12 +170,16 @@ export default async function ProductDetailPage({ params, searchParams }: PagePr
       <Section>
         <Container>
           <div className="grid gap-8 lg:grid-cols-2 lg:gap-12">
-            <ProductGallery images={[]} title={dbProduct.title} />
+            <ProductGallery images={product.images} title={dbProduct.title} />
             <div className="flex flex-col gap-6">
-              <ProductInfo product={dbProduct as any} />
+              <ProductInfo product={product} />
               <PurchaseSection
                 title={dbProduct.title}
-                stockStatus={dbProduct.stock != null && dbProduct.stock > 0 ? "in-stock" : "out-of-stock"}
+                stockStatus={
+                  dbProduct.stock != null && dbProduct.stock > 0
+                    ? "in-stock"
+                    : "out-of-stock"
+                }
                 slug={dbProduct.slug}
                 isWishlisted={isWishlisted}
               />
@@ -182,27 +223,17 @@ export default async function ProductDetailPage({ params, searchParams }: PagePr
             {/* Sort */}
             <div className="mb-4 flex items-center justify-between">
               <p className="text-sm text-base-content/50">
-                {reviewsData.aggregate.total} review{reviewsData.aggregate.total !== 1 ? "s" : ""}
+                {reviewsData.aggregate.total} review
+                {reviewsData.aggregate.total !== 1 ? "s" : ""}
               </p>
               <div className="flex items-center gap-2">
-                <label htmlFor="review-sort" className="text-sm text-base-content/50">
+                <label
+                  htmlFor="review-sort"
+                  className="text-sm text-base-content/50"
+                >
                   Sort:
                 </label>
-                <select
-                  id="review-sort"
-                  className="select select-bordered select-sm"
-                  defaultValue={reviewSort}
-                  onChange={(e) => {
-                    const url = new URL(window.location.href);
-                    url.searchParams.set("reviewSort", e.target.value);
-                    url.searchParams.set("reviewPage", "1");
-                    window.location.href = url.toString();
-                  }}
-                >
-                  <option value="newest">Newest</option>
-                  <option value="highest">Highest Rated</option>
-                  <option value="lowest">Lowest Rated</option>
-                </select>
+                <ReviewSortSelect defaultValue={reviewSort} />
               </div>
             </div>
 
@@ -212,7 +243,10 @@ export default async function ProductDetailPage({ params, searchParams }: PagePr
             {/* Pagination */}
             {reviewsData.totalPages > 1 && (
               <div className="mt-6 flex justify-center gap-2">
-                {Array.from({ length: reviewsData.totalPages }, (_, i) => i + 1).map((p) => (
+                {Array.from(
+                  { length: reviewsData.totalPages },
+                  (_, i) => i + 1,
+                ).map((p) => (
                   <Link
                     key={p}
                     href={`/products/${slug}?reviewPage=${p}&reviewSort=${reviewSort}`}
@@ -227,7 +261,11 @@ export default async function ProductDetailPage({ params, searchParams }: PagePr
             {/* Review Form */}
             <div className="mt-10 rounded-xl border border-base-200 bg-base-100 p-6">
               <h3 className="mb-4 text-lg font-semibold">
-                {userReview ? "Edit Your Review" : canReview ? "Write a Review" : "Write a Review"}
+                {userReview
+                  ? "Edit Your Review"
+                  : canReview
+                    ? "Write a Review"
+                    : "Write a Review"}
               </h3>
               {session?.user ? (
                 userReview ? (

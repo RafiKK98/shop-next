@@ -3,13 +3,16 @@
 import { Suspense } from "react";
 import { Container, Breadcrumb, Section } from "@/components/ui";
 import { NoResults } from "@/components/ui/empty-state";
-import { FilterSidebar, MobileFilterDrawer, Toolbar, ProductGrid, ProductListView, CatalogPagination } from "@/components/catalog";
+import { FilterSidebar, MobileFilterDrawer, Toolbar, ProductGrid, CatalogPagination } from "@/components/catalog";
+import { ProductListView } from "@/components/catalog/product-list-view";
 import { useFilters } from "@/hooks/use-filters";
 import { catalogProducts } from "@/data/catalog";
+import { Search } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 
-function CatalogContentInner() {
+function SearchContentInner() {
   const searchParams = useSearchParams();
+  const query = searchParams.get("q") || "";
   const view = searchParams.get("view") || "grid";
 
   const {
@@ -29,6 +32,8 @@ function CatalogContentInner() {
     clearFilters,
   } = useFilters(catalogProducts);
 
+  const hasQuery = searchQuery.length > 0;
+
   return (
     <Section>
       <Container>
@@ -36,13 +41,24 @@ function CatalogContentInner() {
           className="mb-6"
           items={[
             { label: "Home", href: "/" },
-            { label: "Products" },
+            { label: "Search" },
           ]}
         />
 
         <div className="mb-6">
-          <h1 className="text-3xl font-bold tracking-tight md:text-4xl">Products</h1>
-          <p className="mt-1 text-base-content/60">Browse our complete collection</p>
+          <div className="flex items-center gap-3">
+            <Search size={28} className="text-base-content/40" />
+            <div>
+              <h1 className="text-3xl font-bold tracking-tight md:text-4xl">
+                {hasQuery ? `Results for "${searchQuery}"` : "Search Products"}
+              </h1>
+              <p className="mt-1 text-base-content/60">
+                {hasQuery
+                  ? `${pagination.total} result${pagination.total === 1 ? "" : "s"} found`
+                  : "Enter a search term to find products"}
+              </p>
+            </div>
+          </div>
         </div>
 
         <div className="flex gap-8">
@@ -82,7 +98,15 @@ function CatalogContentInner() {
               onSearchChange={setSearchQuery}
             />
 
-            {displayedProducts.length > 0 ? (
+            {!hasQuery && displayedProducts.length === catalogProducts.length ? (
+              <div className="flex flex-col items-center justify-center gap-4 py-20 text-center">
+                <Search size={48} className="text-base-content/20" />
+                <h3 className="text-lg font-semibold">Search our catalog</h3>
+                <p className="max-w-sm text-sm text-base-content/60">
+                  Use the search bar above to find products by name, brand, or keyword.
+                </p>
+              </div>
+            ) : displayedProducts.length > 0 ? (
               <>
                 {view === "list" ? (
                   <ProductListView products={displayedProducts} />
@@ -105,15 +129,15 @@ function CatalogContentInner() {
   );
 }
 
-export function CatalogContent() {
+export function SearchContent() {
   return (
-    <Suspense fallback={<ProductsPageSkeleton />}>
-      <CatalogContentInner />
+    <Suspense fallback={<SearchSkeleton />}>
+      <SearchContentInner />
     </Suspense>
   );
 }
 
-function ProductsPageSkeleton() {
+function SearchSkeleton() {
   return (
     <Section>
       <Container>

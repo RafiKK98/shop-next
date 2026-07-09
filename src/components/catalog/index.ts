@@ -7,3 +7,4 @@ export { Toolbar } from "./toolbar";
 export { SearchInput } from "./search-input";
 export { ProductGrid } from "./product-grid";
 export { CatalogPagination } from "./pagination-bar";
+export { ProductListView } from "./product-list-view";

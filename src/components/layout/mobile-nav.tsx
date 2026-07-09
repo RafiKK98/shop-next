@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Menu, X, Search, Heart, ShoppingCart, User, LayoutDashboard, Package, LogOut } from "lucide-react";
+import { Menu, X, Search, Heart, ShoppingCart, User, LayoutDashboard, Package, LogOut, Shield } from "lucide-react";
 import { NAVIGATION } from "@/constants/navigation";
 import { ROUTES } from "@/constants";
 import { IconButton } from "@/components/ui";
@@ -100,6 +100,19 @@ export function MobileNav({ user }: MobileNavProps) {
                       </Link>
                     </li>
                   </ul>
+                  {user.role === "admin" && (
+                    <>
+                      <hr className="my-4 border-base-200" />
+                      <Link
+                        href={ROUTES.admin as unknown as any}
+                        className="flex items-center gap-3 py-2 text-base text-warning"
+                        onClick={() => setOpen(false)}
+                      >
+                        <Shield size={18} />
+                        Admin Panel
+                      </Link>
+                    </>
+                  )}
                   <hr className="my-4 border-base-200" />
                   <form action={logoutAction}>
                     <button

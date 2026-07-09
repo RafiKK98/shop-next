@@ -3,7 +3,7 @@ import { NAVIGATION } from "@/constants/navigation";
 import { auth } from "@/lib/auth";
 import { getCartCount } from "@/lib/cart";
 import { getWishlistCount } from "@/lib/wishlist";
-import { Search } from "lucide-react";
+import { Search, Shield } from "lucide-react";
 import Link from "next/link";
 import { UserMenu } from "../auth/user-menu";
 import { CartCount } from "../cart/cart-count";
@@ -48,6 +48,16 @@ export async function Header() {
           >
             <Search size={18} />
           </Link>
+
+          {session?.user?.role === "admin" && (
+            <Link
+              href={ROUTES.admin as unknown as any}
+              className="btn btn-ghost btn-square text-warning"
+              aria-label="Admin Panel"
+            >
+              <Shield size={18} />
+            </Link>
+          )}
 
           <WishlistCount count={wishlistCount} href={ROUTES.wishlist} />
 
