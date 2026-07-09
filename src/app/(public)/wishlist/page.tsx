@@ -2,8 +2,14 @@ import { auth } from "@/lib/auth";
 import { getWishlistItems } from "@/lib/wishlist";
 import { Container, Section, Breadcrumb } from "@/components/ui";
 import { WishlistPageContent } from "@/components/wishlist";
+import { createMetadata } from "@/lib/seo";
+import type { Metadata } from "next";
 
 export const dynamic = "force-dynamic";
+
+export async function generateMetadata(): Promise<Metadata> {
+  return createMetadata({ title: "Wishlist", description: "Your saved items", noIndex: true });
+}
 
 export default async function WishlistPage() {
   const session = await auth();

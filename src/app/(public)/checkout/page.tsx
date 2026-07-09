@@ -7,8 +7,14 @@ import { addresses } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { Container, Section, Breadcrumb } from "@/components/ui";
 import { CheckoutPage } from "@/components/checkout";
+import { createMetadata } from "@/lib/seo";
+import type { Metadata } from "next";
 
 export const dynamic = "force-dynamic";
+
+export async function generateMetadata(): Promise<Metadata> {
+  return createMetadata({ title: "Checkout", description: "Complete your purchase", noIndex: true });
+}
 
 export default async function CheckoutRoute() {
   const session = await auth();

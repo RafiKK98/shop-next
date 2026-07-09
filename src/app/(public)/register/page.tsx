@@ -1,11 +1,12 @@
+import { SITE } from "@/constants";
 import type { Metadata } from "next";
 import { Container, Section } from "@/components/ui";
 import { RegisterForm, GoogleButton } from "@/components/auth";
 import { AuthPageShell } from "../login/auth-shell";
 
 export const metadata: Metadata = {
-  title: "Create Account",
-  description: "Create your ShopNext account",
+  title: `Create Account | ${SITE.name}`,
+  description: "Create your account",
 };
 
 export default async function RegisterPage(props: {

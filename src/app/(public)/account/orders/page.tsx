@@ -5,13 +5,13 @@ import { getUserOrders } from "@/services/orders";
 import { Container, Section, Breadcrumb, Button, EmptyState } from "@/components/ui";
 import { StatusTimeline } from "@/components/orders";
 import { formatCurrency, formatDate } from "@/utils/format";
-import { SITE } from "@/constants";
 import { ShoppingBag } from "lucide-react";
+import { createMetadata } from "@/lib/seo";
 import type { Metadata } from "next";
 
-export const metadata: Metadata = {
-  title: `My Orders | ${SITE.name}`,
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return createMetadata({ title: "My Orders", description: "View your order history", noIndex: true });
+}
 
 export default async function OrdersPage() {
   const session = await auth();

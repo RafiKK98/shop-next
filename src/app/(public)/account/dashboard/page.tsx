@@ -6,7 +6,6 @@ import { eq } from "drizzle-orm";
 import { getUserOrders } from "@/services/orders";
 import { getCartCount } from "@/lib/cart";
 import { getWishlistCount } from "@/lib/wishlist";
-import { SITE } from "@/constants";
 import { WelcomeSection } from "@/components/dashboard/welcome-section";
 import { StatsCards } from "@/components/dashboard/stats-cards";
 import { RecentOrders } from "@/components/dashboard/recent-orders";
@@ -14,11 +13,12 @@ import { DefaultAddress } from "@/components/dashboard/default-address";
 import { RecentlyViewed } from "@/components/dashboard/recently-viewed";
 import { QuickActions } from "@/components/dashboard/quick-actions";
 import { AccountCompletion } from "@/components/dashboard/account-completion";
+import { createMetadata } from "@/lib/seo";
 import type { Metadata } from "next";
 
-export const metadata: Metadata = {
-  title: `Dashboard | ${SITE.name}`,
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return createMetadata({ title: "Dashboard", description: "Your account dashboard", noIndex: true });
+}
 
 export default async function DashboardPage() {
   const session = await auth();

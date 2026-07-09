@@ -1,12 +1,12 @@
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { ProfileForm } from "./profile-form";
-import { SITE } from "@/constants";
+import { createMetadata } from "@/lib/seo";
 import type { Metadata } from "next";
 
-export const metadata: Metadata = {
-  title: `Profile | ${SITE.name}`,
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return createMetadata({ title: "Profile", description: "Manage your profile", noIndex: true });
+}
 
 export default async function ProfilePage() {
   const session = await auth();

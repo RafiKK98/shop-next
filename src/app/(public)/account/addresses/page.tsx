@@ -4,12 +4,12 @@ import { db } from "@/db";
 import { addresses } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { AddressList } from "./address-list";
-import { SITE } from "@/constants";
+import { createMetadata } from "@/lib/seo";
 import type { Metadata } from "next";
 
-export const metadata: Metadata = {
-  title: `Addresses | ${SITE.name}`,
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return createMetadata({ title: "Addresses", description: "Manage your shipping addresses", noIndex: true });
+}
 
 export default async function AddressesPage() {
   const session = await auth();

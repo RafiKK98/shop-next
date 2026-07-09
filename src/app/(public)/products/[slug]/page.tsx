@@ -8,6 +8,9 @@ import { eq, and } from "drizzle-orm";
 import { getProductReviews, getUserReviewForProduct, hasVerifiedPurchase } from "@/services/reviews";
 import type { Product } from "@/types/product";
 import Link from "next/link";
+import { createMetadata, type SeoParams } from "@/lib/seo";
+import { ProductJsonLd, BreadcrumbJsonLd } from "@/lib/json-ld";
+import { productImages } from "@/db/schema";
 import type { Metadata } from "next";
 
 interface PageProps {
@@ -17,9 +20,31 @@ interface PageProps {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  return {
-    title: `${slug.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())} | E-Commerce`,
+  const dbProduct = await db
+    .select()
+    .from(products)
+    .where(eq(products.slug, slug))
+    .then((r) => r[0] ?? null);
+
+  if (!dbProduct) return {};
+
+  const firstImage = await db
+    .select({ url: productImages.imageUrl })
+    .from(productImages)
+    .where(eq(productImages.productId, dbProduct.id))
+    .orderBy(productImages.order)
+    .limit(1)
+    .then((r) => r[0]?.url ?? null);
+
+  const seo: SeoParams = {
+    title: dbProduct.title,
+    description: dbProduct.description || undefined,
+    keywords: `${dbProduct.title}, ${dbProduct.brand || ""}`.trim(),
+    ogImage: firstImage || undefined,
+    canonical: `${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}/products/${slug}`,
   };
+
+  return createMetadata(seo);
 }
 
 export default async function ProductDetailPage({ params, searchParams }: PageProps) {
@@ -67,8 +92,31 @@ export default async function ProductDetailPage({ params, searchParams }: PagePr
     sort: reviewSort,
   });
 
+  const firstImage = await db
+    .select({ url: productImages.imageUrl })
+    .from(productImages)
+    .where(eq(productImages.productId, dbProduct.id))
+    .orderBy(productImages.order)
+    .limit(1)
+    .then((r) => r[0]?.url ?? null);
+
   return (
     <>
+      <ProductJsonLd
+        name={dbProduct.title}
+        description={dbProduct.description}
+        image={firstImage}
+        price={dbProduct.price}
+        sku={dbProduct.id.slice(0, 8).toUpperCase()}
+        url={`${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}/products/${slug}`}
+      />
+      <BreadcrumbJsonLd
+        items={[
+          { name: "Home", href: "/" },
+          { name: "Products", href: "/products" },
+          { name: dbProduct.title },
+        ]}
+      />
       <Section className="pb-0">
         <Container>
           <Breadcrumb

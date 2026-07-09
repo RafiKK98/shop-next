@@ -19,23 +19,16 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: {
-    default: `${SITE.name} - ${SITE.description}`,
-    template: `%s | ${SITE.name}`,
-  },
+  title: SITE.name,
   description: SITE.description,
   metadataBase: new URL(SITE.url),
   openGraph: {
     type: "website",
     locale: SITE.locale,
     siteName: SITE.name,
-    title: SITE.name,
-    description: SITE.description,
   },
   twitter: {
     card: "summary_large_image",
-    title: SITE.name,
-    description: SITE.description,
   },
   robots: {
     index: true,

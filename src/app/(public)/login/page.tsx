@@ -1,11 +1,12 @@
+import { SITE } from "@/constants";
 import type { Metadata } from "next";
 import { Container, Section } from "@/components/ui";
 import { LoginForm, GoogleButton } from "@/components/auth";
 import { AuthPageShell } from "./auth-shell";
 
 export const metadata: Metadata = {
-  title: "Sign In",
-  description: "Sign in to your ShopNext account",
+  title: `Sign In | ${SITE.name}`,
+  description: "Sign in to your account",
 };
 
 export default async function LoginPage(props: {
