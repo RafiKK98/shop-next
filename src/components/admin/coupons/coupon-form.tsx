@@ -1,15 +1,26 @@
 "use client";
 
-import { useForm } from "react-hook-form";
+import {
+  createCouponAction,
+  updateCouponAction,
+} from "@/actions/admin/coupons";
+import { Button, FormError, Label } from "@/components/ui";
+import {
+  couponFormSchema,
+  type CouponFormValues,
+} from "@/lib/validations/coupon";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
-import { couponFormSchema, type CouponFormValues } from "@/lib/validations/coupon";
-import { createCouponAction, updateCouponAction } from "@/actions/admin/coupons";
-import { Button, Label, FormError } from "@/components/ui";
+import { useForm } from "react-hook-form";
 
 interface CouponFormProps {
-  defaultValues?: Partial<CouponFormValues & { startDate?: string | Date | null; expiresAt?: string | Date | null }>;
+  defaultValues?: Partial<
+    CouponFormValues & {
+      startDate?: string | Date | null;
+      expiresAt?: string | Date | null;
+    }
+  >;
   mode: "create" | "edit";
   couponId?: string;
 }
@@ -19,7 +30,10 @@ export function CouponForm({ defaultValues, mode, couponId }: CouponFormProps) {
   const [serverError, setServerError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
-  const action = mode === "create" ? createCouponAction : (fd: FormData) => updateCouponAction(couponId!, fd);
+  const action =
+    mode === "create"
+      ? createCouponAction
+      : (fd: FormData) => updateCouponAction(couponId!, fd);
 
   const form = useForm<CouponFormValues>({
     resolver: zodResolver(couponFormSchema) as any,
@@ -38,7 +52,6 @@ export function CouponForm({ defaultValues, mode, couponId }: CouponFormProps) {
   });
 
   const watchType = form.watch("type");
-
   const onSubmit = form.handleSubmit((data) => {
     setServerError(null);
     startTransition(async () => {
@@ -47,12 +60,24 @@ export function CouponForm({ defaultValues, mode, couponId }: CouponFormProps) {
       fd.set("type", data.type);
       fd.set("value", String(data.value));
       fd.set("description", (data.description as string) ?? "");
-      fd.set("minPurchase", data.minPurchase != null ? String(data.minPurchase) : "");
-      fd.set("maxDiscount", data.maxDiscount != null ? String(data.maxDiscount) : "");
+      fd.set(
+        "minPurchase",
+        data.minPurchase != null ? String(data.minPurchase) : "",
+      );
+      fd.set(
+        "maxDiscount",
+        data.maxDiscount != null ? String(data.maxDiscount) : "",
+      );
       fd.set("maxUsage", data.maxUsage != null ? String(data.maxUsage) : "");
-      fd.set("isActive", data.isActive ? "true" : "false");
-      fd.set("startDate", data.startDate instanceof Date ? data.startDate.toISOString() : "");
-      fd.set("expiresAt", data.expiresAt instanceof Date ? data.expiresAt.toISOString() : "");
+      fd.set("isActive", data.isActive ? "true" : "");
+      fd.set(
+        "startDate",
+        data.startDate instanceof Date ? data.startDate.toISOString() : "",
+      );
+      fd.set(
+        "expiresAt",
+        data.expiresAt instanceof Date ? data.expiresAt.toISOString() : "",
+      );
       const result = await action(fd);
       if (result?.error) setServerError(result.error);
     });
@@ -61,7 +86,10 @@ export function CouponForm({ defaultValues, mode, couponId }: CouponFormProps) {
   return (
     <form onSubmit={onSubmit} noValidate className="space-y-8">
       {serverError && (
-        <div className="rounded-lg border border-error/30 bg-error/5 px-4 py-3 text-sm text-error" role="alert">
+        <div
+          className="rounded-lg border border-error/30 bg-error/5 px-4 py-3 text-sm text-error"
+          role="alert"
+        >
           {serverError}
         </div>
       )}
@@ -79,14 +107,13 @@ export function CouponForm({ defaultValues, mode, couponId }: CouponFormProps) {
               placeholder="SAVE20"
               maxLength={50}
             />
-            <FormError>{form.formState.errors.code?.message as string}</FormError>
+            <FormError>
+              {form.formState.errors.code?.message as string}
+            </FormError>
           </div>
           <div>
             <Label required>Discount Type</Label>
-            <select
-              {...form.register("type")}
-              className="select w-full"
-            >
+            <select {...form.register("type")} className="select w-full">
               <option value="percentage">Percentage</option>
               <option value="fixed">Fixed Amount</option>
             </select>
@@ -103,9 +130,13 @@ export function CouponForm({ defaultValues, mode, couponId }: CouponFormProps) {
               placeholder={watchType === "percentage" ? "10" : "25.00"}
             />
             <p className="mt-1 text-xs text-base-content/40">
-              {watchType === "percentage" ? "Percentage off (e.g. 10 for 10%)" : "Fixed amount off (e.g. 25.00)"}
+              {watchType === "percentage"
+                ? "Percentage off (e.g. 10 for 10%)"
+                : "Fixed amount off (e.g. 25.00)"}
             </p>
-            <FormError>{form.formState.errors.value?.message as string}</FormError>
+            <FormError>
+              {form.formState.errors.value?.message as string}
+            </FormError>
           </div>
           <div>
             <Label>Max Discount Amount</Label>
@@ -113,15 +144,16 @@ export function CouponForm({ defaultValues, mode, couponId }: CouponFormProps) {
               type="number"
               step="0.01"
               min="0"
-              {...form.register("maxDiscount", { valueAsNumber: true })}
+              {...form.register("maxDiscount")}
               className="input w-full"
               placeholder="50.00"
-              disabled={watchType !== "percentage"}
             />
             <p className="mt-1 text-xs text-base-content/40">
               Maximum discount for percentage coupons (optional)
             </p>
-            <FormError>{form.formState.errors.maxDiscount?.message as string}</FormError>
+            <FormError>
+              {form.formState.errors.maxDiscount?.message as string}
+            </FormError>
           </div>
         </div>
       </div>
@@ -138,7 +170,9 @@ export function CouponForm({ defaultValues, mode, couponId }: CouponFormProps) {
             placeholder="Brief description of this coupon..."
             maxLength={500}
           />
-          <FormError>{form.formState.errors.description?.message as string}</FormError>
+          <FormError>
+            {form.formState.errors.description?.message as string}
+          </FormError>
         </div>
       </div>
 
@@ -153,28 +187,32 @@ export function CouponForm({ defaultValues, mode, couponId }: CouponFormProps) {
               type="number"
               step="0.01"
               min="0"
-              {...form.register("minPurchase", { valueAsNumber: true })}
+              {...form.register("minPurchase")}
               className="input w-full"
               placeholder="50.00"
             />
             <p className="mt-1 text-xs text-base-content/40">
               Minimum subtotal required (optional)
             </p>
-            <FormError>{form.formState.errors.minPurchase?.message as string}</FormError>
+            <FormError>
+              {form.formState.errors.minPurchase?.message as string}
+            </FormError>
           </div>
           <div>
             <Label>Usage Limit</Label>
             <input
               type="number"
               min="1"
-              {...form.register("maxUsage", { valueAsNumber: true })}
+              {...form.register("maxUsage")}
               className="input w-full"
               placeholder="100"
             />
             <p className="mt-1 text-xs text-base-content/40">
               Maximum number of uses (optional)
             </p>
-            <FormError>{form.formState.errors.maxUsage?.message as string}</FormError>
+            <FormError>
+              {form.formState.errors.maxUsage?.message as string}
+            </FormError>
           </div>
           <div>
             <Label>Start Date</Label>
@@ -208,7 +246,9 @@ export function CouponForm({ defaultValues, mode, couponId }: CouponFormProps) {
             {...form.register("isActive")}
             className="checkbox"
           />
-          <span className="label-text">Active (coupon can be used immediately)</span>
+          <span className="label-text">
+            Active (coupon can be used immediately)
+          </span>
         </label>
       </div>
 

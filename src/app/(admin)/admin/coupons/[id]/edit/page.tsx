@@ -1,10 +1,10 @@
-import { notFound } from "next/navigation";
-import { SITE } from "@/constants";
-import { AdminPageHeader } from "@/components/admin/admin-page-header";
 import { AdminContainer } from "@/components/admin/admin-container";
+import { AdminPageHeader } from "@/components/admin/admin-page-header";
 import { CouponForm } from "@/components/admin/coupons";
+import { SITE } from "@/constants";
 import { getAdminCouponById } from "@/services/admin/coupons";
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 
 function toDatetimeLocal(date: Date): string {
   const y = date.getFullYear();
@@ -34,13 +34,17 @@ export default async function EditCouponPage({ params }: PageProps) {
     type: coupon.type,
     value: parseFloat(coupon.value),
     description: coupon.description ?? "",
-    minPurchase: coupon.minPurchase ? parseFloat(coupon.minPurchase) : ("" as any),
-    maxDiscount: coupon.maxDiscount ? parseFloat(coupon.maxDiscount) : ("" as any),
+    minPurchase: coupon.minPurchase
+      ? parseFloat(coupon.minPurchase)
+      : ("" as any),
+    maxDiscount: coupon.maxDiscount
+      ? parseFloat(coupon.maxDiscount)
+      : ("" as any),
     maxUsage: coupon.maxUsage ?? ("" as any),
     isActive: coupon.isActive ?? true,
-    startDate: coupon.startDate ?? null,
-    expiresAt: coupon.expiresAt ?? null,
-  };
+    startDate: coupon.startDate ? toDatetimeLocal(coupon.startDate) : "",
+    expiresAt: coupon.expiresAt ? toDatetimeLocal(coupon.expiresAt) : "",
+  } as any;
 
   return (
     <>

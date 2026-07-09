@@ -2,7 +2,7 @@ import "server-only";
 
 import { db } from "@/db";
 import { coupons } from "@/db/schema";
-import { eq, sql, count, desc, asc, and, like } from "drizzle-orm";
+import { and, asc, count, desc, eq, sql } from "drizzle-orm";
 
 export interface AdminCouponListItem {
   id: string;
@@ -75,7 +75,8 @@ export async function getAdminCoupons(params: {
     whereConditions.push(eq(coupons.isActive, false));
   }
 
-  const where = whereConditions.length > 0 ? and(...whereConditions) : undefined;
+  const where =
+    whereConditions.length > 0 ? and(...whereConditions) : undefined;
 
   const sortColumn =
     sort === "code"
@@ -116,7 +117,9 @@ export async function getAdminCoupons(params: {
   };
 }
 
-export async function getAdminCouponById(id: string): Promise<AdminCouponDetail | null> {
+export async function getAdminCouponById(
+  id: string,
+): Promise<AdminCouponDetail | null> {
   const row = await db
     .select()
     .from(coupons)
@@ -155,7 +158,7 @@ export async function createCoupon(input: CreateCouponInput) {
       expiresAt: input.expiresAt ?? null,
     })
     .returning();
-
+  console.log("Coupon row: ", { row });
   return row;
 }
 

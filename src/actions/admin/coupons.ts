@@ -1,9 +1,12 @@
 "use server";
 
-import { auth } from "@/lib/auth";
 import { requireAdmin } from "@/lib/auth/guards";
-import { createCoupon, updateCoupon, toggleCouponActive } from "@/services/admin/coupons";
 import { couponFormSchema } from "@/lib/validations/coupon";
+import {
+  createCoupon,
+  toggleCouponActive,
+  updateCoupon,
+} from "@/services/admin/coupons";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
@@ -14,13 +17,17 @@ export async function createCouponAction(formData: FormData) {
   const parsed = couponFormSchema.safeParse(raw);
 
   if (!parsed.success) {
-    return { error: parsed.error.issues.map((e: { message: string }) => e.message).join(", ") };
+    return {
+      error: parsed.error.issues
+        .map((e: { message: string }) => e.message)
+        .join(", "),
+    };
   }
 
   const data = parsed.data;
 
   try {
-    const coupon = await createCoupon({
+    await createCoupon({
       code: data.code,
       type: data.type,
       value: String(data.value),
@@ -32,9 +39,6 @@ export async function createCouponAction(formData: FormData) {
       startDate: data.startDate,
       expiresAt: data.expiresAt,
     });
-
-    revalidatePath("/admin/coupons");
-    redirect(`/admin/coupons`);
   } catch (err) {
     const e = err as { message?: string; constraint?: string };
     if (e.message?.includes("unique") || e.constraint?.includes("code")) {
@@ -42,6 +46,9 @@ export async function createCouponAction(formData: FormData) {
     }
     return { error: "Failed to create coupon. Please try again." };
   }
+
+  revalidatePath("/admin/coupons");
+  redirect("/admin/coupons");
 }
 
 export async function updateCouponAction(id: string, formData: FormData) {
@@ -50,28 +57,33 @@ export async function updateCouponAction(id: string, formData: FormData) {
   const raw = Object.fromEntries(formData);
   const parsed = couponFormSchema.safeParse(raw);
 
+  console.log("Raw: ", { raw });
+  console.log("Parsed Edit: ", { parsed });
+
   if (!parsed.success) {
-    return { error: parsed.error.issues.map((e: { message: string }) => e.message).join(", ") };
+    return {
+      error: parsed.error.issues
+        .map((e: { message: string }) => e.message)
+        .join(", "),
+    };
   }
 
   const data = parsed.data;
-
+  console.log("Parsed edit data: ", { data });
   try {
     await updateCoupon(id, {
       code: data.code,
       type: data.type,
       value: String(data.value),
       description: (data.description as string) || null,
-      minPurchase: data.minPurchase !== null ? String(data.minPurchase) : null,
-      maxDiscount: data.maxDiscount !== null ? String(data.maxDiscount) : null,
-      maxUsage: data.maxUsage !== null ? Number(data.maxUsage) : null,
+      minPurchase: data.minPurchase ? String(data.minPurchase) : null,
+      maxDiscount: data.maxDiscount ? String(data.maxDiscount) : null,
+      maxUsage: data.maxUsage ? Number(data.maxUsage) : null,
       isActive: data.isActive,
       startDate: data.startDate,
       expiresAt: data.expiresAt,
     });
-
-    revalidatePath("/admin/coupons");
-    redirect(`/admin/coupons`);
+    console.log("success");
   } catch (err) {
     const e = err as { message?: string; constraint?: string };
     if (e.message?.includes("unique") || e.constraint?.includes("code")) {
@@ -79,6 +91,9 @@ export async function updateCouponAction(id: string, formData: FormData) {
     }
     return { error: "Failed to update coupon. Please try again." };
   }
+
+  revalidatePath("/admin/coupons");
+  redirect("/admin/coupons");
 }
 
 export async function toggleCouponAction(id: string, isActive: boolean) {
