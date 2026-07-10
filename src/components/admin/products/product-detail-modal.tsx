@@ -1,19 +1,22 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { X, Package, Star } from "lucide-react";
 import { Badge, Button } from "@/components/ui";
-import { formatCurrency, formatDate } from "@/utils/format";
-import { cn } from "@/utils/cn";
-import Link from "next/link";
 import type { ProductDetail } from "@/services/admin/products";
+import { cn } from "@/utils/cn";
+import { formatCurrency, formatDate } from "@/utils/format";
+import { Package, Star, X } from "lucide-react";
+import Link from "next/link";
+import { useEffect, useState } from "react";
 
 interface ProductDetailModalProps {
   productId: string;
   onClose: () => void;
 }
 
-export function ProductDetailModal({ productId, onClose }: ProductDetailModalProps) {
+export function ProductDetailModal({
+  productId,
+  onClose,
+}: ProductDetailModalProps) {
   const [product, setProduct] = useState<ProductDetail | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -97,14 +100,22 @@ export function ProductDetailModal({ productId, onClose }: ProductDetailModalPro
 
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
-                  <p className="text-xs font-medium uppercase tracking-wider text-base-content/40">Price</p>
-                  <p className="text-xl font-bold">{formatCurrency(product.price)}</p>
+                  <p className="text-xs font-medium uppercase tracking-wider text-base-content/40">
+                    Price
+                  </p>
+                  <p className="text-xl font-bold">
+                    {formatCurrency(product.price)}
+                  </p>
                   {product.discount && Number(product.discount) > 0 && (
-                    <p className="text-sm text-error">-{product.discount}% off</p>
+                    <p className="text-sm text-error">
+                      -{product.discount}% off
+                    </p>
                   )}
                 </div>
                 <div>
-                  <p className="text-xs font-medium uppercase tracking-wider text-base-content/40">Stock</p>
+                  <p className="text-xs font-medium uppercase tracking-wider text-base-content/40">
+                    Stock
+                  </p>
                   <p
                     className={cn(
                       "text-lg font-semibold",
@@ -119,24 +130,45 @@ export function ProductDetailModal({ productId, onClose }: ProductDetailModalPro
                   </p>
                 </div>
                 <div>
-                  <p className="text-xs font-medium uppercase tracking-wider text-base-content/40">Category</p>
-                  <p>{product.categoryName ?? <span className="text-base-content/30">None</span>}</p>
+                  <p className="text-xs font-medium uppercase tracking-wider text-base-content/40">
+                    Category
+                  </p>
+                  <p>
+                    {product.categoryName ?? (
+                      <span className="text-base-content/30">None</span>
+                    )}
+                  </p>
                 </div>
                 <div>
-                  <p className="text-xs font-medium uppercase tracking-wider text-base-content/40">Brand</p>
-                  <p>{product.brand ?? <span className="text-base-content/30">None</span>}</p>
+                  <p className="text-xs font-medium uppercase tracking-wider text-base-content/40">
+                    Brand
+                  </p>
+                  <p>
+                    {product.brand ?? (
+                      <span className="text-base-content/30">None</span>
+                    )}
+                  </p>
                 </div>
                 <div>
-                  <p className="text-xs font-medium uppercase tracking-wider text-base-content/40">Featured</p>
-                  {product.featured ? <Badge variant="primary">Yes</Badge> : "No"}
+                  <p className="text-xs font-medium uppercase tracking-wider text-base-content/40">
+                    Featured
+                  </p>
+                  {product.featured ? (
+                    <Badge variant="primary">Yes</Badge>
+                  ) : (
+                    "No"
+                  )}
                 </div>
                 <div>
-                  <p className="text-xs font-medium uppercase tracking-wider text-base-content/40">Rating</p>
+                  <p className="text-xs font-medium uppercase tracking-wider text-base-content/40">
+                    Rating
+                  </p>
                   <p className="flex items-center gap-1">
                     {product.avgRating ? (
                       <>
                         <Star className="size-4 fill-warning text-warning" />
-                        {product.avgRating.toFixed(1)} ({product.reviewCount} reviews)
+                        {product.avgRating.toFixed(1)} ({product.reviewCount}{" "}
+                        reviews)
                       </>
                     ) : (
                       <span className="text-base-content/30">No reviews</span>
@@ -147,8 +179,12 @@ export function ProductDetailModal({ productId, onClose }: ProductDetailModalPro
 
               {product.description && (
                 <div>
-                  <p className="text-xs font-medium uppercase tracking-wider text-base-content/40">Description</p>
-                  <p className="mt-1 text-sm text-base-content/70">{product.description}</p>
+                  <p className="text-xs font-medium uppercase tracking-wider text-base-content/40">
+                    Description
+                  </p>
+                  <p className="mt-1 text-sm text-base-content/70">
+                    {product.description}
+                  </p>
                 </div>
               )}
 
@@ -158,7 +194,9 @@ export function ProductDetailModal({ productId, onClose }: ProductDetailModalPro
               </div>
             </div>
           ) : (
-            <p className="py-8 text-center text-base-content/40">Product not found</p>
+            <p className="py-8 text-center text-base-content/40">
+              Product not found
+            </p>
           )}
         </div>
 

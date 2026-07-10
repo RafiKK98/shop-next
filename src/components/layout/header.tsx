@@ -3,7 +3,7 @@ import { NAVIGATION } from "@/constants/navigation";
 import { auth } from "@/lib/auth";
 import { getCartCount } from "@/lib/cart";
 import { getWishlistCount } from "@/lib/wishlist";
-import { Search, Shield } from "lucide-react";
+import { Shield } from "lucide-react";
 import Link from "next/link";
 import { UserMenu } from "../auth/user-menu";
 import { CartCount } from "../cart/cart-count";
@@ -11,6 +11,7 @@ import { WishlistCount } from "../wishlist/wishlist-count";
 import { MobileNav } from "./mobile-nav";
 import { NavLink } from "./nav-link";
 import { ThemeToggle } from "./theme-toggle";
+import { SearchTrigger } from "../search/search-trigger";
 
 export async function Header() {
   const session = await auth();
@@ -41,13 +42,7 @@ export async function Header() {
         </nav>
 
         <div className="flex items-center gap-1">
-          <Link
-            href={ROUTES.search as unknown as any}
-            className="btn btn-ghost btn-square"
-            aria-label="Search"
-          >
-            <Search size={18} />
-          </Link>
+          <SearchTrigger userRole={session?.user?.role ?? null} />
 
           {session?.user?.role === "admin" && (
             <Link

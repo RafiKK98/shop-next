@@ -7,6 +7,7 @@ import { NAVIGATION } from "@/constants/navigation";
 import { ROUTES } from "@/constants";
 import { IconButton } from "@/components/ui";
 import { ThemeToggle } from "./theme-toggle";
+import { SearchModal } from "../search/search-modal";
 import { logoutAction } from "@/actions/auth";
 import type { UserRole } from "@/types/auth";
 
@@ -21,6 +22,7 @@ interface MobileNavProps {
 
 export function MobileNav({ user }: MobileNavProps) {
   const [open, setOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
 
   return (
     <>
@@ -153,14 +155,14 @@ export function MobileNav({ user }: MobileNavProps) {
 
               <ul className="flex flex-col gap-2">
                 <li>
-                  <Link
-                    href={ROUTES.search as unknown as any}
-                    className="flex items-center gap-3 py-2 text-base"
-                    onClick={() => setOpen(false)}
+                  <button
+                    type="button"
+                    className="flex w-full items-center gap-3 py-2 text-base"
+                    onClick={() => { setOpen(false); setSearchOpen(true); }}
                   >
                     <Search size={18} />
                     Search
-                  </Link>
+                  </button>
                 </li>
                 <li>
                   <Link
@@ -194,6 +196,11 @@ export function MobileNav({ user }: MobileNavProps) {
           </div>
         </div>
       )}
+      <SearchModal
+        open={searchOpen}
+        onClose={() => setSearchOpen(false)}
+        userRole={user?.role ?? null}
+      />
     </>
   );
 }
