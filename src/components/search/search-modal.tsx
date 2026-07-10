@@ -169,38 +169,30 @@ const SEARCH_LINKS: SearchLink[] = [
 ];
 
 interface SearchModalProps {
-  open: boolean;
   onClose: () => void;
   userRole: string | null;
 }
 
-export function SearchModal({ open, onClose, userRole }: SearchModalProps) {
+export function SearchModal({ onClose, userRole }: SearchModalProps) {
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
   const [query, setQuery] = useState("");
 
   useEffect(() => {
-    if (open) {
-      setQuery("");
-      setTimeout(() => inputRef.current?.focus(), 50);
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
+    inputRef.current?.focus();
+    document.body.style.overflow = "hidden";
     return () => {
       document.body.style.overflow = "";
     };
-  }, [open]);
+  }, []);
 
   useEffect(() => {
     function onKeyDown(e: KeyboardEvent) {
       if (e.key === "Escape") onClose();
     }
-    if (open) {
-      document.addEventListener("keydown", onKeyDown);
-      return () => document.removeEventListener("keydown", onKeyDown);
-    }
-  }, [open, onClose]);
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [onClose]);
 
   const filtered = SEARCH_LINKS.filter((link) => {
     if (link.requiresAdmin && userRole !== "admin") return false;
@@ -218,7 +210,7 @@ export function SearchModal({ open, onClose, userRole }: SearchModalProps) {
 
   const handleNavigate = useCallback(
     (href: string) => {
-      router.push(href as any);
+      router.push(href as never);
       onClose();
     },
     [router, onClose],

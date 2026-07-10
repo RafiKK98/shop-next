@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { Search } from "lucide-react";
 import { SearchModal } from "./search-modal";
 
@@ -10,22 +10,30 @@ interface SearchTriggerProps {
 
 export function SearchTrigger({ userRole }: SearchTriggerProps) {
   const [open, setOpen] = useState(false);
+  const [modalKey, setModalKey] = useState(0);
+
+  const handleOpen = useCallback(() => {
+    setOpen(true);
+    setModalKey((k) => k + 1);
+  }, []);
 
   return (
     <>
       <button
         type="button"
         className="btn btn-ghost btn-square"
-        onClick={() => setOpen(true)}
+        onClick={handleOpen}
         aria-label="Search pages"
       >
         <Search size={18} />
       </button>
-      <SearchModal
-        open={open}
-        onClose={() => setOpen(false)}
-        userRole={userRole}
-      />
+      {open && (
+        <SearchModal
+          key={modalKey}
+          onClose={() => setOpen(false)}
+          userRole={userRole}
+        />
+      )}
     </>
   );
 }

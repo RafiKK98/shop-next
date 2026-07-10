@@ -196,11 +196,13 @@ export function MobileNav({ user }: MobileNavProps) {
           </div>
         </div>
       )}
-      <SearchModal
-        open={searchOpen}
-        onClose={() => setSearchOpen(false)}
-        userRole={user?.role ?? null}
-      />
+      {searchOpen && (
+        <SearchModal
+          key={String(searchOpen)}
+          onClose={() => setSearchOpen(false)}
+          userRole={user?.role ?? null}
+        />
+      )}
     </>
   );
 }
