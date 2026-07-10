@@ -172,7 +172,10 @@ export default async function ProductDetailPage({
           <div className="grid gap-8 lg:grid-cols-2 lg:gap-12">
             <ProductGallery images={product.images} title={dbProduct.title} />
             <div className="flex flex-col gap-6">
-              <ProductInfo product={product} />
+              <ProductInfo
+                product={product}
+                shortDescription={dbProduct.description?.split(". ").slice(0, 2).join(". ").concat(".")}
+              />
               <PurchaseSection
                 title={dbProduct.title}
                 stockStatus={
@@ -194,15 +197,9 @@ export default async function ProductDetailPage({
         <Container>
           <div className="mx-auto max-w-3xl">
             <DescriptionSection
-              detail={{
-                description: dbProduct.description ?? "",
-                shortDescription: "",
-                features: [],
-                specifications: {},
-                gallery: [],
-                reviews: [],
-                sku: dbProduct.id.slice(0, 8).toUpperCase(),
-              }}
+              description={dbProduct.description ?? ""}
+              features={dbProduct.features ?? []}
+              specifications={(dbProduct.specifications ?? {}) as Record<string, string>}
             />
           </div>
         </Container>

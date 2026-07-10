@@ -291,5 +291,3 @@ export function SearchModal({ onClose, userRole }: SearchModalProps) {
     </div>
   );
 }
-
-// Okay, nicely done. Now I was wondering, the product detail page has 3 sections called features, specifications and customer reviews, which all are empty ever since we used data from the database. Before when we used static data (src/data/product-detail) we used those, now we need to solve this (for reviews we can use the reviews of the product using the reviews table), but specificatons and features are not in the DB so, do that.

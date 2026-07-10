@@ -1,4 +1,4 @@
-import { pgTable, uuid, text, timestamp, numeric, integer, boolean, index } from "drizzle-orm/pg-core";
+import { pgTable, uuid, text, timestamp, numeric, integer, boolean, index, jsonb } from "drizzle-orm/pg-core";
 import { categories } from "./categories";
 
 export const products = pgTable(
@@ -16,6 +16,8 @@ export const products = pgTable(
     discount: numeric("discount", { precision: 5, scale: 2 }).default("0"),
     stock: integer("stock").default(0),
     featured: boolean("featured").default(false),
+    features: text("features").array(),
+    specifications: jsonb("specifications").$type<Record<string, string>>(),
     createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
     updatedAt: timestamp("updated_at", { mode: "date" }).defaultNow().notNull(),
   },

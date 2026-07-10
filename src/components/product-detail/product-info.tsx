@@ -2,15 +2,14 @@ import { cn } from "@/utils/cn";
 import { Rating, Price, Badge } from "@/components/ui";
 import type { Product } from "@/types/product";
 import { getProductDiscount } from "@/types/product";
-import { getProductDetail } from "@/data/product-detail";
 
 interface ProductInfoProps {
   product: Product;
+  shortDescription?: string;
 }
 
-export function ProductInfo({ product }: ProductInfoProps) {
+export function ProductInfo({ product, shortDescription }: ProductInfoProps) {
   const discount = getProductDiscount(product);
-  const detail = getProductDetail(product.slug);
 
   const stockBadgeVariant =
     product.stockStatus === "in_stock" ? "primary" :
@@ -57,14 +56,14 @@ export function ProductInfo({ product }: ProductInfoProps) {
            product.stockStatus === "low_stock" ? "Low Stock" :
            "Out of Stock"}
         </span>
-        {detail && (
-          <span className="text-base-content/40">SKU: {detail.sku}</span>
-        )}
+        <span className="text-base-content/40">
+          SKU: {product.id.slice(0, 8).toUpperCase()}
+        </span>
       </div>
 
-      {detail && (
+      {shortDescription && (
         <p className="text-base leading-relaxed text-base-content/80">
-          {detail.shortDescription}
+          {shortDescription}
         </p>
       )}
     </div>

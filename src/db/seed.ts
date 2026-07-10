@@ -191,6 +191,82 @@ interface ProductDef {
   description: string;
 }
 
+// Rich feature/spec data for products where we have it
+const RICH_PRODUCT_DATA: Record<string, { features: string[]; specifications: Record<string, string> }> = {
+  "wireless-nc-headphones": {
+    features: [
+      "Adaptive Active Noise Cancellation (ANC) with ambient sound mode",
+      "30-hour battery life with quick 10-minute charge for 3 hours of playback",
+      "40mm custom drivers with Hi-Res Audio certification",
+      "Bluetooth 5.3 with multipoint connection for up to 3 devices",
+      "Built-in microphone array with wind reduction for crystal-clear calls",
+      "Fold-flat design with premium hard-shell carrying case",
+    ],
+    specifications: {
+      "Driver Size": "40mm dynamic",
+      "Frequency Response": "20Hz – 40kHz",
+      "Bluetooth Version": "5.3",
+      "Battery Life": "30 hours (ANC on)",
+      "Charging": "USB-C, 10W fast charge",
+      "Weight": "250g",
+    },
+  },
+  "4k-ultra-hd-monitor": {
+    features: [
+      "27-inch 4K UHD (3840 × 2160) IPS panel",
+      "HDR400 support with 350 nits typical brightness",
+      "99% sRGB and 95% DCI-P3 color gamut coverage",
+      "USB-C with 65W power delivery and DisplayPort Alt Mode",
+      "Height, tilt, swivel, and pivot adjustable stand",
+      "TUV Rheinland certified for low blue light and flicker-free",
+    ],
+    specifications: {
+      "Screen Size": '27 inches',
+      "Resolution": "3840 × 2160 (4K UHD)",
+      "Panel Type": "IPS",
+      "Refresh Rate": "60Hz",
+      "Brightness": "350 nits",
+      "Connectivity": "USB-C (65W PD), HDMI 2.0 × 2, DP 1.4",
+    },
+  },
+  "premium-cotton-tshirt": {
+    features: [
+      "100% organic combed ring-spun cotton (180 GSM)",
+      "Pre-shrunk fabric — will not shrink in the wash",
+      "Reinforced double-needle stitching at sleeves and hem",
+      "Ribbed collar with Lycra for shape retention",
+      "Modern slim fit — size up for a relaxed look",
+      "Available in 12 colors",
+    ],
+    specifications: {
+      "Material": "100% organic cotton",
+      "Weight": "180 GSM",
+      "Fit": "Slim",
+      "Collar": "Ribbed crew neck",
+      "Care": "Machine wash cold, tumble dry low",
+    },
+  },
+};
+
+function deriveFeatures(def: ProductDef): string[] {
+  const rich = RICH_PRODUCT_DATA[def.slug];
+  if (rich) return rich.features;
+  // Generate from description
+  const parts = def.description.split(". ").filter(Boolean);
+  return parts.slice(0, 5).map((p) => p.trim() + ".");
+}
+
+function deriveSpecifications(def: ProductDef): Record<string, string> {
+  const rich = RICH_PRODUCT_DATA[def.slug];
+  if (rich) return rich.specifications;
+  return {
+    Brand: def.brand,
+    Material: "Premium quality",
+    Warranty: "1 year",
+    Origin: "Imported",
+  };
+}
+
 const electronicsProducts: ProductDef[] = [
   { title: "Wireless Noise-Cancelling Headphones", slug: "wireless-nc-headphones", brand: "SoundWave", price: 299.99, discount: 15, stock: 45, featured: true, description: "Premium over-ear headphones with active noise cancellation, 40-hour battery life, and crystal-clear audio. Features Bluetooth 5.4 and multipoint connection." },
   { title: "4K Ultra HD Smart Monitor", slug: "4k-ultra-hd-monitor", brand: "ViewPro", price: 549.99, discount: 10, stock: 28, featured: true, description: "27-inch 4K IPS monitor with HDR600 support, USB-C docking, and built-in speakers. Perfect for creative professionals." },
@@ -358,6 +434,8 @@ async function seedProductsAndImages(categoryRecords: Awaited<ReturnType<typeof 
       discount: def.discount.toString(),
       stock: def.stock,
       featured: def.featured,
+      features: deriveFeatures(def),
+      specifications: deriveSpecifications(def),
       createdAt,
       updatedAt: createdAt,
     });
@@ -404,6 +482,7 @@ async function seedReviews(
         productId: productRecords[pi].id!,
         rating,
         comment: reviewComments[commentIdx],
+        status: "approved",
         createdAt: new Date(2025, 2, 1 + (pi * 3 + ri) % 200),
         updatedAt: new Date(2025, 2, 1 + (pi * 3 + ri) % 200),
       });
