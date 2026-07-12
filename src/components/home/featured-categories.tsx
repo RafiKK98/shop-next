@@ -1,8 +1,11 @@
 import Image from "next/image";
 import { Container, Section } from "@/components/ui";
-import { featuredCategories, type CategoryCard } from "@/data/home";
+import type { HomeCategory } from "@/services/home";
 
-function CategoryCard({ category }: { category: CategoryCard }) {
+function CategoryCard({ category }: { category: HomeCategory }) {
+  const imageSrc = !category.image || category.image.startsWith("/images/")
+    ? `https://picsum.photos/seed/cat-${category.slug}/400/300`
+    : category.image;
   return (
     <a
       href={`/products?category=${category.slug}`}
@@ -10,7 +13,7 @@ function CategoryCard({ category }: { category: CategoryCard }) {
     >
       <div className="aspect-[4/3] overflow-hidden">
         <Image
-          src={category.image}
+          src={imageSrc}
           alt={category.name}
           width={400}
           height={300}
@@ -27,7 +30,7 @@ function CategoryCard({ category }: { category: CategoryCard }) {
   );
 }
 
-export function FeaturedCategories() {
+export function FeaturedCategories({ categories }: { categories: HomeCategory[] }) {
   return (
     <Section>
       <Container>
@@ -36,7 +39,7 @@ export function FeaturedCategories() {
           <p className="mt-2 text-base-content/60">Find exactly what you need across our curated collections</p>
         </div>
         <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6 lg:gap-6">
-          {featuredCategories.map((category) => (
+          {categories.map((category) => (
             <CategoryCard key={category.id} category={category} />
           ))}
         </div>

@@ -11,9 +11,10 @@ interface ProductCardProps {
   product: Product;
   priority?: boolean;
   onQuickView?: () => void;
+  compact?: boolean;
 }
 
-export function ProductCard({ product, priority, onQuickView }: ProductCardProps) {
+export function ProductCard({ product, priority, onQuickView, compact }: ProductCardProps) {
   const discount = getProductDiscount(product);
   const primaryImage = product.images[0];
   const href = ROUTES.productDetail(product.slug);
@@ -28,9 +29,11 @@ export function ProductCard({ product, priority, onQuickView }: ProductCardProps
           isFeatured={product.isFeatured}
           stockStatus={product.stockStatus}
         />
-        <div className="absolute right-2 top-2 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
-          <WishlistButton slug={product.slug} aria-label={`Add ${product.title} to wishlist`} />
-        </div>
+        {!compact && (
+          <div className="absolute right-2 top-2 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+            <WishlistButton slug={product.slug} aria-label={`Add ${product.title} to wishlist`} />
+          </div>
+        )}
       </Link>
       <div className="card-body p-3 md:p-4">
         <Link href={href} className="text-xs font-medium uppercase tracking-wider text-base-content/50 hover:text-base-content transition-colors">
@@ -46,9 +49,11 @@ export function ProductCard({ product, priority, onQuickView }: ProductCardProps
           <span className="text-xs text-base-content/50">({product.reviewCount})</span>
         </div>
         <Price price={product.price} discount={discount || null} size="sm" />
-        <div className="mt-1">
-          <ProductCardActions title={product.title} stockStatus={product.stockStatus} slug={product.slug} onQuickView={onQuickView} />
-        </div>
+        {!compact && (
+          <div className="mt-1">
+            <ProductCardActions title={product.title} stockStatus={product.stockStatus} slug={product.slug} onQuickView={onQuickView} />
+          </div>
+        )}
       </div>
     </div>
   );

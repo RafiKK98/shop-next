@@ -1,8 +1,8 @@
 import { Container, Section } from "@/components/ui";
 import { ProductCard } from "@/components/product";
-import { featuredProducts } from "@/data/home";
+import type { Product } from "@/types/product";
 
-export function FeaturedProducts() {
+export function FeaturedProducts({ products }: { products: Product[] }) {
   return (
     <Section>
       <Container>
@@ -11,8 +11,8 @@ export function FeaturedProducts() {
           <p className="mt-2 text-base-content/60">Handpicked favorites you won&apos;t want to miss</p>
         </div>
         <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4 lg:gap-6">
-          {featuredProducts.map((product, i) => (
-            <ProductCard key={product.id} product={product} priority={i < 4} />
+          {products.map((product, i) => (
+            <ProductCard key={product.id} product={product} priority={i < 4} compact />
           ))}
         </div>
       </Container>

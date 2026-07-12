@@ -1,8 +1,8 @@
 import { Container, Section, Badge } from "@/components/ui";
 import { ProductCard } from "@/components/product";
-import { newArrivals } from "@/data/home";
+import type { Product } from "@/types/product";
 
-export function NewArrivals() {
+export function NewArrivals({ products }: { products: Product[] }) {
   return (
     <Section>
       <Container>
@@ -14,8 +14,8 @@ export function NewArrivals() {
           <p className="mt-2 text-base-content/60">Fresh off the truck — be the first to snag these</p>
         </div>
         <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4 lg:gap-6">
-          {newArrivals.map((product) => (
-            <ProductCard key={product.id} product={product} />
+          {products.map((product) => (
+            <ProductCard key={product.id} product={product} compact />
           ))}
         </div>
       </Container>

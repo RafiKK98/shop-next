@@ -2,8 +2,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { Container, Section, Breadcrumb } from "@/components/ui";
 import { ROUTES, SITE } from "@/constants";
-import { catalogCategories } from "@/data/catalog";
-import { featuredCategories } from "@/data/home";
+import { getHomeCategories } from "@/services/home";
+import { cookies } from "next/headers";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -11,12 +11,10 @@ export const metadata: Metadata = {
   description: "Browse products by category",
 };
 
-const categoryImages: Record<string, string> = {};
-for (const fc of featuredCategories) {
-  categoryImages[fc.slug] = fc.image;
-}
+export default async function CategoriesPage() {
+  const _cookies = await cookies();
+  const categories = await getHomeCategories();
 
-export default function CategoriesPage() {
   return (
     <Section>
       <Container>
@@ -34,8 +32,10 @@ export default function CategoriesPage() {
         </div>
 
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {catalogCategories.map((category) => {
-            const image = categoryImages[category.slug] || "https://picsum.photos/seed/" + category.slug + "/640/480";
+          {categories.map((category) => {
+            const image = !category.image || category.image.startsWith("/images/")
+              ? "https://picsum.photos/seed/" + category.slug + "/640/480"
+              : category.image;
             return (
               <Link
                 key={category.id}
@@ -55,7 +55,7 @@ export default function CategoriesPage() {
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
                 <div className="absolute bottom-0 left-0 right-0 p-5">
                   <h2 className="text-xl font-semibold text-white">{category.name}</h2>
-                  <p className="mt-1 text-sm text-white/80">{category.count} products</p>
+                  <p className="mt-1 text-sm text-white/80">{category.productCount} products</p>
                 </div>
               </Link>
             );

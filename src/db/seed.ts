@@ -160,16 +160,16 @@ async function seedUsers() {
 
 async function seedCategories() {
   const records = [
-    { id: seedId("category", 1), name: "Electronics", slug: "electronics", image: "/images/categories/electronics.jpg" },
-    { id: seedId("category", 2), name: "Clothing & Fashion", slug: "clothing-fashion", image: "/images/categories/clothing.jpg" },
-    { id: seedId("category", 3), name: "Home & Garden", slug: "home-garden", image: "/images/categories/home-garden.jpg" },
-    { id: seedId("category", 4), name: "Books & Media", slug: "books-media", image: "/images/categories/books.jpg" },
-    { id: seedId("category", 5), name: "Sports & Outdoors", slug: "sports-outdoors", image: "/images/categories/sports.jpg" },
-    { id: seedId("category", 6), name: "Beauty & Health", slug: "beauty-health", image: "/images/categories/beauty.jpg" },
-    { id: seedId("category", 7), name: "Toys & Games", slug: "toys-games", image: "/images/categories/toys.jpg" },
-    { id: seedId("category", 8), name: "Automotive", slug: "automotive", image: "/images/categories/automotive.jpg" },
-    { id: seedId("category", 9), name: "Food & Groceries", slug: "food-groceries", image: "/images/categories/food.jpg" },
-    { id: seedId("category", 10), name: "Music & Instruments", slug: "music-instruments", image: "/images/categories/music.jpg" },
+    { id: seedId("category", 1), name: "Electronics", slug: "electronics", image: "https://picsum.photos/seed/cat-electronics/400/300" },
+    { id: seedId("category", 2), name: "Clothing & Fashion", slug: "clothing-fashion", image: "https://picsum.photos/seed/cat-clothing/400/300" },
+    { id: seedId("category", 3), name: "Home & Garden", slug: "home-garden", image: "https://picsum.photos/seed/cat-home-garden/400/300" },
+    { id: seedId("category", 4), name: "Books & Media", slug: "books-media", image: "https://picsum.photos/seed/cat-books/400/300" },
+    { id: seedId("category", 5), name: "Sports & Outdoors", slug: "sports-outdoors", image: "https://picsum.photos/seed/cat-sports/400/300" },
+    { id: seedId("category", 6), name: "Beauty & Health", slug: "beauty-health", image: "https://picsum.photos/seed/cat-beauty/400/300" },
+    { id: seedId("category", 7), name: "Toys & Games", slug: "toys-games", image: "https://picsum.photos/seed/cat-toys/400/300" },
+    { id: seedId("category", 8), name: "Automotive", slug: "automotive", image: "https://picsum.photos/seed/cat-automotive/400/300" },
+    { id: seedId("category", 9), name: "Food & Groceries", slug: "food-groceries", image: "https://picsum.photos/seed/cat-food/400/300" },
+    { id: seedId("category", 10), name: "Music & Instruments", slug: "music-instruments", image: "https://picsum.photos/seed/cat-music/400/300" },
   ];
 
   await db.insert(categories).values(records);

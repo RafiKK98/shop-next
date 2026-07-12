@@ -1,8 +1,8 @@
 import { Container, Section } from "@/components/ui";
 import { ProductCard } from "@/components/product";
-import { bestSellers } from "@/data/home";
+import type { Product } from "@/types/product";
 
-export function BestSellers() {
+export function BestSellers({ products }: { products: Product[] }) {
   return (
     <Section>
       <Container>
@@ -11,8 +11,8 @@ export function BestSellers() {
           <p className="mt-2 text-base-content/60">Our most popular products loved by customers everywhere</p>
         </div>
         <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4 lg:gap-6">
-          {bestSellers.map((product) => (
-            <ProductCard key={product.id} product={product} />
+          {products.map((product) => (
+            <ProductCard key={product.id} product={product} compact />
           ))}
         </div>
       </Container>

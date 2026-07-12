@@ -1,5 +1,5 @@
 import { Container, Section } from "@/components/ui";
-import { brands } from "@/data/home";
+import type { Brand } from "@/services/home";
 
 const bgColors = [
   "from-primary/10 to-primary/5",
@@ -23,7 +23,7 @@ const textColors = [
   "text-primary",
 ];
 
-export function BrandLogos() {
+export function BrandLogos({ brands }: { brands: Brand[] }) {
   return (
     <Section>
       <Container>

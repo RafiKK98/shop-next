@@ -11,25 +11,44 @@ import {
   BrandLogos,
   NewsletterCta,
 } from "@/components/home";
+import {
+  getFeaturedProducts,
+  getBestSellers,
+  getNewArrivals,
+  getHomeCategories,
+  getBrands,
+} from "@/services/home";
+import { cookies } from "next/headers";
 import type { Metadata } from "next";
 
 export async function generateMetadata(): Promise<Metadata> {
   return createMetadata({});
 }
 
-export default function Home() {
+export default async function Home() {
+  const _cookies = await cookies();
+
+  const [featuredProducts, bestSellers, newArrivals, categories, brands] =
+    await Promise.all([
+      getFeaturedProducts(8),
+      getBestSellers(8),
+      getNewArrivals(8),
+      getHomeCategories(),
+      getBrands(),
+    ]);
+
   return (
     <>
       <OrganizationJsonLd />
       <WebsiteJsonLd />
       <HeroBanner />
-      <FeaturedCategories />
-      <FeaturedProducts />
+      <FeaturedCategories categories={categories} />
+      <FeaturedProducts products={featuredProducts} />
       <PromotionalBanner />
-      <BestSellers />
-      <NewArrivals />
+      <BestSellers products={bestSellers} />
+      <NewArrivals products={newArrivals} />
       <Testimonials />
-      <BrandLogos />
+      <BrandLogos brands={brands.slice(0, 6)} />
       <NewsletterCta />
     </>
   );
