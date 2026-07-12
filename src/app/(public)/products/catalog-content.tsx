@@ -1,20 +1,52 @@
 "use client";
 
-import { Suspense, useState } from "react";
+import { Suspense, useMemo, useState } from "react";
 import { Container, Breadcrumb, Section } from "@/components/ui";
 import { NoResults } from "@/components/ui/empty-state";
 import { FilterSidebar, MobileFilterDrawer, Toolbar, ProductGrid, ProductListView, CatalogPagination } from "@/components/catalog";
 import { ProductQuickViewModal } from "@/components/product/product-quick-view-modal";
 import { useFilters } from "@/hooks/use-filters";
-import { catalogProducts } from "@/data/catalog";
 import { useSearchParams } from "next/navigation";
+import type { Product } from "@/types/product";
 
-function CatalogContentInner() {
+interface Props {
+  products: Product[];
+}
+
+function CatalogContentInner({ products }: Props) {
   const searchParams = useSearchParams();
   const view = searchParams.get("view") || "grid";
+
+  const categoryOptions = useMemo(() => {
+    const map = new Map<string, { label: string; value: string; count: number }>();
+    for (const p of products) {
+      const slug = p.categorySlug;
+      if (!slug) continue;
+      if (map.has(slug)) {
+        map.get(slug)!.count++;
+      } else {
+        map.set(slug, { label: p.categoryName || slug, value: slug, count: 1 });
+      }
+    }
+    return Array.from(map.values());
+  }, [products]);
+
+  const brandOptions = useMemo(() => {
+    const map = new Map<string, { label: string; value: string; count: number }>();
+    for (const p of products) {
+      const brand = p.brand;
+      if (!brand) continue;
+      if (map.has(brand)) {
+        map.get(brand)!.count++;
+      } else {
+        map.set(brand, { label: brand, value: brand.toLowerCase(), count: 1 });
+      }
+    }
+    return Array.from(map.values());
+  }, [products]);
   const [quickViewSlug, setQuickViewSlug] = useState<string | null>(null);
   const quickViewProduct = quickViewSlug
-    ? catalogProducts.find((p) => p.slug === quickViewSlug) ?? null
+    ? products.find((p) => p.slug === quickViewSlug) ?? null
     : null;
 
   const {
@@ -32,7 +64,7 @@ function CatalogContentInner() {
     toggleDiscount,
     setPriceRange,
     clearFilters,
-  } = useFilters(catalogProducts);
+  } = useFilters(products);
 
   return (
     <>
@@ -55,6 +87,8 @@ function CatalogContentInner() {
             <div className="hidden w-64 shrink-0 lg:block">
               <FilterSidebar
                 filters={filters}
+                categoryOptions={categoryOptions}
+                brandOptions={brandOptions}
                 onToggleCategory={(v) => toggleFilter("categories", v)}
                 onToggleBrand={(v) => toggleFilter("brands", v)}
                 onToggleRating={toggleRating}
@@ -66,7 +100,7 @@ function CatalogContentInner() {
 
             <div className="min-w-0 flex-1">
               <Toolbar
-                totalProducts={catalogProducts.length}
+                totalProducts={products.length}
                 activeFilterCount={activeFilterCount}
                 pagination={pagination}
                 sortKey={sortKey}
@@ -75,6 +109,8 @@ function CatalogContentInner() {
                   <MobileFilterDrawer
                     filters={filters}
                     activeFilterCount={activeFilterCount}
+                    categoryOptions={categoryOptions}
+                    brandOptions={brandOptions}
                     onToggleCategory={(v) => toggleFilter("categories", v)}
                     onToggleBrand={(v) => toggleFilter("brands", v)}
                     onToggleRating={toggleRating}
@@ -119,10 +155,10 @@ function CatalogContentInner() {
   );
 }
 
-export function CatalogContent() {
+export function CatalogContent({ products }: Props) {
   return (
     <Suspense fallback={<ProductsPageSkeleton />}>
-      <CatalogContentInner />
+      <CatalogContentInner products={products} />
     </Suspense>
   );
 }

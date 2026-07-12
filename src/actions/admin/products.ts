@@ -3,12 +3,11 @@
 import { db } from "@/db";
 import { productImages, products } from "@/db/schema";
 import { requireAdmin } from "@/lib/auth/guards";
+import { CACHE_TAGS } from "@/lib/cache";
 import { productFormServerSchema } from "@/lib/validations/product";
 import { slugify } from "@/utils/slug";
 import { eq } from "drizzle-orm";
 import { revalidatePath, updateTag } from "next/cache";
-import { CACHE_TAGS } from "@/lib/cache";
-import { getRemovedImageUrls } from "@/lib/upload";
 
 interface ActionSuccess {
   success: true;

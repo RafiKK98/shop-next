@@ -10,7 +10,7 @@ import {
 import { ReviewSortSelect } from "@/components/reviews/review-sort-select";
 import { Breadcrumb, Container, Divider, Section } from "@/components/ui";
 import { db } from "@/db";
-import { productImages, products, wishlistItems } from "@/db/schema";
+import { categories, productImages, products, wishlistItems } from "@/db/schema";
 import { auth } from "@/lib/auth";
 import { BreadcrumbJsonLd, ProductJsonLd } from "@/lib/json-ld";
 import { createMetadata, type SeoParams } from "@/lib/seo";
@@ -35,7 +35,22 @@ export async function generateMetadata({
 }: PageProps): Promise<Metadata> {
   const { slug } = await params;
   const dbProduct = await db
-    .select()
+    .select({
+      id: products.id,
+      title: products.title,
+      slug: products.slug,
+      description: products.description,
+      categoryId: products.categoryId,
+      brand: products.brand,
+      price: products.price,
+      discount: products.discount,
+      stock: products.stock,
+      featured: products.featured,
+      features: products.features,
+      specifications: products.specifications,
+      createdAt: products.createdAt,
+      updatedAt: products.updatedAt,
+    })
     .from(products)
     .where(eq(products.slug, slug))
     .then((r) => r[0] ?? null);
@@ -72,8 +87,26 @@ export default async function ProductDetailPage({
     (sp.reviewSort as "newest" | "highest" | "lowest") ?? "newest";
 
   const dbProduct = await db
-    .select()
+    .select({
+      id: products.id,
+      title: products.title,
+      slug: products.slug,
+      description: products.description,
+      categoryId: products.categoryId,
+      brand: products.brand,
+      price: products.price,
+      discount: products.discount,
+      stock: products.stock,
+      featured: products.featured,
+      features: products.features,
+      specifications: products.specifications,
+      createdAt: products.createdAt,
+      updatedAt: products.updatedAt,
+      categorySlug: categories.slug,
+      categoryName: categories.name,
+    })
     .from(products)
+    .leftJoin(categories, eq(products.categoryId, categories.id))
     .where(eq(products.slug, slug))
     .then((r) => r[0] ?? null);
 
@@ -129,7 +162,8 @@ export default async function ProductDetailPage({
     rating: reviewsData.aggregate.average ?? 0,
     reviewCount: reviewsData.aggregate.total ?? 0,
     brand: dbProduct.brand ?? "",
-    categorySlug: "",
+    categorySlug: dbProduct.categorySlug ?? "",
+    categoryName: dbProduct.categoryName ?? "",
     stockStatus: (dbProduct.stock != null && dbProduct.stock > 0
       ? "in_stock"
       : "out_of_stock") as StockStatus,

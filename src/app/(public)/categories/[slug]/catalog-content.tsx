@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useState } from "react";
+import { Suspense, useMemo, useState } from "react";
 import { Container, Breadcrumb, Section } from "@/components/ui";
 import { NoResults } from "@/components/ui/empty-state";
 import { FilterSidebar, MobileFilterDrawer, Toolbar, ProductGrid, CatalogPagination } from "@/components/catalog";
@@ -9,10 +9,14 @@ import { ProductQuickViewModal } from "@/components/product/product-quick-view-m
 import { useFilters } from "@/hooks/use-filters";
 import { useSearchParams } from "next/navigation";
 import type { Product } from "@/types/product";
-import type { FilterCategory } from "@/data/catalog";
+
+interface CategoryInfo {
+  name: string;
+  slug: string;
+}
 
 interface Props {
-  category: FilterCategory;
+  category: CategoryInfo;
   products: Product[];
 }
 
@@ -23,6 +27,34 @@ function CategoryInner({ category, products }: Props) {
   const quickViewProduct = quickViewSlug
     ? products.find((p) => p.slug === quickViewSlug) ?? null
     : null;
+
+  const categoryOptions = useMemo(() => {
+    const map = new Map<string, { label: string; value: string; count: number }>();
+    for (const p of products) {
+      const slug = p.categorySlug;
+      if (!slug) continue;
+      if (map.has(slug)) {
+        map.get(slug)!.count++;
+      } else {
+        map.set(slug, { label: p.categoryName || slug, value: slug, count: 1 });
+      }
+    }
+    return Array.from(map.values());
+  }, [products]);
+
+  const brandOptions = useMemo(() => {
+    const map = new Map<string, { label: string; value: string; count: number }>();
+    for (const p of products) {
+      const brand = p.brand;
+      if (!brand) continue;
+      if (map.has(brand)) {
+        map.get(brand)!.count++;
+      } else {
+        map.set(brand, { label: brand, value: brand.toLowerCase(), count: 1 });
+      }
+    }
+    return Array.from(map.values());
+  }, [products]);
 
   const {
     filters,
@@ -56,13 +88,15 @@ function CategoryInner({ category, products }: Props) {
 
           <div className="mb-6">
             <h1 className="text-3xl font-bold tracking-tight md:text-4xl">{category.name}</h1>
-            <p className="mt-1 text-base-content/60">{category.count} products</p>
+            <p className="mt-1 text-base-content/60">{products.length} products</p>
           </div>
 
           <div className="flex gap-8">
             <div className="hidden w-64 shrink-0 lg:block">
               <FilterSidebar
                 filters={filters}
+                categoryOptions={categoryOptions}
+                brandOptions={brandOptions}
                 onToggleCategory={(v) => toggleFilter("categories", v)}
                 onToggleBrand={(v) => toggleFilter("brands", v)}
                 onToggleRating={toggleRating}
@@ -83,6 +117,8 @@ function CategoryInner({ category, products }: Props) {
                   <MobileFilterDrawer
                     filters={filters}
                     activeFilterCount={activeFilterCount}
+                    categoryOptions={categoryOptions}
+                    brandOptions={brandOptions}
                     onToggleCategory={(v) => toggleFilter("categories", v)}
                     onToggleBrand={(v) => toggleFilter("brands", v)}
                     onToggleRating={toggleRating}

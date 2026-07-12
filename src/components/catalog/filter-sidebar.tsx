@@ -2,7 +2,7 @@ import { FilterSection } from "./filter-section";
 import { FilterCheckboxGroup } from "./filter-checkbox-group";
 import { FilterPriceRange } from "./filter-price-range";
 import type { FilterState } from "@/lib/filters";
-import { catalogCategories, catalogBrands, priceRange, ratingOptions, discountOptions } from "@/data/catalog";
+import { priceRange, ratingOptions, discountOptions } from "@/data/catalog";
 
 interface FilterSidebarProps {
   filters: FilterState;
@@ -12,6 +12,8 @@ interface FilterSidebarProps {
   onToggleAvailability: (value: string) => void;
   onToggleDiscount: (value: number) => void;
   onPriceChange: (min: number | null, max: number | null) => void;
+  categoryOptions?: { label: string; value: string; count: number }[];
+  brandOptions?: { label: string; value: string; count: number }[];
 }
 
 const availabilityOptions = [
@@ -27,28 +29,34 @@ export function FilterSidebar({
   onToggleAvailability,
   onToggleDiscount,
   onPriceChange,
+  categoryOptions,
+  brandOptions,
 }: FilterSidebarProps) {
   return (
     <aside className="space-y-1">
       <h2 className="sr-only">Filters</h2>
 
-      <FilterSection title="Category">
-        <FilterCheckboxGroup
-          name="category"
-          options={catalogCategories.map((c) => ({ label: c.name, value: c.slug, count: c.count }))}
-          selectedValues={filters.categories}
-          onToggle={onToggleCategory}
-        />
-      </FilterSection>
+      {categoryOptions && (
+        <FilterSection title="Category">
+          <FilterCheckboxGroup
+            name="category"
+            options={categoryOptions}
+            selectedValues={filters.categories}
+            onToggle={onToggleCategory}
+          />
+        </FilterSection>
+      )}
 
-      <FilterSection title="Brand">
-        <FilterCheckboxGroup
-          name="brand"
-          options={catalogBrands.map((b) => ({ label: b.name, value: b.name.toLowerCase(), count: b.count }))}
-          selectedValues={filters.brands}
-          onToggle={onToggleBrand}
-        />
-      </FilterSection>
+      {brandOptions && (
+        <FilterSection title="Brand">
+          <FilterCheckboxGroup
+            name="brand"
+            options={brandOptions}
+            selectedValues={filters.brands}
+            onToggle={onToggleBrand}
+          />
+        </FilterSection>
+      )}
 
       <FilterSection title="Price Range">
         <FilterPriceRange

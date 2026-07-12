@@ -14,6 +14,8 @@ interface MobileFilterDrawerProps {
   onToggleAvailability: (value: string) => void;
   onToggleDiscount: (value: number) => void;
   onPriceChange: (min: number | null, max: number | null) => void;
+  categoryOptions?: { label: string; value: string; count: number }[];
+  brandOptions?: { label: string; value: string; count: number }[];
 }
 
 export function MobileFilterDrawer({
@@ -25,6 +27,8 @@ export function MobileFilterDrawer({
   onToggleAvailability,
   onToggleDiscount,
   onPriceChange,
+  categoryOptions,
+  brandOptions,
 }: MobileFilterDrawerProps) {
   const [open, setOpen] = useState(false);
 
@@ -64,6 +68,8 @@ export function MobileFilterDrawer({
             </div>
             <FilterSidebar
               filters={filters}
+              categoryOptions={categoryOptions}
+              brandOptions={brandOptions}
               onToggleCategory={onToggleCategory}
               onToggleBrand={onToggleBrand}
               onToggleRating={onToggleRating}

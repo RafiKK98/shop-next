@@ -1,6 +1,8 @@
 import { notFound } from "next/navigation";
 import { SITE } from "@/constants";
-import { catalogCategories, catalogProducts } from "@/data/catalog";
+import { catalogCategories } from "@/data/catalog";
+import { getCatalogProductsByCategory } from "@/services/products";
+import { cookies } from "next/headers";
 import type { Metadata } from "next";
 import { CategoryDetailContent } from "./catalog-content";
 
@@ -27,7 +29,9 @@ export default async function CategoryDetailPage({ params }: Props) {
   const category = catalogCategories.find((c) => c.slug === slug);
   if (!category) notFound();
 
-  const products = catalogProducts.filter((p) => p.categorySlug === slug);
+  const _cookies = await cookies();
+
+  const products = await getCatalogProductsByCategory(slug);
 
   return <CategoryDetailContent category={category} products={products} />;
 }

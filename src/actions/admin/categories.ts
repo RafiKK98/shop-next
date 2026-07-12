@@ -1,16 +1,14 @@
 "use server";
 
 import { requireAdmin } from "@/lib/auth/guards";
+import { CACHE_TAGS } from "@/lib/cache";
 import { categoryFormServerSchema } from "@/lib/validations/category";
 import {
   createCategoryDb,
-  updateCategoryDb,
   deleteCategoryDb,
-  getCategoryImageUrl,
+  updateCategoryDb,
 } from "@/services/admin/categories";
 import { revalidatePath, updateTag } from "next/cache";
-import { CACHE_TAGS } from "@/lib/cache";
-import { extractPublicId } from "@/lib/upload";
 
 interface ActionSuccess {
   success: true;
@@ -31,7 +29,9 @@ async function parseFormData(formData: FormData) {
   });
 }
 
-export async function createCategory(formData: FormData): Promise<ActionResult> {
+export async function createCategory(
+  formData: FormData,
+): Promise<ActionResult> {
   await requireAdmin();
 
   const parsed = await parseFormData(formData);
@@ -78,7 +78,9 @@ export async function updateCategory(
   }
 }
 
-export async function deleteCategory(categoryId: string): Promise<ActionResult> {
+export async function deleteCategory(
+  categoryId: string,
+): Promise<ActionResult> {
   await requireAdmin();
 
   try {

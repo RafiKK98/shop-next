@@ -11,6 +11,7 @@ export interface Product {
   reviewCount: number;
   brand: string;
   categorySlug: string;
+  categoryName: string;
   stockStatus: StockStatus;
   isNew: boolean;
   isFeatured: boolean;
