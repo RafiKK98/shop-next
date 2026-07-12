@@ -1,6 +1,5 @@
 "use client";
 
-import Script from "next/script";
 import {
   createContext,
   ReactNode,
@@ -43,20 +42,15 @@ const FOUC_SCRIPT = `
 
 export function ThemeScript() {
   return (
-    <Script
+    <script
       id="theme-init"
-      strategy="beforeInteractive"
       dangerouslySetInnerHTML={{ __html: FOUC_SCRIPT }}
     />
   );
 }
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>("light");
-
-  useEffect(() => {
-    setThemeState(getInitialTheme());
-  }, []);
+  const [theme, setThemeState] = useState<Theme>(getInitialTheme());
 
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", theme);

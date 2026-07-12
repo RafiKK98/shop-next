@@ -46,11 +46,26 @@ const STATUS_OPTIONS = [
   { value: "hidden", label: "Hidden" },
 ];
 
+function SortIcon({
+  column,
+  sort,
+  order,
+}: {
+  column: string;
+  sort: string;
+  order: "asc" | "desc";
+}) {
+  if (sort !== column) return <ChevronUp className="size-3 text-base-content/20" />;
+  return order === "asc" ? (
+    <ChevronUp className="size-3" />
+  ) : (
+    <ChevronDown className="size-3" />
+  );
+}
+
 export function ReviewsTable({
   reviews,
-  total,
   page,
-  pageSize,
   totalPages,
   search: initialSearch,
   statusFilter,
@@ -112,15 +127,6 @@ export function ReviewsTable({
     [router],
   );
 
-  const SortIcon = ({ column }: { column: string }) => {
-    if (sort !== column) return <ChevronUp className="size-3 text-base-content/20" />;
-    return order === "asc" ? (
-      <ChevronUp className="size-3" />
-    ) : (
-      <ChevronDown className="size-3" />
-    );
-  };
-
   return (
     <div className="space-y-4">
       {/* Search + Filters */}
@@ -164,7 +170,7 @@ export function ReviewsTable({
                   onClick={() => handleSort("rating")}
                   className="inline-flex items-center gap-1"
                 >
-                  Rating <SortIcon column="rating" />
+                  Rating <SortIcon column="rating" sort={sort} order={order} />
                 </button>
               </th>
               <th>Review</th>
@@ -173,7 +179,7 @@ export function ReviewsTable({
                   onClick={() => handleSort("status")}
                   className="inline-flex items-center gap-1"
                 >
-                  Status <SortIcon column="status" />
+                  Status <SortIcon column="status" sort={sort} order={order} />
                 </button>
               </th>
               <th>
@@ -181,7 +187,7 @@ export function ReviewsTable({
                   onClick={() => handleSort("createdAt")}
                   className="inline-flex items-center gap-1"
                 >
-                  Date <SortIcon column="createdAt" />
+                  Date <SortIcon column="createdAt" sort={sort} order={order} />
                 </button>
               </th>
               <th className="text-right">Actions</th>

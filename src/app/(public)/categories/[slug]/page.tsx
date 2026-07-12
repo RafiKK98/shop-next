@@ -1,9 +1,7 @@
 import { SITE } from "@/constants";
-import { getAllCategories } from "@/services/home";
-import { getCatalogProductsByCategory } from "@/services/products";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { CategoryDetailContent } from "./catalog-content";
+import { CategoryPageLoader } from "./category-page-loader";
 
 const STATIC_CATEGORIES: Record<string, string> = {
   electronics: "Electronics",
@@ -41,10 +39,5 @@ export default async function CategoryDetailPage({ params }: Props) {
   const name = STATIC_CATEGORIES[slug];
   if (!name) notFound();
 
-  const categories = await getAllCategories();
-  const category = categories.find((c) => c.slug === slug)!;
-
-  const products = await getCatalogProductsByCategory(slug);
-
-  return <CategoryDetailContent category={category} products={products} />;
+  return <CategoryPageLoader slug={slug} />;
 }

@@ -8,7 +8,7 @@ import { formatCurrency } from "@/utils/format";
 import { Minus, Plus, Trash2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState, useTransition } from "react";
+import { useState, useTransition } from "react";
 
 interface CartItemRowProps {
   item: CartItemWithProduct;
@@ -18,10 +18,6 @@ export function CartItemRow({ item }: CartItemRowProps) {
   const [isPending, startTransition] = useTransition();
   const [, setError] = useState<string | null>(null);
   const [localQty, setLocalQty] = useState(item.quantity);
-
-  useEffect(() => {
-    setLocalQty(item.quantity);
-  }, [item.quantity]);
 
   const price = parseFloat(item.product.price);
   const discount = parseFloat(item.product.discount || "0");

@@ -1,4 +1,5 @@
 import { redirect, notFound } from "next/navigation";
+import Image from "next/image";
 import Link from "next/link";
 import { auth } from "@/lib/auth";
 import { getOrderById } from "@/services/orders";
@@ -76,10 +77,12 @@ export default async function OrderDetailPage({ params }: Props) {
                 <li key={item.id} className="flex items-center gap-4 px-4 py-3">
                   {item.productImage ? (
                     <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-base-200">
-                      <img
+                      <Image
                         src={item.productImage}
                         alt={item.productName}
-                        className="size-full object-cover"
+                        fill
+                        className="object-cover"
+                        sizes="56px"
                       />
                     </div>
                   ) : (

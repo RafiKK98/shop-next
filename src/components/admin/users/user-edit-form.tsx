@@ -4,7 +4,7 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { updateUser } from "@/actions/admin/users";
 import { Button, Label } from "@/components/ui";
-import { notify, crud, errors } from "@/lib/notifications";
+import { notify, crud } from "@/lib/notifications";
 import {
   USER_ROLE_LABEL,
   USER_STATUS_LABEL,

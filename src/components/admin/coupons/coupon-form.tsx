@@ -12,7 +12,7 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
-import { useForm, type Resolver } from "react-hook-form";
+import { useForm, useWatch, type Resolver } from "react-hook-form";
 
 interface CouponFormProps {
   defaultValues?: Partial<
@@ -35,8 +35,7 @@ export function CouponForm({ defaultValues, mode, couponId }: CouponFormProps) {
       ? createCouponAction
       : (fd: FormData) => updateCouponAction(couponId!, fd);
 
-  const { watch, handleSubmit, register, formState } =
-    useForm<CouponFormValues>({
+  const form = useForm<CouponFormValues>({
       resolver: zodResolver(
         couponFormSchema,
       ) as unknown as Resolver<CouponFormValues>,
@@ -54,7 +53,8 @@ export function CouponForm({ defaultValues, mode, couponId }: CouponFormProps) {
       }) as CouponFormValues,
     });
 
-  const watchType = watch("type");
+  const { handleSubmit, register, formState } = form;
+  const watchType = useWatch({ control: form.control, name: "type" });
   const onSubmit = handleSubmit((data) => {
     setServerError(null);
     startTransition(async () => {

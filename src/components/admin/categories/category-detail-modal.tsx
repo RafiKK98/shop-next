@@ -19,7 +19,6 @@ export function CategoryDetailModal({
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    setLoading(true);
     fetch(`/api/admin/categories/${categoryId}`)
       .then((res) => res.json())
       .then((data) => {

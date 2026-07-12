@@ -11,7 +11,7 @@ import { slugify } from "@/utils/slug";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useCallback, useState, useTransition } from "react";
-import { useForm, type Resolver } from "react-hook-form";
+import { useForm, useWatch, type Resolver } from "react-hook-form";
 
 interface CategoryOption {
   id: string;
@@ -99,7 +99,7 @@ export function ProductForm({
     });
   });
 
-  const images = form.watch("images");
+  const images = useWatch({ control: form.control, name: "images" });
 
   return (
     <form onSubmit={onSubmit} noValidate className="space-y-8">

@@ -1,6 +1,7 @@
 import { Container, Section, Breadcrumb } from "@/components/ui";
 import { SITE } from "@/constants";
 import { createMetadata } from "@/lib/seo";
+import Link from "next/link";
 import type { Metadata } from "next";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -100,9 +101,9 @@ export default function AboutPage() {
           <p className="mx-auto mt-2 max-w-xl text-base-content/60">
             Join thousands of happy customers and discover your next favorite product.
           </p>
-          <a href="/products" className="btn btn-primary mt-6">
+          <Link href="/products" className="btn btn-primary mt-6">
             Browse Products
-          </a>
+          </Link>
         </Container>
       </Section>
     </>

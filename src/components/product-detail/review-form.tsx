@@ -10,7 +10,7 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
-import { useForm, type Resolver } from "react-hook-form";
+import { useForm, useWatch, type Resolver } from "react-hook-form";
 
 interface ReviewFormProps {
   productId: string;
@@ -36,7 +36,7 @@ export function ReviewForm({ productId, defaultValues }: ReviewFormProps) {
     },
   });
 
-  const currentRating = form.watch("rating") || hoverRating;
+  const currentRating = useWatch({ control: form.control, name: "rating" }) || hoverRating;
 
   const onSubmit = form.handleSubmit((data) => {
     setServerError(null);
