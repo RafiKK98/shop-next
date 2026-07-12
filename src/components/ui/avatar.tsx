@@ -1,4 +1,5 @@
 import { cn } from "@/utils/cn";
+import Image from "next/image";
 
 interface AvatarProps extends React.HTMLAttributes<HTMLDivElement> {
   src?: string | null;
@@ -16,13 +17,23 @@ const sizeClass: Record<string, string> = {
   xl: "w-24",
 };
 
-export function Avatar({ className, src, alt, size = "md", shape = "circle", fallback, ...props }: AvatarProps) {
-  const initials = fallback || alt
-    .split(" ")
-    .map((n) => n[0])
-    .join("")
-    .toUpperCase()
-    .slice(0, 2);
+export function Avatar({
+  className,
+  src,
+  alt,
+  size = "md",
+  shape = "circle",
+  fallback,
+  ...props
+}: AvatarProps) {
+  const initials =
+    fallback ||
+    alt
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase()
+      .slice(0, 2);
 
   return (
     <div
@@ -31,11 +42,21 @@ export function Avatar({ className, src, alt, size = "md", shape = "circle", fal
       {...props}
     >
       {src ? (
-        <div className={cn(sizeClass[size], shape === "circle" && "rounded-full")}>
-          <img
+        <div
+          className={cn(
+            sizeClass[size],
+            "relative",
+            shape === "circle" && "rounded-full",
+          )}
+        >
+          <Image
             src={src}
             alt={alt}
-            className={cn(shape === "circle" ? "rounded-full" : "rounded-box", "object-cover")}
+            fill
+            className={cn(
+              shape === "circle" ? "rounded-full" : "rounded-box",
+              "object-cover",
+            )}
           />
         </div>
       ) : (

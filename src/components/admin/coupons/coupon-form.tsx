@@ -12,7 +12,7 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, type Resolver } from "react-hook-form";
 
 interface CouponFormProps {
   defaultValues?: Partial<
@@ -35,24 +35,27 @@ export function CouponForm({ defaultValues, mode, couponId }: CouponFormProps) {
       ? createCouponAction
       : (fd: FormData) => updateCouponAction(couponId!, fd);
 
-  const form = useForm<CouponFormValues>({
-    resolver: zodResolver(couponFormSchema) as any,
-    defaultValues: (defaultValues ?? {
-      code: "",
-      type: "percentage",
-      value: 0,
-      description: "",
-      minPurchase: null,
-      maxDiscount: null,
-      maxUsage: null,
-      isActive: true,
-      startDate: null,
-      expiresAt: null,
-    }) as CouponFormValues,
-  });
+  const { watch, handleSubmit, register, formState } =
+    useForm<CouponFormValues>({
+      resolver: zodResolver(
+        couponFormSchema,
+      ) as unknown as Resolver<CouponFormValues>,
+      defaultValues: (defaultValues ?? {
+        code: "",
+        type: "percentage",
+        value: 0,
+        description: "",
+        minPurchase: null,
+        maxDiscount: null,
+        maxUsage: null,
+        isActive: true,
+        startDate: null,
+        expiresAt: null,
+      }) as CouponFormValues,
+    });
 
-  const watchType = form.watch("type");
-  const onSubmit = form.handleSubmit((data) => {
+  const watchType = watch("type");
+  const onSubmit = handleSubmit((data) => {
     setServerError(null);
     startTransition(async () => {
       const fd = new FormData();
@@ -102,18 +105,16 @@ export function CouponForm({ defaultValues, mode, couponId }: CouponFormProps) {
           <div>
             <Label required>Coupon Code</Label>
             <input
-              {...form.register("code")}
+              {...register("code")}
               className="input w-full font-mono uppercase"
               placeholder="SAVE20"
               maxLength={50}
             />
-            <FormError>
-              {form.formState.errors.code?.message as string}
-            </FormError>
+            <FormError>{formState.errors.code?.message as string}</FormError>
           </div>
           <div>
             <Label required>Discount Type</Label>
-            <select {...form.register("type")} className="select w-full">
+            <select {...register("type")} className="select w-full">
               <option value="percentage">Percentage</option>
               <option value="fixed">Fixed Amount</option>
             </select>
@@ -125,7 +126,7 @@ export function CouponForm({ defaultValues, mode, couponId }: CouponFormProps) {
               step="0.01"
               min="0.01"
               max="999999.99"
-              {...form.register("value", { valueAsNumber: true })}
+              {...register("value", { valueAsNumber: true })}
               className="input w-full"
               placeholder={watchType === "percentage" ? "10" : "25.00"}
             />
@@ -134,9 +135,7 @@ export function CouponForm({ defaultValues, mode, couponId }: CouponFormProps) {
                 ? "Percentage off (e.g. 10 for 10%)"
                 : "Fixed amount off (e.g. 25.00)"}
             </p>
-            <FormError>
-              {form.formState.errors.value?.message as string}
-            </FormError>
+            <FormError>{formState.errors.value?.message as string}</FormError>
           </div>
           <div>
             <Label>Max Discount Amount</Label>
@@ -144,7 +143,7 @@ export function CouponForm({ defaultValues, mode, couponId }: CouponFormProps) {
               type="number"
               step="0.01"
               min="0"
-              {...form.register("maxDiscount")}
+              {...register("maxDiscount")}
               className="input w-full"
               placeholder="50.00"
             />
@@ -152,7 +151,7 @@ export function CouponForm({ defaultValues, mode, couponId }: CouponFormProps) {
               Maximum discount for percentage coupons (optional)
             </p>
             <FormError>
-              {form.formState.errors.maxDiscount?.message as string}
+              {formState.errors.maxDiscount?.message as string}
             </FormError>
           </div>
         </div>
@@ -164,14 +163,14 @@ export function CouponForm({ defaultValues, mode, couponId }: CouponFormProps) {
         </h2>
         <div>
           <textarea
-            {...form.register("description")}
+            {...register("description")}
             className="textarea textarea-bordered w-full"
             rows={2}
             placeholder="Brief description of this coupon..."
             maxLength={500}
           />
           <FormError>
-            {form.formState.errors.description?.message as string}
+            {formState.errors.description?.message as string}
           </FormError>
         </div>
       </div>
@@ -187,7 +186,7 @@ export function CouponForm({ defaultValues, mode, couponId }: CouponFormProps) {
               type="number"
               step="0.01"
               min="0"
-              {...form.register("minPurchase")}
+              {...register("minPurchase")}
               className="input w-full"
               placeholder="50.00"
             />
@@ -195,7 +194,7 @@ export function CouponForm({ defaultValues, mode, couponId }: CouponFormProps) {
               Minimum subtotal required (optional)
             </p>
             <FormError>
-              {form.formState.errors.minPurchase?.message as string}
+              {formState.errors.minPurchase?.message as string}
             </FormError>
           </div>
           <div>
@@ -203,7 +202,7 @@ export function CouponForm({ defaultValues, mode, couponId }: CouponFormProps) {
             <input
               type="number"
               min="1"
-              {...form.register("maxUsage")}
+              {...register("maxUsage")}
               className="input w-full"
               placeholder="100"
             />
@@ -211,14 +210,14 @@ export function CouponForm({ defaultValues, mode, couponId }: CouponFormProps) {
               Maximum number of uses (optional)
             </p>
             <FormError>
-              {form.formState.errors.maxUsage?.message as string}
+              {formState.errors.maxUsage?.message as string}
             </FormError>
           </div>
           <div>
             <Label>Start Date</Label>
             <input
               type="datetime-local"
-              {...form.register("startDate")}
+              {...register("startDate")}
               className="input w-full"
             />
             <p className="mt-1 text-xs text-base-content/40">
@@ -229,7 +228,7 @@ export function CouponForm({ defaultValues, mode, couponId }: CouponFormProps) {
             <Label>End Date</Label>
             <input
               type="datetime-local"
-              {...form.register("expiresAt")}
+              {...register("expiresAt")}
               className="input w-full"
             />
             <p className="mt-1 text-xs text-base-content/40">
@@ -243,7 +242,7 @@ export function CouponForm({ defaultValues, mode, couponId }: CouponFormProps) {
         <label className="label cursor-pointer justify-start gap-3">
           <input
             type="checkbox"
-            {...form.register("isActive")}
+            {...register("isActive")}
             className="checkbox"
           />
           <span className="label-text">

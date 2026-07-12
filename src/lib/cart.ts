@@ -1,6 +1,6 @@
 import { db } from "@/db";
-import { carts, cartItems, products, productImages } from "@/db/schema";
-import { eq, and, sql } from "drizzle-orm";
+import { cartItems, carts, productImages, products } from "@/db/schema";
+import { eq, sql } from "drizzle-orm";
 
 export interface CartItemWithProduct {
   id: string;
@@ -55,7 +55,9 @@ export async function getOrCreateCart(userId: string) {
   return cart;
 }
 
-export async function getCartItems(userId: string): Promise<CartItemWithProduct[]> {
+export async function getCartItems(
+  userId: string,
+): Promise<CartItemWithProduct[]> {
   const cart = await getUserCart(userId);
   if (!cart) return [];
 

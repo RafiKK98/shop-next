@@ -1,14 +1,14 @@
 "use client";
 
-import { useTransition, useState, useEffect } from "react";
-import Image from "next/image";
-import Link from "next/link";
-import { Trash2, Minus, Plus } from "lucide-react";
-import { cn } from "@/utils/cn";
-import { formatCurrency } from "@/utils/format";
 import { removeFromCart, updateCartItemQuantity } from "@/actions/cart";
 import { ROUTES } from "@/constants";
 import type { CartItemWithProduct } from "@/lib/cart";
+import { cn } from "@/utils/cn";
+import { formatCurrency } from "@/utils/format";
+import { Minus, Plus, Trash2 } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { useEffect, useState, useTransition } from "react";
 
 interface CartItemRowProps {
   item: CartItemWithProduct;
@@ -16,7 +16,7 @@ interface CartItemRowProps {
 
 export function CartItemRow({ item }: CartItemRowProps) {
   const [isPending, startTransition] = useTransition();
-  const [error, setError] = useState<string | null>(null);
+  const [, setError] = useState<string | null>(null);
   const [localQty, setLocalQty] = useState(item.quantity);
 
   useEffect(() => {
@@ -136,7 +136,9 @@ export function CartItemRow({ item }: CartItemRowProps) {
       </div>
 
       <div className="flex shrink-0 flex-col items-end justify-between">
-        <span className="text-sm font-semibold">{formatCurrency(subtotal)}</span>
+        <span className="text-sm font-semibold">
+          {formatCurrency(subtotal)}
+        </span>
       </div>
     </div>
   );

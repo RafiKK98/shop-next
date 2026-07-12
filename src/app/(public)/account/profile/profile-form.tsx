@@ -1,14 +1,15 @@
 "use client";
 
-import { useState, useTransition } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import type { Resolver } from "react-hook-form";
-import { User } from "lucide-react";
-import { Button, Input, Label } from "@/components/ui";
-import { formatDate } from "@/utils/format";
 import { updateProfile } from "@/actions/profile";
+import { Button, Input, Label } from "@/components/ui";
 import { profileSchema, type ProfileInput } from "@/lib/validations/profile";
+import { formatDate } from "@/utils/format";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { User } from "lucide-react";
+import Image from "next/image";
+import { useState, useTransition } from "react";
+import type { Resolver } from "react-hook-form";
+import { useForm } from "react-hook-form";
 
 interface ProfileFormProps {
   user: {
@@ -59,11 +60,12 @@ export function ProfileForm({ user }: ProfileFormProps) {
   return (
     <div className="rounded-xl border border-base-200 bg-base-100">
       <div className="flex flex-col items-center gap-4 border-b border-base-200 px-6 py-8 sm:flex-row">
-        <div className="flex size-20 items-center justify-center rounded-full bg-base-200">
+        <div className="flex relative size-20 items-center justify-center rounded-full bg-base-200">
           {user.image ? (
-            <img
+            <Image
               src={user.image}
               alt={user.name || "Avatar"}
+              fill
               className="size-20 rounded-full object-cover"
             />
           ) : (
@@ -91,12 +93,21 @@ export function ProfileForm({ user }: ProfileFormProps) {
 
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
-            <Input id="email" value={user.email || ""} disabled className="bg-base-200" />
+            <Input
+              id="email"
+              value={user.email || ""}
+              disabled
+              className="bg-base-200"
+            />
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="phone">Phone Number</Label>
-            <Input id="phone" {...register("phone")} placeholder="+1 (555) 000-0000" />
+            <Input
+              id="phone"
+              {...register("phone")}
+              placeholder="+1 (555) 000-0000"
+            />
             {errors.phone && (
               <p className="text-xs text-error">{errors.phone.message}</p>
             )}
@@ -106,7 +117,11 @@ export function ProfileForm({ user }: ProfileFormProps) {
             <Label htmlFor="role">Account Role</Label>
             <Input
               id="role"
-              value={user.role ? user.role.charAt(0).toUpperCase() + user.role.slice(1) : ""}
+              value={
+                user.role
+                  ? user.role.charAt(0).toUpperCase() + user.role.slice(1)
+                  : ""
+              }
               disabled
               className="bg-base-200"
             />
@@ -126,7 +141,12 @@ export function ProfileForm({ user }: ProfileFormProps) {
         )}
 
         <div className="flex justify-end">
-          <Button type="submit" size="lg" disabled={isPending} loading={isPending}>
+          <Button
+            type="submit"
+            size="lg"
+            disabled={isPending}
+            loading={isPending}
+          >
             Save Changes
           </Button>
         </div>

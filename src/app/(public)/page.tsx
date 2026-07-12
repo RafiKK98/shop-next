@@ -1,24 +1,23 @@
-import { createMetadata } from "@/lib/seo";
-import { OrganizationJsonLd, WebsiteJsonLd } from "@/lib/json-ld";
 import {
-  HeroBanner,
+  BestSellers,
+  BrandLogos,
   FeaturedCategories,
   FeaturedProducts,
-  PromotionalBanner,
-  BestSellers,
+  HeroBanner,
   NewArrivals,
-  Testimonials,
-  BrandLogos,
   NewsletterCta,
+  PromotionalBanner,
+  Testimonials,
 } from "@/components/home";
+import { OrganizationJsonLd, WebsiteJsonLd } from "@/lib/json-ld";
+import { createMetadata } from "@/lib/seo";
 import {
-  getFeaturedProducts,
   getBestSellers,
-  getNewArrivals,
-  getHomeCategories,
   getBrands,
+  getFeaturedProducts,
+  getHomeCategories,
+  getNewArrivals,
 } from "@/services/home";
-import { cookies } from "next/headers";
 import type { Metadata } from "next";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -26,8 +25,6 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function Home() {
-  const _cookies = await cookies();
-
   const [featuredProducts, bestSellers, newArrivals, categories, brands] =
     await Promise.all([
       getFeaturedProducts(8),

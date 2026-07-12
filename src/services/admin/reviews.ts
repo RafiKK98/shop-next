@@ -1,8 +1,10 @@
 import "server-only";
 
 import { db } from "@/db";
-import { products, reviews, users } from "@/db/schema";
-import { and, asc, count, desc, eq, like, or, sql } from "drizzle-orm";
+import { products, reviews, reviewStatusEnum, users } from "@/db/schema";
+import { and, asc, count, desc, eq, like, or } from "drizzle-orm";
+
+type ReviewStatus = (typeof reviewStatusEnum.enumValues)[number];
 
 // ── Types ────────────────────────────────────────────────────────────────
 
@@ -28,7 +30,12 @@ export interface AdminReviewsResponse {
   totalPages: number;
 }
 
-export const REVIEW_STATUS_ORDER = ["pending", "approved", "rejected", "hidden"] as const;
+export const REVIEW_STATUS_ORDER = [
+  "pending",
+  "approved",
+  "rejected",
+  "hidden",
+] as const;
 
 // ── List ─────────────────────────────────────────────────────────────────
 
@@ -36,14 +43,14 @@ export async function getAdminReviews(params: {
   page?: number;
   pageSize?: number;
   search?: string;
-  status?: string;
+  status?: ReviewStatus;
   sort?: string;
   order?: "asc" | "desc";
 }): Promise<AdminReviewsResponse> {
   const page = Math.max(1, params.page ?? 1);
   const pageSize = Math.min(100, Math.max(1, params.pageSize ?? 20));
   const search = params.search?.trim() ?? "";
-  const status = params.status?.trim() ?? "";
+  const status = params.status?.trim() as ReviewStatus | "";
   const sort = params.sort ?? "createdAt";
   const order = params.order ?? "desc";
 
@@ -58,7 +65,7 @@ export async function getAdminReviews(params: {
     );
   }
   if (status) {
-    conditions.push(eq(reviews.status, status as any));
+    conditions.push(eq(reviews.status, status as ReviewStatus));
   }
 
   const where = conditions.length > 0 ? and(...conditions) : undefined;
@@ -117,10 +124,10 @@ export async function getAdminReviews(params: {
 
 export async function updateReviewStatus(
   reviewId: string,
-  status: string,
+  status: ReviewStatus,
 ): Promise<void> {
   await db
     .update(reviews)
-    .set({ status: status as any, updatedAt: new Date() })
+    .set({ status, updatedAt: new Date() })
     .where(eq(reviews.id, reviewId));
 }

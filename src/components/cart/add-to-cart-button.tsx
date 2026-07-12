@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import type { Route } from "next";
 import { useRouter } from "next/navigation";
 import { addToCart } from "@/actions/cart";
 import { Button } from "@/components/ui";
@@ -43,7 +44,7 @@ export function AddToCartButton({
       const result = await addToCart(fd);
 
       if (result?.redirect) {
-        router.push(result.redirect as any);
+        router.push(result.redirect as Route);
         return;
       }
 

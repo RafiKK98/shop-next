@@ -62,7 +62,7 @@ export default async function OrderDetailPage({ params }: Props) {
         </div>
 
         <div className="space-y-4">
-          <StatusTimeline status={order.status as any} />
+          <StatusTimeline status={order.status} />
 
           <div className="rounded-xl border border-base-200 bg-base-100">
             <div className="border-b border-base-200 px-4 py-3">

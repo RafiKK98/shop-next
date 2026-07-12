@@ -10,6 +10,7 @@ import { AdminPageHeader } from "@/components/admin/admin-page-header";
 import { StatCard } from "@/components/admin/stat-card";
 import { OrdersTable } from "@/components/admin/orders";
 import { getAdminOrders, getOrderStats } from "@/services/admin/orders";
+import type { OrderStatus, PaymentStatus } from "@/services/admin/order-types";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -27,8 +28,8 @@ export default async function AdminOrdersPage({ searchParams }: PageProps) {
   const search = (sp.search as string) ?? "";
   const sort = (sp.sort as string) ?? "createdAt";
   const order = (sp.order as "asc" | "desc") ?? "desc";
-  const statusFilter = (sp.status as string) ?? "";
-  const paymentFilter = (sp.paymentStatus as string) ?? "";
+  const statusFilter = (sp.status as OrderStatus | "") ?? "";
+  const paymentFilter = (sp.paymentStatus as PaymentStatus | "") ?? "";
   const dateFrom = (sp.dateFrom as string) ?? "";
   const dateTo = (sp.dateTo as string) ?? "";
 
@@ -39,8 +40,8 @@ export default async function AdminOrdersPage({ searchParams }: PageProps) {
       search,
       sort,
       order,
-      status: statusFilter as any,
-      paymentStatus: paymentFilter as any,
+      status: statusFilter,
+      paymentStatus: paymentFilter,
       dateFrom,
       dateTo,
     }),

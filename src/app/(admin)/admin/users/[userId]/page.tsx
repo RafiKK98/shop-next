@@ -32,10 +32,7 @@ interface PageProps {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }
 
-export async function generateMetadata({
-  params,
-}: PageProps): Promise<Metadata> {
-  const { userId } = await params;
+export async function generateMetadata(): Promise<Metadata> {
   return {
     title: `User | Admin | ${SITE.name}`,
   };

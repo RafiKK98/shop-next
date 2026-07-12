@@ -1,4 +1,3 @@
-import type { StoreSettings } from "@/services/store-settings";
 import { getStoreSettings } from "@/services/store-settings";
 
 function JsonLd({ data }: { data: Record<string, unknown> }) {
@@ -102,7 +101,11 @@ export function BreadcrumbJsonLd({
           "@type": "ListItem",
           position: i + 1,
           name: item.name,
-          ...(item.href ? { item: `${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}${item.href}` } : {}),
+          ...(item.href
+            ? {
+                item: `${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}${item.href}`,
+              }
+            : {}),
         })),
       }}
     />

@@ -1,24 +1,26 @@
 "use client";
 
-import { useTransition } from "react";
-import Image from "next/image";
-import Link from "next/link";
-import { Heart, ShoppingBag, Trash2, ArrowLeft } from "lucide-react";
-import { Button, EmptyState, Rating } from "@/components/ui";
-import { Price } from "@/components/ui/price";
-import { WishlistButton } from "./wishlist-button";
 import { moveWishlistToCart, removeFromWishlist } from "@/actions/wishlist";
+import { Button, EmptyState } from "@/components/ui";
+import { Price } from "@/components/ui/price";
 import { ROUTES } from "@/constants";
-import { cn } from "@/utils/cn";
-import { formatCurrency } from "@/utils/format";
 import type { WishlistItemWithProduct } from "@/lib/wishlist";
 import type { StockStatus } from "@/types/product";
+import { cn } from "@/utils/cn";
+import { Heart, ShoppingBag, Trash2 } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { useTransition } from "react";
+import { WishlistButton } from "./wishlist-button";
 
 interface WishlistPageContentProps {
   items: WishlistItemWithProduct[];
 }
 
-function getStockDisplay(stock: number): { status: StockStatus; label: string } {
+function getStockDisplay(stock: number): {
+  status: StockStatus;
+  label: string;
+} {
   if (stock <= 0) return { status: "out_of_stock", label: "Out of Stock" };
   if (stock <= 5) return { status: "low_stock", label: "Low Stock" };
   return { status: "in_stock", label: "In Stock" };
@@ -67,7 +69,7 @@ export function WishlistPageContent({ items }: WishlistPageContentProps) {
                 href={ROUTES.productDetail(item.product.slug)}
                 className="relative"
               >
-                <div className="relative aspect-[4/3] overflow-hidden rounded-t-box bg-base-200">
+                <div className="relative aspect-4/3 overflow-hidden rounded-t-box bg-base-200">
                   {item.product.image ? (
                     <Image
                       src={item.product.image}
@@ -84,7 +86,10 @@ export function WishlistPageContent({ items }: WishlistPageContentProps) {
                 </div>
 
                 <div className="absolute right-2 top-2 z-10">
-                  <WishlistButton slug={item.product.slug} initialState={true} />
+                  <WishlistButton
+                    slug={item.product.slug}
+                    initialState={true}
+                  />
                 </div>
               </Link>
 
@@ -105,7 +110,11 @@ export function WishlistPageContent({ items }: WishlistPageContentProps) {
                   </Link>
                 </h3>
 
-                <Price price={price} discount={discount > 0 ? discount : null} size="sm" />
+                <Price
+                  price={price}
+                  discount={discount > 0 ? discount : null}
+                  size="sm"
+                />
 
                 <span
                   className={cn(

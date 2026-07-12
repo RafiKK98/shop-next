@@ -1,14 +1,15 @@
 "use client";
 
-import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
-import { ChevronUp, ChevronDown, Search, Eye, Pencil, Trash2, FolderTree } from "lucide-react";
-import { formatDate } from "@/utils/format";
 import { Badge } from "@/components/ui";
 import type { CategoryListItem } from "@/services/admin/categories";
-import { DeleteCategoryButton } from "./delete-category-button";
-import { CategoryDetailModal } from "./category-detail-modal";
+import { formatDate } from "@/utils/format";
+import { ChevronDown, ChevronUp, Eye, Pencil, Search } from "lucide-react";
+import type { Route } from "next";
+import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
+import { CategoryDetailModal } from "./category-detail-modal";
+import { DeleteCategoryButton } from "./delete-category-button";
 
 interface CategoriesTableProps {
   categories: CategoryListItem[];
@@ -25,7 +26,6 @@ export function CategoriesTable({
   categories: items,
   total,
   page,
-  pageSize,
   totalPages,
   search,
   sort,
@@ -45,7 +45,7 @@ export function CategoriesTable({
   };
 
   const navigate = (url: string) => {
-    router.push(url as any);
+    router.push(url as Route);
   };
 
   const toggleSort = (column: string) => {
@@ -240,9 +240,7 @@ export function CategoriesTable({
             <button
               type="button"
               disabled={page <= 1}
-              onClick={() =>
-                navigate(createUrl({ page: String(page - 1) }))
-              }
+              onClick={() => navigate(createUrl({ page: String(page - 1) }))}
               className="btn btn-outline btn-sm"
             >
               Previous
@@ -250,9 +248,7 @@ export function CategoriesTable({
             <button
               type="button"
               disabled={page >= totalPages}
-              onClick={() =>
-                navigate(createUrl({ page: String(page + 1) }))
-              }
+              onClick={() => navigate(createUrl({ page: String(page + 1) }))}
               className="btn btn-outline btn-sm"
             >
               Next

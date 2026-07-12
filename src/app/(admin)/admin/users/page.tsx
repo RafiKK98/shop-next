@@ -3,6 +3,7 @@ import { SITE } from "@/constants";
 import { AdminPageHeader } from "@/components/admin/admin-page-header";
 import { UsersTable } from "@/components/admin/users";
 import { getAdminUsers } from "@/services/admin/users";
+import type { UserRole, UserStatus } from "@/services/admin/user-types";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -20,8 +21,8 @@ export default async function AdminUsersPage({ searchParams }: PageProps) {
   const search = (sp.search as string) ?? "";
   const sort = (sp.sort as string) ?? "createdAt";
   const order = (sp.order as "asc" | "desc") ?? "desc";
-  const roleFilter = (sp.role as string) ?? "";
-  const statusFilter = (sp.status as string) ?? "";
+  const roleFilter = (sp.role as UserRole | "") ?? "";
+  const statusFilter = (sp.status as UserStatus | "") ?? "";
 
   const result = await getAdminUsers({
     page,
@@ -29,8 +30,8 @@ export default async function AdminUsersPage({ searchParams }: PageProps) {
     search,
     sort,
     order,
-    role: roleFilter as any,
-    status: statusFilter as any,
+    role: roleFilter,
+    status: statusFilter,
   });
 
   return (

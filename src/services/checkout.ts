@@ -1,8 +1,17 @@
 import { db } from "@/db";
-import { orders, orderItems, cartItems, carts, products, addresses, coupons, couponUsages } from "@/db/schema";
-import { eq, and, sql } from "drizzle-orm";
-import { productImages } from "@/db/schema";
-import { validateCoupon, computeDiscount } from "./coupons";
+import {
+  addresses,
+  cartItems,
+  carts,
+  coupons,
+  couponUsages,
+  orderItems,
+  orders,
+  productImages,
+  products,
+} from "@/db/schema";
+import { and, eq, sql } from "drizzle-orm";
+import { validateCoupon } from "./coupons";
 
 export interface CreateOrderResult {
   orderId: string;
@@ -13,7 +22,14 @@ export interface CreateOrderError {
 }
 
 function parseDbError(err: unknown): string {
-  const e = err as Record<string, unknown> & { message?: string; code?: string; constraint?: string; column?: string; table?: string; detail?: string };
+  const e = err as Record<string, unknown> & {
+    message?: string;
+    code?: string;
+    constraint?: string;
+    column?: string;
+    table?: string;
+    detail?: string;
+  };
 
   if (e.code) {
     const parts = [`SQLSTATE ${e.code}`];
@@ -41,7 +57,9 @@ interface ProductForOrder {
   image: string | null;
 }
 
-async function fetchProduct(productId: string): Promise<ProductForOrder | null> {
+async function fetchProduct(
+  productId: string,
+): Promise<ProductForOrder | null> {
   const row = await db
     .select({
       id: products.id,
@@ -134,15 +152,17 @@ export async function createOrder(
   }
 
   // 4. Validate every product
-  const validatedItems: { cartItemId: string; product: ProductForOrder; quantity: number }[] = [];
+  const validatedItems: {
+    cartItemId: string;
+    product: ProductForOrder;
+    quantity: number;
+  }[] = [];
 
   for (const item of items) {
     const product = await fetchProduct(item.productId);
 
     if (!product) {
-      await db
-        .delete(cartItems)
-        .where(eq(cartItems.id, item.id));
+      await db.delete(cartItems).where(eq(cartItems.id, item.id));
       return { error: "Some items in your cart are no longer available" };
     }
 
@@ -157,7 +177,11 @@ export async function createOrder(
       };
     }
 
-    validatedItems.push({ cartItemId: item.id, product, quantity: item.quantity });
+    validatedItems.push({
+      cartItemId: item.id,
+      product,
+      quantity: item.quantity,
+    });
   }
 
   // 5. Calculate base totals
@@ -270,20 +294,23 @@ export async function createOrder(
       }
 
       // Remove all cart items (keep the cart)
-      await tx
-        .delete(cartItems)
-        .where(eq(cartItems.cartId, cart.id));
+      await tx.delete(cartItems).where(eq(cartItems.cartId, cart.id));
 
       return { orderId: order.id };
     });
   } catch (err) {
     const details = parseDbError(err);
     console.error("[createOrder] transaction failed:", details, err);
-    return { error: "A database error occurred while placing your order. Please try again." };
+    return {
+      error:
+        "A database error occurred while placing your order. Please try again.",
+    };
   }
 
   if (!result) {
-    return { error: "Some items could not be fulfilled due to insufficient stock" };
+    return {
+      error: "Some items could not be fulfilled due to insufficient stock",
+    };
   }
 
   return result;

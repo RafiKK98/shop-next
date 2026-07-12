@@ -11,7 +11,7 @@ import { slugify } from "@/utils/slug";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useCallback, useState, useTransition } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, type Resolver } from "react-hook-form";
 
 interface CategoryOption {
   id: string;
@@ -36,7 +36,7 @@ export function ProductForm({
   const [isPending, startTransition] = useTransition();
 
   const form = useForm<ProductFormValues>({
-    resolver: zodResolver(productFormSchema) as any,
+    resolver: zodResolver(productFormSchema) as unknown as Resolver<ProductFormValues>,
     defaultValues: defaultValues ?? {
       title: "",
       slug: "",

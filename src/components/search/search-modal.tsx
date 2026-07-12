@@ -22,6 +22,7 @@ import {
   Users,
   X,
 } from "lucide-react";
+import type { Route } from "next";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 
@@ -210,7 +211,7 @@ export function SearchModal({ onClose, userRole }: SearchModalProps) {
 
   const handleNavigate = useCallback(
     (href: string) => {
-      router.push(href as never);
+      router.push(href as Route);
       onClose();
     },
     [router, onClose],

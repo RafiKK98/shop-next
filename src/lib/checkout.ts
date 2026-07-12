@@ -1,4 +1,3 @@
-import { db } from "@/db";
 import { getCartItems } from "@/lib/cart";
 
 export interface CartValidation {

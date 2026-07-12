@@ -2,6 +2,7 @@
 
 import { requireAdmin } from "@/lib/auth/guards";
 import { updateReviewStatus } from "@/services/admin/reviews";
+import { reviewStatusEnum } from "@/db/schema";
 import { revalidatePath, updateTag } from "next/cache";
 import { CACHE_TAGS } from "@/lib/cache";
 
@@ -15,11 +16,13 @@ interface ActionError {
 
 type ActionResult = ActionSuccess | ActionError;
 
-const VALID_STATUSES = ["approved", "rejected", "hidden"];
+type ReviewStatus = (typeof reviewStatusEnum.enumValues)[number];
+
+const VALID_STATUSES: ReviewStatus[] = ["approved", "rejected", "hidden"];
 
 export async function moderateReview(
   reviewId: string,
-  status: string,
+  status: ReviewStatus,
 ): Promise<ActionResult> {
   await requireAdmin();
 

@@ -12,6 +12,8 @@ import {
   Pencil,
   Search,
 } from "lucide-react";
+import type { Route } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
@@ -33,7 +35,6 @@ export function ProductTable({
   products,
   total,
   page,
-  pageSize,
   totalPages,
   search,
   sort,
@@ -53,7 +54,7 @@ export function ProductTable({
   };
 
   const navigate = (url: string) => {
-    router.push(url as never);
+    router.push(url as Route);
   };
 
   const toggleSort = (column: string) => {
@@ -174,11 +175,12 @@ export function ProductTable({
               products.map((product) => (
                 <tr key={product.id} className="hover">
                   <td>
-                    <div className="flex size-10 items-center justify-center overflow-hidden rounded-lg bg-base-200">
+                    <div className="flex relative size-10 items-center justify-center overflow-hidden rounded-lg bg-base-200">
                       {product.thumbnail ? (
-                        <img
+                        <Image
                           src={product.thumbnail}
                           alt={product.title}
+                          fill
                           className="size-full object-cover"
                         />
                       ) : (
@@ -187,13 +189,12 @@ export function ProductTable({
                     </div>
                   </td>
                   <td>
-                    <button
-                      type="button"
-                      onClick={() => setDetailProductId(product.id)}
+                    <Link
+                      href={`/admin/products/${product.id}`}
                       className="text-sm font-medium hover:text-primary"
                     >
                       {product.title}
-                    </button>
+                    </Link>
                     <p className="text-xs text-base-content/40">
                       {product.slug}
                     </p>

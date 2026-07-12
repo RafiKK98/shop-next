@@ -5,6 +5,7 @@ import type { ProductDetail } from "@/services/admin/products";
 import { cn } from "@/utils/cn";
 import { formatCurrency, formatDate } from "@/utils/format";
 import { Package, Star, X } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
@@ -79,11 +80,12 @@ export function ProductDetailModal({
                   {product.images.map((img) => (
                     <div
                       key={img.id}
-                      className="flex size-24 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-base-200"
+                      className="flex relative size-24 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-base-200"
                     >
-                      <img
+                      <Image
                         src={img.url}
                         alt={img.alt ?? product.title}
+                        fill
                         className="size-full object-cover"
                       />
                     </div>

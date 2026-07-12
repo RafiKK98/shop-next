@@ -3,11 +3,14 @@
 import { db } from "@/db";
 import { reviews } from "@/db/schema";
 import { requireAuth } from "@/lib/auth/guards";
-import { reviewFormServerSchema } from "@/lib/validations/review";
-import { hasVerifiedPurchase, getUserReviewForProduct } from "@/services/reviews";
-import { eq, and } from "drizzle-orm";
-import { revalidatePath, updateTag } from "next/cache";
 import { CACHE_TAGS } from "@/lib/cache";
+import { reviewFormServerSchema } from "@/lib/validations/review";
+import {
+  getUserReviewForProduct,
+  hasVerifiedPurchase,
+} from "@/services/reviews";
+import { eq } from "drizzle-orm";
+import { revalidatePath, updateTag } from "next/cache";
 
 interface ActionSuccess {
   success: true;
@@ -68,7 +71,8 @@ export async function createReview(formData: FormData): Promise<ActionResult> {
     updateTag(CACHE_TAGS.REVIEWS);
     return { success: true, reviewId: review.id };
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Failed to submit review";
+    const message =
+      err instanceof Error ? err.message : "Failed to submit review";
     return { error: message };
   }
 }
@@ -123,7 +127,8 @@ export async function updateReview(formData: FormData): Promise<ActionResult> {
     updateTag(CACHE_TAGS.REVIEWS);
     return { success: true, reviewId };
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Failed to update review";
+    const message =
+      err instanceof Error ? err.message : "Failed to update review";
     return { error: message };
   }
 }

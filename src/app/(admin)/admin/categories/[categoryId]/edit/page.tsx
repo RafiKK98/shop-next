@@ -1,17 +1,16 @@
-import { notFound } from "next/navigation";
-import { SITE } from "@/constants";
-import { AdminPageHeader } from "@/components/admin/admin-page-header";
 import { AdminBreadcrumbs } from "@/components/admin/admin-breadcrumbs";
+import { AdminPageHeader } from "@/components/admin/admin-page-header";
 import { CategoryForm } from "@/components/admin/categories";
+import { SITE } from "@/constants";
 import { getAdminCategoryById } from "@/services/admin/categories";
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 
 interface PageProps {
   params: Promise<{ categoryId: string }>;
 }
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const { categoryId } = await params;
+export async function generateMetadata(): Promise<Metadata> {
   return {
     title: `Edit Category | Admin | ${SITE.name}`,
   };
@@ -29,7 +28,10 @@ export default async function EditCategoryPage({ params }: PageProps) {
         <AdminBreadcrumbs />
       </div>
 
-      <AdminPageHeader title={`Edit: ${category.name}`} description="Update category details" />
+      <AdminPageHeader
+        title={`Edit: ${category.name}`}
+        description="Update category details"
+      />
 
       <div className="mx-auto max-w-2xl">
         <CategoryForm

@@ -3,11 +3,14 @@ import "server-only";
 import { db } from "@/db";
 import { categories, productImages, products, reviews } from "@/db/schema";
 import type { Product, StockStatus } from "@/types/product";
-import { and, eq, sql } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 
 const NEW_PRODUCT_DAYS = 30;
 
-function computeCompareAtPrice(price: number, discount: number | null): number | null {
+function computeCompareAtPrice(
+  price: number,
+  discount: number | null,
+): number | null {
   if (!discount || discount <= 0) return null;
   return Math.round((price / (1 - discount / 100)) * 100) / 100;
 }
@@ -28,7 +31,9 @@ export async function getCatalogProducts(): Promise<Product[]> {
   const reviewAgg = db
     .select({
       productId: reviews.productId,
-      avgRating: sql<number>`COALESCE(AVG(${reviews.rating}), 0)`.as("avg_rating"),
+      avgRating: sql<number>`COALESCE(AVG(${reviews.rating}), 0)`.as(
+        "avg_rating",
+      ),
       reviewCount: sql<number>`COUNT(*)`.as("review_count"),
     })
     .from(reviews)
@@ -93,7 +98,9 @@ export async function getCatalogProducts(): Promise<Product[]> {
   return Array.from(productMap.values());
 }
 
-export async function getCatalogProductsByCategory(categorySlug: string): Promise<Product[]> {
+export async function getCatalogProductsByCategory(
+  categorySlug: string,
+): Promise<Product[]> {
   const all = await getCatalogProducts();
   return all.filter((p) => p.categorySlug === categorySlug);
 }

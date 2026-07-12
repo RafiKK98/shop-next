@@ -1,6 +1,6 @@
 import { db } from "@/db";
-import { wishlistItems, products, productImages } from "@/db/schema";
-import { eq, and, sql, inArray } from "drizzle-orm";
+import { productImages, products, wishlistItems } from "@/db/schema";
+import { eq, sql } from "drizzle-orm";
 
 export interface WishlistItemWithProduct {
   id: string;
@@ -38,7 +38,9 @@ function getFirstImageAlt() {
   `;
 }
 
-export async function getWishlistItems(userId: string): Promise<WishlistItemWithProduct[]> {
+export async function getWishlistItems(
+  userId: string,
+): Promise<WishlistItemWithProduct[]> {
   const rows = await db
     .select({
       id: wishlistItems.id,

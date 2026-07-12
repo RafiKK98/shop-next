@@ -2,7 +2,7 @@ import "server-only";
 
 import { db } from "@/db";
 import { orderItems, orders, reviews, users } from "@/db/schema";
-import { and, asc, count, desc, eq, inArray, ne, sql } from "drizzle-orm";
+import { and, asc, count, desc, eq, ne, sql } from "drizzle-orm";
 
 // ── Types ────────────────────────────────────────────────────────────────
 
@@ -100,7 +100,10 @@ export async function getProductReviews(
   const sort = params.sort ?? "newest";
   const approvedStatus = "approved";
 
-  const where = and(eq(reviews.productId, productId), eq(reviews.status, approvedStatus));
+  const where = and(
+    eq(reviews.productId, productId),
+    eq(reviews.status, approvedStatus),
+  );
 
   const orderFn =
     sort === "highest"

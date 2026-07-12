@@ -1,15 +1,15 @@
 "use client";
 
-import { useEffect } from "react";
-import { Rating, Price, Button } from "@/components/ui";
 import { AddToCartButton } from "@/components/cart";
+import { Price, Rating } from "@/components/ui";
 import { WishlistButton } from "@/components/wishlist";
-import { ProductCardImage } from "./product-card-image";
+import { ROUTES } from "@/constants";
 import type { Product } from "@/types/product";
 import { getProductDiscount } from "@/types/product";
-import { ROUTES } from "@/constants";
 import { X } from "lucide-react";
 import Link from "next/link";
+import { useEffect } from "react";
+import { ProductCardImage } from "./product-card-image";
 
 interface ProductQuickViewModalProps {
   product: Product;
@@ -76,15 +76,26 @@ export function ProductQuickViewModal({
               </span>
             </div>
 
-            <Price price={product.price} discount={discount || null} size="lg" />
+            <Price
+              price={product.price}
+              discount={discount || null}
+              size="lg"
+            />
 
             <p className="line-clamp-3 text-sm leading-relaxed text-base-content/70">
-              High-quality {product.title} from {product.brand}. Shop now for the best prices.
+              High-quality {product.title} from {product.brand}. Shop now for
+              the best prices.
             </p>
 
             <div className="mt-auto flex flex-col gap-3 pt-4">
-              <AddToCartButton slug={product.slug} className="w-full" disabled={product.stockStatus === "out_of_stock"}>
-                {product.stockStatus === "out_of_stock" ? "Out of Stock" : "Add to Cart"}
+              <AddToCartButton
+                slug={product.slug}
+                className="w-full"
+                disabled={product.stockStatus === "out_of_stock"}
+              >
+                {product.stockStatus === "out_of_stock"
+                  ? "Out of Stock"
+                  : "Add to Cart"}
               </AddToCartButton>
               <WishlistButton slug={product.slug} showLabel size="md" />
               <Link

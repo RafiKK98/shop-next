@@ -36,14 +36,6 @@ function parseDbError(err: unknown): string {
   return "An unexpected database error occurred";
 }
 
-async function getProductImageUrls(productId: string): Promise<string[]> {
-  const rows = await db
-    .select({ url: productImages.imageUrl })
-    .from(productImages)
-    .where(eq(productImages.productId, productId));
-  return rows.map((r) => r.url);
-}
-
 export async function createProduct(formData: FormData): Promise<ActionResult> {
   await requireAdmin();
 

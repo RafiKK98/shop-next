@@ -2,13 +2,15 @@
 
 import { createReview, updateReview } from "@/actions/reviews";
 import { Button, FormError, Label } from "@/components/ui";
-import { reviewFormSchema, type ReviewFormValues } from "@/lib/validations/review";
-import { notify, crud, errors } from "@/lib/notifications";
+import { notify } from "@/lib/notifications";
+import {
+  reviewFormSchema,
+  type ReviewFormValues,
+} from "@/lib/validations/review";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
-import { useForm } from "react-hook-form";
-import { Star } from "lucide-react";
+import { useForm, type Resolver } from "react-hook-form";
 
 interface ReviewFormProps {
   productId: string;
@@ -24,7 +26,9 @@ export function ReviewForm({ productId, defaultValues }: ReviewFormProps) {
   const isEditing = !!defaultValues?.reviewId;
 
   const form = useForm<ReviewFormValues>({
-    resolver: zodResolver(reviewFormSchema) as any,
+    resolver: zodResolver(
+      reviewFormSchema,
+    ) as unknown as Resolver<ReviewFormValues>,
     defaultValues: defaultValues ?? {
       rating: 0,
       title: "",
@@ -55,7 +59,9 @@ export function ReviewForm({ productId, defaultValues }: ReviewFormProps) {
         notify.error(result.error);
       } else {
         notify.success(
-          isEditing ? "Review updated successfully" : "Review submitted successfully",
+          isEditing
+            ? "Review updated successfully"
+            : "Review submitted successfully",
           "It will appear once approved by a moderator.",
         );
         router.refresh();
@@ -88,13 +94,17 @@ export function ReviewForm({ productId, defaultValues }: ReviewFormProps) {
               className="mask mask-star-2 bg-orange-400"
               aria-label={`${star} star${star > 1 ? "s" : ""}`}
               checked={currentRating >= star}
-              onChange={() => form.setValue("rating", star, { shouldValidate: true })}
+              onChange={() =>
+                form.setValue("rating", star, { shouldValidate: true })
+              }
               onMouseEnter={() => setHoverRating(star)}
             />
           ))}
         </div>
         {form.formState.errors.rating && (
-          <p className="mt-1 text-xs text-error">{form.formState.errors.rating.message}</p>
+          <p className="mt-1 text-xs text-error">
+            {form.formState.errors.rating.message}
+          </p>
         )}
       </div>
 

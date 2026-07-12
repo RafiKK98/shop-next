@@ -3,11 +3,14 @@ import "server-only";
 import { db } from "@/db";
 import { categories, productImages, products, reviews } from "@/db/schema";
 import type { Product, StockStatus } from "@/types/product";
-import { and, eq, sql } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 
 const NEW_PRODUCT_DAYS = 30;
 
-function computeCompareAtPrice(price: number, discount: number | null): number | null {
+function computeCompareAtPrice(
+  price: number,
+  discount: number | null,
+): number | null {
   if (!discount || discount <= 0) return null;
   return Math.round((price / (1 - discount / 100)) * 100) / 100;
 }
@@ -27,7 +30,9 @@ function computeIsNew(createdAt: Date | null): boolean {
 const reviewAgg = db
   .select({
     productId: reviews.productId,
-    avgRating: sql<number>`COALESCE(AVG(${reviews.rating}), 0)`.as("avg_rating"),
+    avgRating: sql<number>`COALESCE(AVG(${reviews.rating}), 0)`.as(
+      "avg_rating",
+    ),
     reviewCount: sql<number>`COUNT(*)`.as("review_count"),
   })
   .from(reviews)
@@ -35,22 +40,24 @@ const reviewAgg = db
   .groupBy(reviews.productId)
   .as("review_agg");
 
-function mapRows(rows: {
-  id: string;
-  title: string;
-  slug: string;
-  price: string;
-  discount: string | null;
-  stock: number | null;
-  featured: boolean | null;
-  createdAt: Date | null;
-  brand: string | null;
-  categorySlug: string | null;
-  categoryName: string | null;
-  imageUrl: string | null;
-  avgRating: number | null;
-  reviewCount: number | null;
-}[]): Product[] {
+function mapRows(
+  rows: {
+    id: string;
+    title: string;
+    slug: string;
+    price: string;
+    discount: string | null;
+    stock: number | null;
+    featured: boolean | null;
+    createdAt: Date | null;
+    brand: string | null;
+    categorySlug: string | null;
+    categoryName: string | null;
+    imageUrl: string | null;
+    avgRating: number | null;
+    reviewCount: number | null;
+  }[],
+): Product[] {
   const productMap = new Map<string, Product>();
   for (const row of rows) {
     const existing = productMap.get(row.id);

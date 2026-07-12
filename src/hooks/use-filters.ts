@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useMemo } from "react";
+import type { Route } from "next";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import type { Product } from "@/types/product";
 import type { FilterState } from "@/lib/filters";
@@ -73,7 +74,7 @@ export function useFilters(products: Product[]): UseFiltersReturn {
     (newParams: URLSearchParams, options?: { resetPage?: boolean }) => {
       if (options?.resetPage) newParams.delete("page");
       const qs = newParams.toString();
-      router.replace((qs ? `${baseUrl}?${qs}` : baseUrl) as any, { scroll: false });
+      router.replace((qs ? `${baseUrl}?${qs}` : baseUrl) as Route, { scroll: false });
     },
     [baseUrl, router],
   );
@@ -188,7 +189,7 @@ export function useFilters(products: Product[]): UseFiltersReturn {
   );
 
   const clearFilters = useCallback(() => {
-    router.replace(baseUrl as any, { scroll: false });
+    router.replace(baseUrl as Route, { scroll: false });
   }, [baseUrl, router]);
 
   return {

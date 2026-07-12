@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import type { Route } from "next";
 import { useRouter } from "next/navigation";
 import { Heart } from "lucide-react";
 import { cn } from "@/utils/cn";
@@ -43,7 +44,7 @@ export function WishlistButton({
 
       if (result?.redirect) {
         setIsWishlisted(prev);
-        router.push(result.redirect as any);
+        router.push(result.redirect as Route);
         return;
       }
 

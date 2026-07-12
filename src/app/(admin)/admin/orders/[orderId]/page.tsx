@@ -19,6 +19,7 @@ import {
   User,
 } from "lucide-react";
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -44,17 +45,11 @@ const statusBadgeVariant: Record<string, string> = {
   cancelled: "badge-error",
 };
 
-const paymentBadgeVariant: Record<string, string> = {
-  pending: "badge-warning",
-  completed: "badge-success",
-  failed: "badge-error",
-  refunded: "badge-info",
-};
-
 export default async function AdminOrderDetailPage({ params }: PageProps) {
   const { orderId } = await params;
   const order = await getAdminOrderById(orderId);
 
+  console.log({ orderId, order });
   if (!order) notFound();
 
   return (
@@ -92,11 +87,12 @@ export default async function AdminOrderDetailPage({ params }: PageProps) {
                   key={item.id}
                   className="flex items-center gap-4 px-5 py-4"
                 >
-                  <div className="flex size-14 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-base-200">
+                  <div className="flex relative size-14 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-base-200">
                     {item.productImage ? (
-                      <img
+                      <Image
                         src={item.productImage}
                         alt={item.productName}
+                        fill
                         className="size-full object-cover"
                       />
                     ) : (

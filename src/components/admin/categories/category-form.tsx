@@ -12,7 +12,7 @@ import { slugify } from "@/utils/slug";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useCallback, useState, useTransition } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, type Resolver } from "react-hook-form";
 
 interface CategoryFormProps {
   defaultValues?: CategoryFormValues;
@@ -30,7 +30,7 @@ export function CategoryForm({
   const [isPending, startTransition] = useTransition();
 
   const form = useForm<CategoryFormValues>({
-    resolver: zodResolver(categoryFormSchema) as any,
+    resolver: zodResolver(categoryFormSchema) as unknown as Resolver<CategoryFormValues>,
     defaultValues: defaultValues ?? {
       name: "",
       slug: "",

@@ -1,6 +1,7 @@
 import { AdminContainer } from "@/components/admin/admin-container";
 import { AdminPageHeader } from "@/components/admin/admin-page-header";
 import { CouponForm } from "@/components/admin/coupons";
+import type { CouponFormValues } from "@/lib/validations/coupon";
 import { SITE } from "@/constants";
 import { getAdminCouponById } from "@/services/admin/coupons";
 import type { Metadata } from "next";
@@ -34,17 +35,13 @@ export default async function EditCouponPage({ params }: PageProps) {
     type: coupon.type,
     value: parseFloat(coupon.value),
     description: coupon.description ?? "",
-    minPurchase: coupon.minPurchase
-      ? parseFloat(coupon.minPurchase)
-      : ("" as any),
-    maxDiscount: coupon.maxDiscount
-      ? parseFloat(coupon.maxDiscount)
-      : ("" as any),
-    maxUsage: coupon.maxUsage ?? ("" as any),
+    minPurchase: coupon.minPurchase ? parseFloat(coupon.minPurchase) : undefined,
+    maxDiscount: coupon.maxDiscount ? parseFloat(coupon.maxDiscount) : undefined,
+    maxUsage: coupon.maxUsage ?? undefined,
     isActive: coupon.isActive ?? true,
-    startDate: coupon.startDate ? toDatetimeLocal(coupon.startDate) : "",
-    expiresAt: coupon.expiresAt ? toDatetimeLocal(coupon.expiresAt) : "",
-  } as any;
+    startDate: coupon.startDate ? toDatetimeLocal(coupon.startDate) : null,
+    expiresAt: coupon.expiresAt ? toDatetimeLocal(coupon.expiresAt) : null,
+  } as Partial<CouponFormValues & { startDate?: string | Date | null; expiresAt?: string | Date | null }>;
 
   return (
     <>

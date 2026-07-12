@@ -1,15 +1,22 @@
 import { db } from "@/db";
-import { orders, orderItems, products } from "@/db/schema";
-import { eq, and, desc, sql } from "drizzle-orm";
-import { productImages } from "@/db/schema";
-import { revalidatePath } from "next/cache";
+import {
+  orderItems,
+  orders,
+  orderStatusEnum,
+  paymentStatusEnum,
+  products,
+} from "@/db/schema";
+import { and, desc, eq, sql } from "drizzle-orm";
+
+type OrderStatus = (typeof orderStatusEnum.enumValues)[number];
+type PaymentStatus = (typeof paymentStatusEnum.enumValues)[number];
 
 export interface OrderListItem {
   id: string;
   orderNumber: string;
   total: string;
-  status: string;
-  paymentStatus: string;
+  status: OrderStatus;
+  paymentStatus: PaymentStatus;
   itemCount: number;
   createdAt: Date;
   thumbnail: string | null;
@@ -20,8 +27,8 @@ export interface OrderDetail {
   orderNumber: string;
   userId: string;
   total: string;
-  status: string;
-  paymentStatus: string;
+  status: OrderStatus;
+  paymentStatus: PaymentStatus;
   createdAt: Date;
   updatedAt: Date;
   items: {

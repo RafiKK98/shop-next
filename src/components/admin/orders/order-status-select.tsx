@@ -1,17 +1,17 @@
 "use client";
 
-import { useTransition } from "react";
-import { useRouter } from "next/navigation";
 import { updateOrderStatus, updatePaymentStatus } from "@/actions/admin/orders";
-import { notify, errors } from "@/lib/notifications";
+import { notify } from "@/lib/notifications";
 import {
   ORDER_STATUS_LABEL,
+  PAYMENT_STATUS_LABEL,
   VALID_ORDER_TRANSITIONS,
   VALID_PAYMENT_TRANSITIONS,
-  PAYMENT_STATUS_LABEL,
   type OrderStatus,
   type PaymentStatus,
 } from "@/services/admin/order-types";
+import { useRouter } from "next/navigation";
+import { useTransition } from "react";
 
 interface OrderStatusSelectProps {
   orderId: string;
@@ -28,7 +28,6 @@ export function OrderStatusSelect({
 
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newStatus = e.target.value as OrderStatus;
-    const previousValue = currentStatus;
 
     startTransition(async () => {
       const result = await updateOrderStatus(orderId, newStatus);
@@ -81,13 +80,11 @@ export function PaymentStatusSelect({
 
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newStatus = e.target.value as PaymentStatus;
-    const previousValue = currentStatus;
 
     startTransition(async () => {
       const result = await updatePaymentStatus(orderId, newStatus);
-      if ("error" in result) {
-        notify.error(result.error);
-      } else {
+      if ("error" in result) notify.error(result.error);
+      else {
         notify.success(
           `Payment status updated to ${PAYMENT_STATUS_LABEL[newStatus]}`,
         );

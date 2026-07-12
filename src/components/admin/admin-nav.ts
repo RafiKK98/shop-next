@@ -1,12 +1,12 @@
 import {
   LayoutDashboard,
   Package,
-  Tags,
-  ShoppingCart,
-  Users,
-  Ticket,
-  Star,
   Settings,
+  ShoppingCart,
+  Star,
+  Tags,
+  Ticket,
+  Users,
   type LucideIcon,
 } from "lucide-react";
 
@@ -26,6 +26,3 @@ export const ADMIN_NAV: readonly AdminNavItem[] = [
   { label: "Reviews", href: "/admin/reviews", icon: Star },
   { label: "Settings", href: "/admin/settings", icon: Settings },
 ] as const;
-
-const navHrefs = ADMIN_NAV.map((item) => item.href);
-export type AdminRoute = (typeof navHrefs)[number];

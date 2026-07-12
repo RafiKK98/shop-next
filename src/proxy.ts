@@ -1,8 +1,6 @@
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
 import { auth } from "@/lib/auth";
-
-const PUBLIC_ROUTES = ["/", "/products", "/categories", "/search", "/about", "/faq", "/cart"];
+import type { NextAuthRequest } from "next-auth";
+import { NextResponse } from "next/server";
 
 const AUTH_ROUTES = ["/login", "/register"];
 
@@ -10,7 +8,7 @@ const PROTECTED_ROUTES = ["/dashboard", "/checkout", "/orders", "/wishlist"];
 
 const ADMIN_ROUTES = ["/admin"];
 
-export const proxy = auth((req: NextRequest & { auth?: any }) => {
+export const proxy = auth((req: NextAuthRequest) => {
   const { pathname } = req.nextUrl;
   const isAuthenticated = !!req.auth;
   const role = req.auth?.user?.role;

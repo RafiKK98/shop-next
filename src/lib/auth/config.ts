@@ -9,10 +9,10 @@ import { verifyPassword } from "./password";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: DrizzleAdapter(db, {
-    usersTable: users as any,
-    accountsTable: accounts as any,
-    sessionsTable: sessions as any,
-    verificationTokensTable: verificationTokens as any,
+    usersTable: users,
+    accountsTable: accounts,
+    sessionsTable: sessions,
+    verificationTokensTable: verificationTokens,
   }),
   session: { strategy: "jwt" },
   pages: {

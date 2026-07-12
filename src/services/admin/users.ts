@@ -1,17 +1,32 @@
 import "server-only";
 
-import { cache } from "react";
 import { db } from "@/db";
-import { users, orders, orderItems, wishlistItems, addresses } from "@/db/schema";
-import { and, asc, count, desc, eq, or, sql, desc as descFn } from "drizzle-orm";
+import {
+  addresses,
+  orderItems,
+  orders,
+  users,
+  wishlistItems,
+} from "@/db/schema";
+import {
+  and,
+  asc,
+  count,
+  desc,
+  desc as descFn,
+  eq,
+  or,
+  sql,
+} from "drizzle-orm";
+import { cache } from "react";
 import type {
-  UserListItem,
-  UserDetail,
-  UsersResponse,
   RecentOrder,
   RecentWishlistItem,
+  UserDetail,
+  UserRole,
+  UsersResponse,
+  UserStatus,
 } from "./user-types";
-import type { UserRole, UserStatus } from "./user-types";
 
 // ── Queries ─────────────────────────────────────────────────────────────
 
@@ -62,7 +77,8 @@ export async function getAdminUsers(params: {
   if (params.status) {
     whereConditions.push(eq(users.status, params.status));
   }
-  const where = whereConditions.length > 0 ? and(...whereConditions) : undefined;
+  const where =
+    whereConditions.length > 0 ? and(...whereConditions) : undefined;
 
   const sortColumn =
     sort === "name"
@@ -99,7 +115,10 @@ export async function getAdminUsers(params: {
       totalPages: Math.ceil(total / pageSize),
     };
   } catch (err) {
-    const e = err as Record<string, unknown> & { message?: string; code?: string };
+    const e = err as Record<string, unknown> & {
+      message?: string;
+      code?: string;
+    };
     console.error("[DB ERROR] getAdminUsers:", e.code ?? "", e.message ?? "");
     throw err;
   }
@@ -152,8 +171,15 @@ export const getAdminUserById = cache(async function getAdminUserById(
 
     return { ...user, totalSpent: Number(user.totalSpent), defaultAddress };
   } catch (err) {
-    const e = err as Record<string, unknown> & { message?: string; code?: string };
-    console.error("[DB ERROR] getAdminUserById:", e.code ?? "", e.message ?? "");
+    const e = err as Record<string, unknown> & {
+      message?: string;
+      code?: string;
+    };
+    console.error(
+      "[DB ERROR] getAdminUserById:",
+      e.code ?? "",
+      e.message ?? "",
+    );
     throw err;
   }
 });

@@ -3,7 +3,10 @@ import { SITE } from "@/constants";
 import { AdminPageHeader } from "@/components/admin/admin-page-header";
 import { ReviewsTable } from "@/components/admin/reviews";
 import { getAdminReviews } from "@/services/admin/reviews";
+import { reviewStatusEnum } from "@/db/schema";
 import type { Metadata } from "next";
+
+type ReviewStatus = (typeof reviewStatusEnum.enumValues)[number];
 
 export const metadata: Metadata = {
   title: `Reviews | Admin | ${SITE.name}`,
@@ -18,7 +21,8 @@ export default async function AdminReviewsPage({ searchParams }: PageProps) {
   const page = Number(sp.page) || 1;
   const pageSize = Number(sp.pageSize) || 20;
   const search = (sp.search as string) ?? "";
-  const status = (sp.status as string) ?? "";
+  const statusFilter = (sp.status as string) ?? "";
+  const status = (sp.status ?? undefined) as ReviewStatus | undefined;
   const sort = (sp.sort as string) ?? "createdAt";
   const order = (sp.order as "asc" | "desc") ?? "desc";
 
@@ -46,7 +50,7 @@ export default async function AdminReviewsPage({ searchParams }: PageProps) {
           pageSize={result.pageSize}
           totalPages={result.totalPages}
           search={search}
-          statusFilter={status}
+          statusFilter={statusFilter}
           sort={sort}
           order={order}
         />

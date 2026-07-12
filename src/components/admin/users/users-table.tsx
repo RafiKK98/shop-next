@@ -1,17 +1,16 @@
 "use client";
 
-import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
-import { ChevronUp, ChevronDown, Search, Eye, Pencil, Users } from "lucide-react";
-import { formatDate } from "@/utils/format";
-import { Badge, Avatar } from "@/components/ui";
+import { Avatar, Badge } from "@/components/ui";
 import {
   USER_ROLE_LABEL,
   USER_STATUS_LABEL,
   type UserListItem,
-  type UserRole,
-  type UserStatus,
 } from "@/services/admin/user-types";
+import { formatDate } from "@/utils/format";
+import { ChevronDown, ChevronUp, Eye, Pencil, Search } from "lucide-react";
+import type { Route } from "next";
+import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
 
 interface UsersTableProps {
   users: UserListItem[];
@@ -39,19 +38,24 @@ const statusBadgeVariant: Record<string, string> = {
 
 const ROLE_OPTIONS: { value: string; label: string }[] = [
   { value: "", label: "All Roles" },
-  ...Object.entries(USER_ROLE_LABEL).map(([value, label]) => ({ value, label })),
+  ...Object.entries(USER_ROLE_LABEL).map(([value, label]) => ({
+    value,
+    label,
+  })),
 ];
 
 const STATUS_OPTIONS: { value: string; label: string }[] = [
   { value: "", label: "All Statuses" },
-  ...Object.entries(USER_STATUS_LABEL).map(([value, label]) => ({ value, label })),
+  ...Object.entries(USER_STATUS_LABEL).map(([value, label]) => ({
+    value,
+    label,
+  })),
 ];
 
 export function UsersTable({
   users: items,
   total,
   page,
-  pageSize,
   totalPages,
   search,
   sort,
@@ -72,7 +76,7 @@ export function UsersTable({
   };
 
   const navigate = (url: string) => {
-    router.push(url as any);
+    router.push(url as Route);
   };
 
   const toggleSort = (column: string) => {
@@ -97,7 +101,7 @@ export function UsersTable({
     <div className="space-y-4">
       {/* Filters */}
       <div className="flex flex-wrap items-center gap-3">
-        <div className="relative flex-1 min-w-[200px]">
+        <div className="relative flex-1 min-w-50">
           <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-base-content/40" />
           <input
             type="text"
@@ -150,7 +154,11 @@ export function UsersTable({
                 >
                   Name
                   {sort === "name" &&
-                    (order === "asc" ? <ChevronUp className="size-3" /> : <ChevronDown className="size-3" />)}
+                    (order === "asc" ? (
+                      <ChevronUp className="size-3" />
+                    ) : (
+                      <ChevronDown className="size-3" />
+                    ))}
                 </button>
               </th>
               <th>Email</th>
@@ -162,7 +170,11 @@ export function UsersTable({
                 >
                   Role
                   {sort === "role" &&
-                    (order === "asc" ? <ChevronUp className="size-3" /> : <ChevronDown className="size-3" />)}
+                    (order === "asc" ? (
+                      <ChevronUp className="size-3" />
+                    ) : (
+                      <ChevronDown className="size-3" />
+                    ))}
                 </button>
               </th>
               <th className="hidden sm:table-cell">
@@ -173,7 +185,11 @@ export function UsersTable({
                 >
                   Status
                   {sort === "status" &&
-                    (order === "asc" ? <ChevronUp className="size-3" /> : <ChevronDown className="size-3" />)}
+                    (order === "asc" ? (
+                      <ChevronUp className="size-3" />
+                    ) : (
+                      <ChevronDown className="size-3" />
+                    ))}
                 </button>
               </th>
               <th className="hidden md:table-cell">Verified</th>
@@ -185,7 +201,11 @@ export function UsersTable({
                 >
                   Orders
                   {sort === "orderCount" &&
-                    (order === "asc" ? <ChevronUp className="size-3" /> : <ChevronDown className="size-3" />)}
+                    (order === "asc" ? (
+                      <ChevronUp className="size-3" />
+                    ) : (
+                      <ChevronDown className="size-3" />
+                    ))}
                 </button>
               </th>
               <th className="hidden xl:table-cell">Registered</th>
@@ -195,7 +215,10 @@ export function UsersTable({
           <tbody>
             {items.length === 0 ? (
               <tr>
-                <td colSpan={9} className="py-16 text-center text-sm text-base-content/40">
+                <td
+                  colSpan={9}
+                  className="py-16 text-center text-sm text-base-content/40"
+                >
                   {search || roleFilter || statusFilter
                     ? "No users match your filters"
                     : "No users yet"}
@@ -220,12 +243,25 @@ export function UsersTable({
                   </td>
                   <td className="text-sm text-base-content/60">{user.email}</td>
                   <td>
-                    <Badge variant={roleBadgeVariant[user.role] as any} size="xs">
+                    <Badge
+                      variant={
+                        roleBadgeVariant[user.role] as "ghost" | "primary"
+                      }
+                      size="xs"
+                    >
                       {USER_ROLE_LABEL[user.role]}
                     </Badge>
                   </td>
                   <td className="hidden sm:table-cell">
-                    <Badge variant={statusBadgeVariant[user.status] as any} size="xs">
+                    <Badge
+                      variant={
+                        statusBadgeVariant[user.status] as
+                          | "success"
+                          | "warning"
+                          | "error"
+                      }
+                      size="xs"
+                    >
                       {USER_STATUS_LABEL[user.status]}
                     </Badge>
                   </td>
@@ -236,7 +272,9 @@ export function UsersTable({
                       <span className="text-base-content/30">Not verified</span>
                     )}
                   </td>
-                  <td className="hidden text-sm lg:table-cell">{user.orderCount}</td>
+                  <td className="hidden text-sm lg:table-cell">
+                    {user.orderCount}
+                  </td>
                   <td className="hidden text-xs text-base-content/50 xl:table-cell">
                     {formatDate(user.createdAt)}
                   </td>

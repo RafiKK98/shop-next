@@ -1,9 +1,8 @@
-import { notFound } from "next/navigation";
 import { SITE } from "@/constants";
-import { getCatalogProductsByCategory } from "@/services/products";
 import { getAllCategories } from "@/services/home";
-import { cookies } from "next/headers";
+import { getCatalogProductsByCategory } from "@/services/products";
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { CategoryDetailContent } from "./catalog-content";
 
 const STATIC_CATEGORIES: Record<string, string> = {
@@ -41,8 +40,6 @@ export default async function CategoryDetailPage({ params }: Props) {
   const { slug } = await params;
   const name = STATIC_CATEGORIES[slug];
   if (!name) notFound();
-
-  const _cookies = await cookies();
 
   const categories = await getAllCategories();
   const category = categories.find((c) => c.slug === slug)!;

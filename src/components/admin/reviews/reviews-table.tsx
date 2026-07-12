@@ -5,6 +5,7 @@ import { notify } from "@/lib/notifications";
 import { formatDate } from "@/utils/format";
 import { Badge, Button } from "@/components/ui";
 import { Pagination } from "@/components/ui";
+import type { Route } from "next";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Search, ChevronUp, ChevronDown } from "lucide-react";
@@ -76,7 +77,7 @@ export function ReviewsTable({
   const handleSearch = useCallback(
     (e: React.FormEvent) => {
       e.preventDefault();
-      router.push(buildHref({ search, page: "1" }) as any);
+      router.push(buildHref({ search, page: "1" }) as Route);
     },
     [router, buildHref, search],
   );
@@ -84,20 +85,20 @@ export function ReviewsTable({
   const handleSort = useCallback(
     (column: string) => {
       const newOrder = sort === column && order === "asc" ? "desc" : "asc";
-      router.push(buildHref({ sort: column, order: newOrder, page: "1" }) as any);
+      router.push(buildHref({ sort: column, order: newOrder, page: "1" }) as Route);
     },
     [router, buildHref, sort, order],
   );
 
   const handleStatusFilter = useCallback(
     (e: React.ChangeEvent<HTMLSelectElement>) => {
-      router.push(buildHref({ status: e.target.value, page: "1" }) as any);
+      router.push(buildHref({ status: e.target.value, page: "1" }) as Route);
     },
     [router, buildHref],
   );
 
   const handleModerate = useCallback(
-    async (reviewId: string, status: string) => {
+    async (reviewId: string, status: "pending" | "approved" | "rejected" | "hidden") => {
       setModeratingId(reviewId);
       const result = await moderateReview(reviewId, status);
       setModeratingId(null);
@@ -227,7 +228,7 @@ export function ReviewsTable({
                     </div>
                   </td>
                   <td>
-                    <Badge variant={STATUS_BADGE[review.status] as any}>
+                    <Badge variant={STATUS_BADGE[review.status] as "warning" | "success" | "error" | "neutral"}>
                       {STATUS_LABEL[review.status] ?? review.status}
                     </Badge>
                   </td>
@@ -279,7 +280,7 @@ export function ReviewsTable({
       <Pagination
         currentPage={page}
         totalPages={totalPages}
-        onPageChange={(p) => router.push(buildHref({ page: String(p) }) as any)}
+        onPageChange={(p) => router.push(buildHref({ page: String(p) }) as Route)}
       />
     </div>
   );

@@ -66,7 +66,7 @@ export default async function DashboardPage() {
 
       <RecentOrders orders={recentOrders} />
 
-      <DefaultAddress address={defaultAddress as any} />
+      <DefaultAddress address={defaultAddress} />
 
       <RecentlyViewed />
 

@@ -1,17 +1,19 @@
 "use server";
 
-import { auth } from "@/lib/auth";
 import { db } from "@/db";
-import { wishlistItems, products, cartItems, carts } from "@/db/schema";
-import { eq, and } from "drizzle-orm";
-import { revalidatePath } from "next/cache";
+import { cartItems, products, wishlistItems } from "@/db/schema";
+import { auth } from "@/lib/auth";
 import { getOrCreateCart } from "@/lib/cart";
+import { and, eq } from "drizzle-orm";
+import { revalidatePath } from "next/cache";
 
 export async function toggleWishlist(formData: FormData) {
   const session = await auth();
   if (!session?.user?.id) {
     const callbackUrl = (formData.get("callbackUrl") as string) || "/";
-    return { redirect: `/login?callbackUrl=${encodeURIComponent(callbackUrl)}` };
+    return {
+      redirect: `/login?callbackUrl=${encodeURIComponent(callbackUrl)}`,
+    };
   }
 
   const slug = formData.get("slug") as string;
@@ -29,14 +31,15 @@ export async function toggleWishlist(formData: FormData) {
     .select()
     .from(wishlistItems)
     .where(
-      and(eq(wishlistItems.userId, session.user.id), eq(wishlistItems.productId, product.id)),
+      and(
+        eq(wishlistItems.userId, session.user.id),
+        eq(wishlistItems.productId, product.id),
+      ),
     )
     .then((r) => r[0] ?? null);
 
   if (existing) {
-    await db
-      .delete(wishlistItems)
-      .where(eq(wishlistItems.id, existing.id));
+    await db.delete(wishlistItems).where(eq(wishlistItems.id, existing.id));
   } else {
     await db.insert(wishlistItems).values({
       userId: session.user.id,
@@ -58,7 +61,12 @@ export async function removeFromWishlist(formData: FormData) {
 
   await db
     .delete(wishlistItems)
-    .where(and(eq(wishlistItems.id, itemId), eq(wishlistItems.userId, session.user.id)));
+    .where(
+      and(
+        eq(wishlistItems.id, itemId),
+        eq(wishlistItems.userId, session.user.id),
+      ),
+    );
 
   revalidatePath("/");
   revalidatePath("/wishlist");
@@ -79,7 +87,10 @@ export async function moveWishlistToCart(formData: FormData) {
     })
     .from(wishlistItems)
     .where(
-      and(eq(wishlistItems.id, wishlistItemId), eq(wishlistItems.userId, session.user.id)),
+      and(
+        eq(wishlistItems.id, wishlistItemId),
+        eq(wishlistItems.userId, session.user.id),
+      ),
     )
     .then((r) => r[0] ?? null);
 
@@ -104,7 +115,10 @@ export async function moveWishlistToCart(formData: FormData) {
     )
     .then((r) => r[0] ?? null);
 
-  const maxAllowed = Math.max(product.stock ?? 0, existingCartItem?.quantity ?? 0);
+  const maxAllowed = Math.max(
+    product.stock ?? 0,
+    existingCartItem?.quantity ?? 0,
+  );
   const newQty = existingCartItem
     ? Math.min(existingCartItem.quantity + 1, maxAllowed)
     : 1;
@@ -122,9 +136,7 @@ export async function moveWishlistToCart(formData: FormData) {
     });
   }
 
-  await db
-    .delete(wishlistItems)
-    .where(eq(wishlistItems.id, wishlistItemId));
+  await db.delete(wishlistItems).where(eq(wishlistItems.id, wishlistItemId));
 
   revalidatePath("/");
   revalidatePath("/cart");

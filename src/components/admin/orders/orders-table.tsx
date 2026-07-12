@@ -1,22 +1,16 @@
 "use client";
 
-import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
-import {
-  ChevronUp,
-  ChevronDown,
-  Search,
-  Eye,
-  ShoppingBag,
-  Calendar,
-} from "lucide-react";
-import { formatCurrency, formatDate } from "@/utils/format";
+import { Badge } from "@/components/ui";
 import {
   ORDER_STATUS_LABEL,
   PAYMENT_STATUS_LABEL,
   type OrderListItem,
 } from "@/services/admin/order-types";
-import { Badge, Button } from "@/components/ui";
+import { formatCurrency, formatDate } from "@/utils/format";
+import { Calendar, ChevronDown, ChevronUp, Eye, Search } from "lucide-react";
+import type { Route } from "next";
+import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
 
 interface OrdersTableProps {
   orders: OrderListItem[];
@@ -32,19 +26,19 @@ interface OrdersTableProps {
 }
 
 const statusBadgeVariant: Record<string, string> = {
-  pending: "badge-warning",
-  paid: "badge-info",
-  processing: "badge-info",
-  shipped: "badge-primary",
-  delivered: "badge-success",
-  cancelled: "badge-error",
+  pending: "warning",
+  paid: "info",
+  processing: "info",
+  shipped: "primary",
+  delivered: "success",
+  cancelled: "error",
 };
 
 const paymentBadgeVariant: Record<string, string> = {
-  pending: "badge-warning",
-  completed: "badge-success",
-  failed: "badge-error",
-  refunded: "badge-info",
+  pending: "warning",
+  completed: "success",
+  failed: "error",
+  refunded: "info",
 };
 
 const ORDER_STATUS_OPTIONS: { value: string; label: string }[] = [
@@ -67,7 +61,6 @@ export function OrdersTable({
   orders,
   total,
   page,
-  pageSize,
   totalPages,
   search,
   sort,
@@ -89,7 +82,7 @@ export function OrdersTable({
   };
 
   const navigate = (url: string) => {
-    router.push(url as any);
+    router.push(url as Route);
   };
 
   const toggleSort = (column: string) => {
@@ -118,7 +111,7 @@ export function OrdersTable({
     <div className="space-y-4">
       {/* Filters */}
       <div className="flex flex-wrap items-center gap-3">
-        <div className="relative flex-1 min-w-[200px]">
+        <div className="relative flex-1 min-w-50">
           <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-base-content/40" />
           <input
             type="text"
@@ -278,7 +271,12 @@ export function OrdersTable({
                   <td>
                     <Badge
                       variant={
-                        statusBadgeVariant[order.status] as any
+                        statusBadgeVariant[order.status] as
+                          | "warning"
+                          | "info"
+                          | "primary"
+                          | "success"
+                          | "error"
                       }
                       size="xs"
                     >
@@ -288,7 +286,10 @@ export function OrdersTable({
                   <td className="hidden md:table-cell">
                     <Badge
                       variant={
-                        paymentBadgeVariant[order.paymentStatus] as any
+                        paymentBadgeVariant[order.paymentStatus] as
+                          | "warning"
+                          | "success"
+                          | "error"
                       }
                       size="xs"
                     >
@@ -329,9 +330,7 @@ export function OrdersTable({
             <button
               type="button"
               disabled={page <= 1}
-              onClick={() =>
-                navigate(createUrl({ page: String(page - 1) }))
-              }
+              onClick={() => navigate(createUrl({ page: String(page - 1) }))}
               className="btn btn-outline btn-sm"
             >
               Previous
@@ -339,9 +338,7 @@ export function OrdersTable({
             <button
               type="button"
               disabled={page >= totalPages}
-              onClick={() =>
-                navigate(createUrl({ page: String(page + 1) }))
-              }
+              onClick={() => navigate(createUrl({ page: String(page + 1) }))}
               className="btn btn-outline btn-sm"
             >
               Next

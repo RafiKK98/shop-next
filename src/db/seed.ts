@@ -1,25 +1,24 @@
-import "dotenv/config";
-import { createHash, randomUUID } from "node:crypto";
 import bcrypt from "bcryptjs";
+import "dotenv/config";
+import { createHash } from "node:crypto";
 import { db } from "./index";
-import * as schema from "./schema";
 import {
-  users,
   accounts,
-  sessions,
-  verificationTokens,
-  categories,
-  products,
-  productImages,
-  reviews,
-  carts,
-  cartItems,
-  wishlistItems,
-  orders,
-  orderItems,
   addresses,
+  cartItems,
+  carts,
+  categories,
   coupons,
   couponUsages,
+  orderItems,
+  orders,
+  productImages,
+  products,
+  reviews,
+  sessions,
+  users,
+  verificationTokens,
+  wishlistItems,
 } from "./schema";
 
 // ---------------------------------------------------------------------------
@@ -27,9 +26,7 @@ import {
 // ---------------------------------------------------------------------------
 
 function seedId(namespace: string, index: number): string {
-  const hash = createHash("md5")
-    .update(`${namespace}:${index}`)
-    .digest("hex");
+  const hash = createHash("md5").update(`${namespace}:${index}`).digest("hex");
   return [
     hash.slice(0, 8),
     hash.slice(8, 12),
@@ -160,16 +157,66 @@ async function seedUsers() {
 
 async function seedCategories() {
   const records = [
-    { id: seedId("category", 1), name: "Electronics", slug: "electronics", image: "https://picsum.photos/seed/cat-electronics/400/300" },
-    { id: seedId("category", 2), name: "Clothing & Fashion", slug: "clothing-fashion", image: "https://picsum.photos/seed/cat-clothing/400/300" },
-    { id: seedId("category", 3), name: "Home & Garden", slug: "home-garden", image: "https://picsum.photos/seed/cat-home-garden/400/300" },
-    { id: seedId("category", 4), name: "Books & Media", slug: "books-media", image: "https://picsum.photos/seed/cat-books/400/300" },
-    { id: seedId("category", 5), name: "Sports & Outdoors", slug: "sports-outdoors", image: "https://picsum.photos/seed/cat-sports/400/300" },
-    { id: seedId("category", 6), name: "Beauty & Health", slug: "beauty-health", image: "https://picsum.photos/seed/cat-beauty/400/300" },
-    { id: seedId("category", 7), name: "Toys & Games", slug: "toys-games", image: "https://picsum.photos/seed/cat-toys/400/300" },
-    { id: seedId("category", 8), name: "Automotive", slug: "automotive", image: "https://picsum.photos/seed/cat-automotive/400/300" },
-    { id: seedId("category", 9), name: "Food & Groceries", slug: "food-groceries", image: "https://picsum.photos/seed/cat-food/400/300" },
-    { id: seedId("category", 10), name: "Music & Instruments", slug: "music-instruments", image: "https://picsum.photos/seed/cat-music/400/300" },
+    {
+      id: seedId("category", 1),
+      name: "Electronics",
+      slug: "electronics",
+      image: "https://picsum.photos/seed/cat-electronics/400/300",
+    },
+    {
+      id: seedId("category", 2),
+      name: "Clothing & Fashion",
+      slug: "clothing-fashion",
+      image: "https://picsum.photos/seed/cat-clothing/400/300",
+    },
+    {
+      id: seedId("category", 3),
+      name: "Home & Garden",
+      slug: "home-garden",
+      image: "https://picsum.photos/seed/cat-home-garden/400/300",
+    },
+    {
+      id: seedId("category", 4),
+      name: "Books & Media",
+      slug: "books-media",
+      image: "https://picsum.photos/seed/cat-books/400/300",
+    },
+    {
+      id: seedId("category", 5),
+      name: "Sports & Outdoors",
+      slug: "sports-outdoors",
+      image: "https://picsum.photos/seed/cat-sports/400/300",
+    },
+    {
+      id: seedId("category", 6),
+      name: "Beauty & Health",
+      slug: "beauty-health",
+      image: "https://picsum.photos/seed/cat-beauty/400/300",
+    },
+    {
+      id: seedId("category", 7),
+      name: "Toys & Games",
+      slug: "toys-games",
+      image: "https://picsum.photos/seed/cat-toys/400/300",
+    },
+    {
+      id: seedId("category", 8),
+      name: "Automotive",
+      slug: "automotive",
+      image: "https://picsum.photos/seed/cat-automotive/400/300",
+    },
+    {
+      id: seedId("category", 9),
+      name: "Food & Groceries",
+      slug: "food-groceries",
+      image: "https://picsum.photos/seed/cat-food/400/300",
+    },
+    {
+      id: seedId("category", 10),
+      name: "Music & Instruments",
+      slug: "music-instruments",
+      image: "https://picsum.photos/seed/cat-music/400/300",
+    },
   ];
 
   await db.insert(categories).values(records);
@@ -192,7 +239,10 @@ interface ProductDef {
 }
 
 // Rich feature/spec data for products where we have it
-const RICH_PRODUCT_DATA: Record<string, { features: string[]; specifications: Record<string, string> }> = {
+const RICH_PRODUCT_DATA: Record<
+  string,
+  { features: string[]; specifications: Record<string, string> }
+> = {
   "wireless-nc-headphones": {
     features: [
       "Adaptive Active Noise Cancellation (ANC) with ambient sound mode",
@@ -207,8 +257,8 @@ const RICH_PRODUCT_DATA: Record<string, { features: string[]; specifications: Re
       "Frequency Response": "20Hz – 40kHz",
       "Bluetooth Version": "5.3",
       "Battery Life": "30 hours (ANC on)",
-      "Charging": "USB-C, 10W fast charge",
-      "Weight": "250g",
+      Charging: "USB-C, 10W fast charge",
+      Weight: "250g",
     },
   },
   "4k-ultra-hd-monitor": {
@@ -221,12 +271,12 @@ const RICH_PRODUCT_DATA: Record<string, { features: string[]; specifications: Re
       "TUV Rheinland certified for low blue light and flicker-free",
     ],
     specifications: {
-      "Screen Size": '27 inches',
-      "Resolution": "3840 × 2160 (4K UHD)",
+      "Screen Size": "27 inches",
+      Resolution: "3840 × 2160 (4K UHD)",
       "Panel Type": "IPS",
       "Refresh Rate": "60Hz",
-      "Brightness": "350 nits",
-      "Connectivity": "USB-C (65W PD), HDMI 2.0 × 2, DP 1.4",
+      Brightness: "350 nits",
+      Connectivity: "USB-C (65W PD), HDMI 2.0 × 2, DP 1.4",
     },
   },
   "premium-cotton-tshirt": {
@@ -239,11 +289,11 @@ const RICH_PRODUCT_DATA: Record<string, { features: string[]; specifications: Re
       "Available in 12 colors",
     ],
     specifications: {
-      "Material": "100% organic cotton",
-      "Weight": "180 GSM",
-      "Fit": "Slim",
-      "Collar": "Ribbed crew neck",
-      "Care": "Machine wash cold, tumble dry low",
+      Material: "100% organic cotton",
+      Weight: "180 GSM",
+      Fit: "Slim",
+      Collar: "Ribbed crew neck",
+      Care: "Machine wash cold, tumble dry low",
     },
   },
 };
@@ -268,113 +318,913 @@ function deriveSpecifications(def: ProductDef): Record<string, string> {
 }
 
 const electronicsProducts: ProductDef[] = [
-  { title: "Wireless Noise-Cancelling Headphones", slug: "wireless-nc-headphones", brand: "SoundWave", price: 299.99, discount: 15, stock: 45, featured: true, description: "Premium over-ear headphones with active noise cancellation, 40-hour battery life, and crystal-clear audio. Features Bluetooth 5.4 and multipoint connection." },
-  { title: "4K Ultra HD Smart Monitor", slug: "4k-ultra-hd-monitor", brand: "ViewPro", price: 549.99, discount: 10, stock: 28, featured: true, description: "27-inch 4K IPS monitor with HDR600 support, USB-C docking, and built-in speakers. Perfect for creative professionals." },
-  { title: "Mechanical Gaming Keyboard", slug: "mechanical-gaming-keyboard", brand: "GameType", price: 149.99, discount: 0, stock: 120, featured: false, description: "RGB mechanical keyboard with hot-swappable switches, PBT keycaps, and aerospace-grade aluminum frame." },
-  { title: "Portable Bluetooth Speaker", slug: "portable-bt-speaker", brand: "SoundWave", price: 79.99, discount: 20, stock: 200, featured: false, description: "Waterproof portable speaker with 360-degree sound, 20-hour battery, and built-in microphone." },
-  { title: "USB-C Hub Multiport Adapter", slug: "usb-c-hub-adapter", brand: "ConnectPro", price: 45.99, discount: 0, stock: 350, featured: false, description: "7-in-1 USB-C hub with HDMI 4K, 100W PD charging, SD card reader, and USB 3.0 ports." },
-  { title: "Wireless Ergonomic Mouse", slug: "wireless-ergonomic-mouse", brand: "ErgoTech", price: 89.99, discount: 5, stock: 175, featured: false, description: "Vertical ergonomic design reduces wrist strain. 6 programmable buttons, 4000 DPI, and 3-month battery life." },
-  { title: "Smart Plug Wi-Fi Outlet", slug: "smart-plug-wifi", brand: "HomeSync", price: 24.99, discount: 0, stock: 500, featured: false, description: "Compatible with Alexa and Google Home. Track energy usage, set schedules, and control remotely." },
-  { title: "Laptop Stand Adjustable", slug: "laptop-stand-adjustable", brand: "ErgoTech", price: 39.99, discount: 25, stock: 90, featured: true, description: "Aluminum adjustable laptop stand with 6 height levels. Improves airflow and ergonomics." },
+  {
+    title: "Wireless Noise-Cancelling Headphones",
+    slug: "wireless-nc-headphones",
+    brand: "SoundWave",
+    price: 299.99,
+    discount: 15,
+    stock: 45,
+    featured: true,
+    description:
+      "Premium over-ear headphones with active noise cancellation, 40-hour battery life, and crystal-clear audio. Features Bluetooth 5.4 and multipoint connection.",
+  },
+  {
+    title: "4K Ultra HD Smart Monitor",
+    slug: "4k-ultra-hd-monitor",
+    brand: "ViewPro",
+    price: 549.99,
+    discount: 10,
+    stock: 28,
+    featured: true,
+    description:
+      "27-inch 4K IPS monitor with HDR600 support, USB-C docking, and built-in speakers. Perfect for creative professionals.",
+  },
+  {
+    title: "Mechanical Gaming Keyboard",
+    slug: "mechanical-gaming-keyboard",
+    brand: "GameType",
+    price: 149.99,
+    discount: 0,
+    stock: 120,
+    featured: false,
+    description:
+      "RGB mechanical keyboard with hot-swappable switches, PBT keycaps, and aerospace-grade aluminum frame.",
+  },
+  {
+    title: "Portable Bluetooth Speaker",
+    slug: "portable-bt-speaker",
+    brand: "SoundWave",
+    price: 79.99,
+    discount: 20,
+    stock: 200,
+    featured: false,
+    description:
+      "Waterproof portable speaker with 360-degree sound, 20-hour battery, and built-in microphone.",
+  },
+  {
+    title: "USB-C Hub Multiport Adapter",
+    slug: "usb-c-hub-adapter",
+    brand: "ConnectPro",
+    price: 45.99,
+    discount: 0,
+    stock: 350,
+    featured: false,
+    description:
+      "7-in-1 USB-C hub with HDMI 4K, 100W PD charging, SD card reader, and USB 3.0 ports.",
+  },
+  {
+    title: "Wireless Ergonomic Mouse",
+    slug: "wireless-ergonomic-mouse",
+    brand: "ErgoTech",
+    price: 89.99,
+    discount: 5,
+    stock: 175,
+    featured: false,
+    description:
+      "Vertical ergonomic design reduces wrist strain. 6 programmable buttons, 4000 DPI, and 3-month battery life.",
+  },
+  {
+    title: "Smart Plug Wi-Fi Outlet",
+    slug: "smart-plug-wifi",
+    brand: "HomeSync",
+    price: 24.99,
+    discount: 0,
+    stock: 500,
+    featured: false,
+    description:
+      "Compatible with Alexa and Google Home. Track energy usage, set schedules, and control remotely.",
+  },
+  {
+    title: "Laptop Stand Adjustable",
+    slug: "laptop-stand-adjustable",
+    brand: "ErgoTech",
+    price: 39.99,
+    discount: 25,
+    stock: 90,
+    featured: true,
+    description:
+      "Aluminum adjustable laptop stand with 6 height levels. Improves airflow and ergonomics.",
+  },
 ];
 
 const clothingProducts: ProductDef[] = [
-  { title: "Premium Cotton T-Shirt", slug: "premium-cotton-tshirt", brand: "UrbanWear", price: 34.99, discount: 0, stock: 300, featured: false, description: "100% organic cotton crew neck tee. Pre-shrunk, ring-spun fabric for lasting comfort." },
-  { title: "Slim Fit Denim Jeans", slug: "slim-fit-denim-jeans", brand: "UrbanWear", price: 89.99, discount: 10, stock: 150, featured: true, description: "Stretch denim jeans with modern slim fit. Mid-rise waist, five-pocket styling." },
-  { title: "Wool Blend Winter Coat", slug: "wool-blend-winter-coat", brand: "ApexStyle", price: 249.99, discount: 20, stock: 40, featured: true, description: "Classic double-breasted wool blend coat with satin lining. Water-resistant outer shell." },
-  { title: "Running Shoes Lightweight", slug: "running-shoes-lightweight", brand: "StridePro", price: 129.99, discount: 15, stock: 85, featured: false, description: "Breathable mesh running shoes with responsive cushioning and 10mm drop." },
-  { title: "Casual Linen Shirt", slug: "casual-linen-shirt", brand: "ApexStyle", price: 59.99, discount: 0, stock: 120, featured: false, description: "Relaxed fit linen shirt perfect for summer. Available in 6 colors." },
-  { title: "Leather Crossbody Bag", slug: "leather-crossbody-bag", brand: "VaultCraft", price: 179.99, discount: 25, stock: 55, featured: false, description: "Genuine full-grain leather crossbody bag with adjustable strap and multiple pockets." },
-  { title: "Athletic Shorts Quick-Dry", slug: "athletic-shorts-quickdry", brand: "StridePro", price: 44.99, discount: 0, stock: 200, featured: false, description: "Moisture-wicking athletic shorts with built-in compression liner and zipper pocket." },
-  { title: "Cashmere Blend Scarf", slug: "cashmere-blend-scarf", brand: "ApexStyle", price: 69.99, discount: 30, stock: 70, featured: false, description: "Luxurious cashmere-merino blend scarf. Oversized design, available in 4 neutral tones." },
+  {
+    title: "Premium Cotton T-Shirt",
+    slug: "premium-cotton-tshirt",
+    brand: "UrbanWear",
+    price: 34.99,
+    discount: 0,
+    stock: 300,
+    featured: false,
+    description:
+      "100% organic cotton crew neck tee. Pre-shrunk, ring-spun fabric for lasting comfort.",
+  },
+  {
+    title: "Slim Fit Denim Jeans",
+    slug: "slim-fit-denim-jeans",
+    brand: "UrbanWear",
+    price: 89.99,
+    discount: 10,
+    stock: 150,
+    featured: true,
+    description:
+      "Stretch denim jeans with modern slim fit. Mid-rise waist, five-pocket styling.",
+  },
+  {
+    title: "Wool Blend Winter Coat",
+    slug: "wool-blend-winter-coat",
+    brand: "ApexStyle",
+    price: 249.99,
+    discount: 20,
+    stock: 40,
+    featured: true,
+    description:
+      "Classic double-breasted wool blend coat with satin lining. Water-resistant outer shell.",
+  },
+  {
+    title: "Running Shoes Lightweight",
+    slug: "running-shoes-lightweight",
+    brand: "StridePro",
+    price: 129.99,
+    discount: 15,
+    stock: 85,
+    featured: false,
+    description:
+      "Breathable mesh running shoes with responsive cushioning and 10mm drop.",
+  },
+  {
+    title: "Casual Linen Shirt",
+    slug: "casual-linen-shirt",
+    brand: "ApexStyle",
+    price: 59.99,
+    discount: 0,
+    stock: 120,
+    featured: false,
+    description:
+      "Relaxed fit linen shirt perfect for summer. Available in 6 colors.",
+  },
+  {
+    title: "Leather Crossbody Bag",
+    slug: "leather-crossbody-bag",
+    brand: "VaultCraft",
+    price: 179.99,
+    discount: 25,
+    stock: 55,
+    featured: false,
+    description:
+      "Genuine full-grain leather crossbody bag with adjustable strap and multiple pockets.",
+  },
+  {
+    title: "Athletic Shorts Quick-Dry",
+    slug: "athletic-shorts-quickdry",
+    brand: "StridePro",
+    price: 44.99,
+    discount: 0,
+    stock: 200,
+    featured: false,
+    description:
+      "Moisture-wicking athletic shorts with built-in compression liner and zipper pocket.",
+  },
+  {
+    title: "Cashmere Blend Scarf",
+    slug: "cashmere-blend-scarf",
+    brand: "ApexStyle",
+    price: 69.99,
+    discount: 30,
+    stock: 70,
+    featured: false,
+    description:
+      "Luxurious cashmere-merino blend scarf. Oversized design, available in 4 neutral tones.",
+  },
 ];
 
 const homeGardenProducts: ProductDef[] = [
-  { title: "Cast Iron Dutch Oven", slug: "cast-iron-dutch-oven", brand: "KitchenCraft", price: 89.99, discount: 0, stock: 60, featured: false, description: "6-quart enameled cast iron dutch oven. Even heat distribution, self-basting lid." },
-  { title: "Indoor Herb Garden Kit", slug: "indoor-herb-garden-kit", brand: "GreenThumb", price: 49.99, discount: 10, stock: 110, featured: true, description: "Self-watering planter with LED grow lights. Includes basil, cilantro, and mint seeds." },
-  { title: "Memory Foam Bed Pillows (2-Pack)", slug: "memory-foam-pillows", brand: "SleepWell", price: 59.99, discount: 20, stock: 200, featured: false, description: "Shredded memory foam pillows with adjustable loft. Bamboo-derived cover, hypoallergenic." },
-  { title: "Bamboo Cutting Board Set", slug: "bamboo-cutting-board-set", brand: "KitchenCraft", price: 34.99, discount: 0, stock: 180, featured: false, description: "Set of 3 organic bamboo cutting boards with juice grooves and easy-grip handles." },
-  { title: "Scented Soy Candle Collection", slug: "scented-soy-candles", brand: "AmbientGlow", price: 42.99, discount: 15, stock: 250, featured: false, description: "Hand-poured soy wax candles. Set of 4: vanilla, lavender, cedar, and eucalyptus." },
-  { title: "Robot Vacuum Cleaner", slug: "robot-vacuum-cleaner", brand: "CleanBot", price: 399.99, discount: 10, stock: 35, featured: true, description: "LiDAR navigation, 2500Pa suction, self-emptying base. Works on carpet and hardwood." },
-  { title: "Glass Food Storage Containers", slug: "glass-food-storage", brand: "KitchenCraft", price: 28.99, discount: 0, stock: 300, featured: false, description: "10-piece borosilicate glass container set with airtight bamboo lids. Microwave and oven safe." },
-  { title: "Adjustable Plant Stand", slug: "adjustable-plant-stand", brand: "GreenThumb", price: 39.99, discount: 5, stock: 65, featured: false, description: "Tiered bamboo plant stand for 4 pots. Water-resistant finish, fits 6-8 inch pots." },
+  {
+    title: "Cast Iron Dutch Oven",
+    slug: "cast-iron-dutch-oven",
+    brand: "KitchenCraft",
+    price: 89.99,
+    discount: 0,
+    stock: 60,
+    featured: false,
+    description:
+      "6-quart enameled cast iron dutch oven. Even heat distribution, self-basting lid.",
+  },
+  {
+    title: "Indoor Herb Garden Kit",
+    slug: "indoor-herb-garden-kit",
+    brand: "GreenThumb",
+    price: 49.99,
+    discount: 10,
+    stock: 110,
+    featured: true,
+    description:
+      "Self-watering planter with LED grow lights. Includes basil, cilantro, and mint seeds.",
+  },
+  {
+    title: "Memory Foam Bed Pillows (2-Pack)",
+    slug: "memory-foam-pillows",
+    brand: "SleepWell",
+    price: 59.99,
+    discount: 20,
+    stock: 200,
+    featured: false,
+    description:
+      "Shredded memory foam pillows with adjustable loft. Bamboo-derived cover, hypoallergenic.",
+  },
+  {
+    title: "Bamboo Cutting Board Set",
+    slug: "bamboo-cutting-board-set",
+    brand: "KitchenCraft",
+    price: 34.99,
+    discount: 0,
+    stock: 180,
+    featured: false,
+    description:
+      "Set of 3 organic bamboo cutting boards with juice grooves and easy-grip handles.",
+  },
+  {
+    title: "Scented Soy Candle Collection",
+    slug: "scented-soy-candles",
+    brand: "AmbientGlow",
+    price: 42.99,
+    discount: 15,
+    stock: 250,
+    featured: false,
+    description:
+      "Hand-poured soy wax candles. Set of 4: vanilla, lavender, cedar, and eucalyptus.",
+  },
+  {
+    title: "Robot Vacuum Cleaner",
+    slug: "robot-vacuum-cleaner",
+    brand: "CleanBot",
+    price: 399.99,
+    discount: 10,
+    stock: 35,
+    featured: true,
+    description:
+      "LiDAR navigation, 2500Pa suction, self-emptying base. Works on carpet and hardwood.",
+  },
+  {
+    title: "Glass Food Storage Containers",
+    slug: "glass-food-storage",
+    brand: "KitchenCraft",
+    price: 28.99,
+    discount: 0,
+    stock: 300,
+    featured: false,
+    description:
+      "10-piece borosilicate glass container set with airtight bamboo lids. Microwave and oven safe.",
+  },
+  {
+    title: "Adjustable Plant Stand",
+    slug: "adjustable-plant-stand",
+    brand: "GreenThumb",
+    price: 39.99,
+    discount: 5,
+    stock: 65,
+    featured: false,
+    description:
+      "Tiered bamboo plant stand for 4 pots. Water-resistant finish, fits 6-8 inch pots.",
+  },
 ];
 
 const booksProducts: ProductDef[] = [
-  { title: "The Art of Clean Code", slug: "art-of-clean-code", brand: "TechPress", price: 39.99, discount: 0, stock: 90, featured: true, description: "A practical guide to writing maintainable, scalable code. Covers design patterns, refactoring, and testing." },
-  { title: "Journey Through the Cosmos", slug: "journey-through-cosmos", brand: "StarBooks", price: 28.99, discount: 10, stock: 75, featured: false, description: "Bestselling illustrated guide to astronomy and space exploration. Includes 200+ full-color photographs." },
-  { title: "Modern Mediterranean Cooking", slug: "modern-mediterranean-cooking", brand: "CulinaryPress", price: 34.99, discount: 0, stock: 55, featured: false, description: "120 healthy Mediterranean recipes with seasonal ingredients and step-by-step instructions." },
-  { title: "The Silent Algorithm", slug: "the-silent-algorithm", brand: "PageTurner", price: 24.99, discount: 20, stock: 120, featured: false, description: "A gripping techno-thriller about AI, surveillance, and one programmer's fight for privacy." },
-  { title: "Watercolor Painting for Beginners", slug: "watercolor-painting", brand: "ArtCraft", price: 22.99, discount: 0, stock: 85, featured: false, description: "Complete beginner's guide to watercolor with 12 practice projects and technique tutorials." },
-  { title: "Financial Freedom for Millennials", slug: "financial-freedom-millennials", brand: "WealthPress", price: 19.99, discount: 5, stock: 140, featured: false, description: "Practical investing and budgeting guide tailored for the modern workforce." },
-  { title: "The Complete Herbal Handbook", slug: "complete-herbal-handbook", brand: "GreenLife", price: 29.99, discount: 0, stock: 40, featured: false, description: "Encyclopedia of medicinal herbs with cultivation tips, preparation methods, and safety guidelines." },
-  { title: "Architecture in the Digital Age", slug: "architecture-digital-age", brand: "DesignPress", price: 45.99, discount: 15, stock: 30, featured: false, description: "Exploring how digital tools and sustainable practices are reshaping modern architecture." },
+  {
+    title: "The Art of Clean Code",
+    slug: "art-of-clean-code",
+    brand: "TechPress",
+    price: 39.99,
+    discount: 0,
+    stock: 90,
+    featured: true,
+    description:
+      "A practical guide to writing maintainable, scalable code. Covers design patterns, refactoring, and testing.",
+  },
+  {
+    title: "Journey Through the Cosmos",
+    slug: "journey-through-cosmos",
+    brand: "StarBooks",
+    price: 28.99,
+    discount: 10,
+    stock: 75,
+    featured: false,
+    description:
+      "Bestselling illustrated guide to astronomy and space exploration. Includes 200+ full-color photographs.",
+  },
+  {
+    title: "Modern Mediterranean Cooking",
+    slug: "modern-mediterranean-cooking",
+    brand: "CulinaryPress",
+    price: 34.99,
+    discount: 0,
+    stock: 55,
+    featured: false,
+    description:
+      "120 healthy Mediterranean recipes with seasonal ingredients and step-by-step instructions.",
+  },
+  {
+    title: "The Silent Algorithm",
+    slug: "the-silent-algorithm",
+    brand: "PageTurner",
+    price: 24.99,
+    discount: 20,
+    stock: 120,
+    featured: false,
+    description:
+      "A gripping techno-thriller about AI, surveillance, and one programmer's fight for privacy.",
+  },
+  {
+    title: "Watercolor Painting for Beginners",
+    slug: "watercolor-painting",
+    brand: "ArtCraft",
+    price: 22.99,
+    discount: 0,
+    stock: 85,
+    featured: false,
+    description:
+      "Complete beginner's guide to watercolor with 12 practice projects and technique tutorials.",
+  },
+  {
+    title: "Financial Freedom for Millennials",
+    slug: "financial-freedom-millennials",
+    brand: "WealthPress",
+    price: 19.99,
+    discount: 5,
+    stock: 140,
+    featured: false,
+    description:
+      "Practical investing and budgeting guide tailored for the modern workforce.",
+  },
+  {
+    title: "The Complete Herbal Handbook",
+    slug: "complete-herbal-handbook",
+    brand: "GreenLife",
+    price: 29.99,
+    discount: 0,
+    stock: 40,
+    featured: false,
+    description:
+      "Encyclopedia of medicinal herbs with cultivation tips, preparation methods, and safety guidelines.",
+  },
+  {
+    title: "Architecture in the Digital Age",
+    slug: "architecture-digital-age",
+    brand: "DesignPress",
+    price: 45.99,
+    discount: 15,
+    stock: 30,
+    featured: false,
+    description:
+      "Exploring how digital tools and sustainable practices are reshaping modern architecture.",
+  },
 ];
 
 const sportsProducts: ProductDef[] = [
-  { title: "Yoga Mat Premium Non-Slip", slug: "yoga-mat-premium", brand: "FlexFit", price: 68.99, discount: 0, stock: 160, featured: false, description: "6mm thick eco-friendly TPE yoga mat with alignment lines. Non-slip surface, carries case included." },
-  { title: "Adjustable Dumbbell Set", slug: "adjustable-dumbbell-set", brand: "IronForce", price: 299.99, discount: 10, stock: 25, featured: true, description: "Space-saving adjustable dumbbells from 5-52.5 lbs each. Quick-change weight selection." },
-  { title: "Insulated Water Bottle 32oz", slug: "insulated-water-bottle", brand: "HydroMax", price: 34.99, discount: 0, stock: 400, featured: false, description: "Double-wall vacuum insulated stainless steel. Keeps drinks cold 24h or hot 12h." },
-  { title: "Resistance Bands Set", slug: "resistance-bands-set", brand: "FlexFit", price: 24.99, discount: 20, stock: 280, featured: false, description: "5-level resistance band set with door anchor, handles, and ankle straps. Portable workout." },
-  { title: "Cycling Helmet Aerodynamic", slug: "cycling-helmet-aero", brand: "SpeedGear", price: 119.99, discount: 15, stock: 45, featured: false, description: "Aero road cycling helmet with MIPS protection, 16 vents, and magnetic buckle." },
-  { title: "Camping Hammock Double", slug: "camping-hammock-double", brand: "TrailBlazer", price: 54.99, discount: 0, stock: 80, featured: false, description: "Double parachute nylon hammock with tree straps. Supports 500 lbs, packs to soccer ball size." },
-  { title: "Jump Rope Speed Cable", slug: "jump-rope-speed", brand: "FlexFit", price: 18.99, discount: 0, stock: 350, featured: false, description: "Adjustable speed jump rope with ball bearings and foam handles. Great for cardio training." },
-  { title: "Trekking Poles Carbon Fiber", slug: "trekking-poles-carbon", brand: "TrailBlazer", price: 89.99, discount: 25, stock: 35, featured: false, description: "Adjustable carbon fiber trekking poles with cork grips and anti-shock system." },
+  {
+    title: "Yoga Mat Premium Non-Slip",
+    slug: "yoga-mat-premium",
+    brand: "FlexFit",
+    price: 68.99,
+    discount: 0,
+    stock: 160,
+    featured: false,
+    description:
+      "6mm thick eco-friendly TPE yoga mat with alignment lines. Non-slip surface, carries case included.",
+  },
+  {
+    title: "Adjustable Dumbbell Set",
+    slug: "adjustable-dumbbell-set",
+    brand: "IronForce",
+    price: 299.99,
+    discount: 10,
+    stock: 25,
+    featured: true,
+    description:
+      "Space-saving adjustable dumbbells from 5-52.5 lbs each. Quick-change weight selection.",
+  },
+  {
+    title: "Insulated Water Bottle 32oz",
+    slug: "insulated-water-bottle",
+    brand: "HydroMax",
+    price: 34.99,
+    discount: 0,
+    stock: 400,
+    featured: false,
+    description:
+      "Double-wall vacuum insulated stainless steel. Keeps drinks cold 24h or hot 12h.",
+  },
+  {
+    title: "Resistance Bands Set",
+    slug: "resistance-bands-set",
+    brand: "FlexFit",
+    price: 24.99,
+    discount: 20,
+    stock: 280,
+    featured: false,
+    description:
+      "5-level resistance band set with door anchor, handles, and ankle straps. Portable workout.",
+  },
+  {
+    title: "Cycling Helmet Aerodynamic",
+    slug: "cycling-helmet-aero",
+    brand: "SpeedGear",
+    price: 119.99,
+    discount: 15,
+    stock: 45,
+    featured: false,
+    description:
+      "Aero road cycling helmet with MIPS protection, 16 vents, and magnetic buckle.",
+  },
+  {
+    title: "Camping Hammock Double",
+    slug: "camping-hammock-double",
+    brand: "TrailBlazer",
+    price: 54.99,
+    discount: 0,
+    stock: 80,
+    featured: false,
+    description:
+      "Double parachute nylon hammock with tree straps. Supports 500 lbs, packs to soccer ball size.",
+  },
+  {
+    title: "Jump Rope Speed Cable",
+    slug: "jump-rope-speed",
+    brand: "FlexFit",
+    price: 18.99,
+    discount: 0,
+    stock: 350,
+    featured: false,
+    description:
+      "Adjustable speed jump rope with ball bearings and foam handles. Great for cardio training.",
+  },
+  {
+    title: "Trekking Poles Carbon Fiber",
+    slug: "trekking-poles-carbon",
+    brand: "TrailBlazer",
+    price: 89.99,
+    discount: 25,
+    stock: 35,
+    featured: false,
+    description:
+      "Adjustable carbon fiber trekking poles with cork grips and anti-shock system.",
+  },
 ];
 
 const beautyProducts: ProductDef[] = [
-  { title: "Vitamin C Serum Anti-Aging", slug: "vitamin-c-serum", brand: "GlowLab", price: 42.99, discount: 0, stock: 210, featured: false, description: "20% Vitamin C + Hyaluronic Acid serum. Brightens skin, reduces fine lines and dark spots." },
-  { title: "Electric Toothbrush Sonic", slug: "electric-toothbrush-sonic", brand: "SmileBright", price: 79.99, discount: 10, stock: 130, featured: false, description: "Sonic toothbrush with 5 cleaning modes, 2-min timer, and USB-C charging. 30-day battery." },
-  { title: "Hair Dryer Ionic Pro", slug: "hair-dryer-ionic", brand: "StyleCraft", price: 119.99, discount: 20, stock: 65, featured: true, description: "Professional ionic hair dryer with 3 heat settings, concentrator, and diffuser attachments." },
-  { title: "Organic Face Moisturizer", slug: "organic-face-moisturizer", brand: "GlowLab", price: 36.99, discount: 0, stock: 190, featured: false, description: "Lightweight organic face cream with aloe vera, jojoba oil, and green tea extract." },
-  { title: "Essential Oil Diffuser", slug: "essential-oil-diffuser", brand: "AromaZen", price: 32.99, discount: 5, stock: 95, featured: false, description: "Ultrasonic aromatherapy diffuser with 7-color LED, 200ml capacity, and auto shut-off." },
-  { title: "Beard Trimmer Precision", slug: "beard-trimmer-precision", brand: "StyleCraft", price: 54.99, discount: 0, stock: 110, featured: false, description: "Waterproof beard trimmer with 20 length settings, titanium blades, and vacuum system." },
-  { title: "Sunscreen SPF 50 Daily", slug: "sunscreen-spf50-daily", brand: "GlowLab", price: 24.99, discount: 0, stock: 320, featured: false, description: "Lightweight, non-greasy daily sunscreen with zinc oxide. Reef-safe and fragrance-free." },
-  { title: "Massage Gun Deep Tissue", slug: "massage-gun-deep-tissue", brand: "RelaxPro", price: 149.99, discount: 15, stock: 40, featured: false, description: "Percussion massage gun with 6 heads, 20 speed levels, and ultra-quiet motor." },
+  {
+    title: "Vitamin C Serum Anti-Aging",
+    slug: "vitamin-c-serum",
+    brand: "GlowLab",
+    price: 42.99,
+    discount: 0,
+    stock: 210,
+    featured: false,
+    description:
+      "20% Vitamin C + Hyaluronic Acid serum. Brightens skin, reduces fine lines and dark spots.",
+  },
+  {
+    title: "Electric Toothbrush Sonic",
+    slug: "electric-toothbrush-sonic",
+    brand: "SmileBright",
+    price: 79.99,
+    discount: 10,
+    stock: 130,
+    featured: false,
+    description:
+      "Sonic toothbrush with 5 cleaning modes, 2-min timer, and USB-C charging. 30-day battery.",
+  },
+  {
+    title: "Hair Dryer Ionic Pro",
+    slug: "hair-dryer-ionic",
+    brand: "StyleCraft",
+    price: 119.99,
+    discount: 20,
+    stock: 65,
+    featured: true,
+    description:
+      "Professional ionic hair dryer with 3 heat settings, concentrator, and diffuser attachments.",
+  },
+  {
+    title: "Organic Face Moisturizer",
+    slug: "organic-face-moisturizer",
+    brand: "GlowLab",
+    price: 36.99,
+    discount: 0,
+    stock: 190,
+    featured: false,
+    description:
+      "Lightweight organic face cream with aloe vera, jojoba oil, and green tea extract.",
+  },
+  {
+    title: "Essential Oil Diffuser",
+    slug: "essential-oil-diffuser",
+    brand: "AromaZen",
+    price: 32.99,
+    discount: 5,
+    stock: 95,
+    featured: false,
+    description:
+      "Ultrasonic aromatherapy diffuser with 7-color LED, 200ml capacity, and auto shut-off.",
+  },
+  {
+    title: "Beard Trimmer Precision",
+    slug: "beard-trimmer-precision",
+    brand: "StyleCraft",
+    price: 54.99,
+    discount: 0,
+    stock: 110,
+    featured: false,
+    description:
+      "Waterproof beard trimmer with 20 length settings, titanium blades, and vacuum system.",
+  },
+  {
+    title: "Sunscreen SPF 50 Daily",
+    slug: "sunscreen-spf50-daily",
+    brand: "GlowLab",
+    price: 24.99,
+    discount: 0,
+    stock: 320,
+    featured: false,
+    description:
+      "Lightweight, non-greasy daily sunscreen with zinc oxide. Reef-safe and fragrance-free.",
+  },
+  {
+    title: "Massage Gun Deep Tissue",
+    slug: "massage-gun-deep-tissue",
+    brand: "RelaxPro",
+    price: 149.99,
+    discount: 15,
+    stock: 40,
+    featured: false,
+    description:
+      "Percussion massage gun with 6 heads, 20 speed levels, and ultra-quiet motor.",
+  },
 ];
 
 const toysProducts: ProductDef[] = [
-  { title: "Building Blocks Creative Set", slug: "building-blocks-creative", brand: "BuildFun", price: 59.99, discount: 0, stock: 80, featured: true, description: "800-piece building block set with base plates, wheels, and special pieces. Ages 4+." },
-  { title: "Remote Control Racing Car", slug: "rc-racing-car", brand: "TurboToys", price: 44.99, discount: 10, stock: 60, featured: false, description: "4WD RC car with 30mph top speed, rechargeable battery, and extra set of wheels." },
-  { title: "Board Game Strategy Edition", slug: "board-game-strategy", brand: "GameNight", price: 39.99, discount: 0, stock: 45, featured: false, description: "Award-winning strategy board game for 2-6 players. Average play time 60 minutes." },
-  { title: "Plush Teddy Bear Giant", slug: "plush-teddy-bear-giant", brand: "SnuggleHug", price: 49.99, discount: 15, stock: 35, featured: false, description: "4-foot超大 plush teddy bear made from ultra-soft materials. Hypoallergenic filling." },
-  { title: "Science Experiment Kit", slug: "science-experiment-kit", brand: "BrainLab", price: 34.99, discount: 0, stock: 55, featured: false, description: "50+ science experiments for kids ages 8-14. Includes chemicals, tools, and illustrated guide." },
-  { title: "Puzzle 1000-Piece Landscape", slug: "puzzle-1000-landscape", brand: "PuzzleCraft", price: 22.99, discount: 0, stock: 100, featured: false, description: "Premium 1000-piece puzzle featuring a scenic mountain landscape. Anti-glare surface." },
-  { title: "Card Game Family Fun Pack", slug: "card-game-family-fun", brand: "GameNight", price: 14.99, discount: 0, stock: 300, featured: false, description: "5 classic card games in one box. Perfect for family game night, ages 6+." },
-  { title: "Drone with Camera HD", slug: "drone-with-camera", brand: "SkyView", price: 199.99, discount: 20, stock: 20, featured: true, description: "Foldable drone with 4K camera, GPS positioning, 30-min flight time, and one-key return." },
+  {
+    title: "Building Blocks Creative Set",
+    slug: "building-blocks-creative",
+    brand: "BuildFun",
+    price: 59.99,
+    discount: 0,
+    stock: 80,
+    featured: true,
+    description:
+      "800-piece building block set with base plates, wheels, and special pieces. Ages 4+.",
+  },
+  {
+    title: "Remote Control Racing Car",
+    slug: "rc-racing-car",
+    brand: "TurboToys",
+    price: 44.99,
+    discount: 10,
+    stock: 60,
+    featured: false,
+    description:
+      "4WD RC car with 30mph top speed, rechargeable battery, and extra set of wheels.",
+  },
+  {
+    title: "Board Game Strategy Edition",
+    slug: "board-game-strategy",
+    brand: "GameNight",
+    price: 39.99,
+    discount: 0,
+    stock: 45,
+    featured: false,
+    description:
+      "Award-winning strategy board game for 2-6 players. Average play time 60 minutes.",
+  },
+  {
+    title: "Plush Teddy Bear Giant",
+    slug: "plush-teddy-bear-giant",
+    brand: "SnuggleHug",
+    price: 49.99,
+    discount: 15,
+    stock: 35,
+    featured: false,
+    description:
+      "4-foot超大 plush teddy bear made from ultra-soft materials. Hypoallergenic filling.",
+  },
+  {
+    title: "Science Experiment Kit",
+    slug: "science-experiment-kit",
+    brand: "BrainLab",
+    price: 34.99,
+    discount: 0,
+    stock: 55,
+    featured: false,
+    description:
+      "50+ science experiments for kids ages 8-14. Includes chemicals, tools, and illustrated guide.",
+  },
+  {
+    title: "Puzzle 1000-Piece Landscape",
+    slug: "puzzle-1000-landscape",
+    brand: "PuzzleCraft",
+    price: 22.99,
+    discount: 0,
+    stock: 100,
+    featured: false,
+    description:
+      "Premium 1000-piece puzzle featuring a scenic mountain landscape. Anti-glare surface.",
+  },
+  {
+    title: "Card Game Family Fun Pack",
+    slug: "card-game-family-fun",
+    brand: "GameNight",
+    price: 14.99,
+    discount: 0,
+    stock: 300,
+    featured: false,
+    description:
+      "5 classic card games in one box. Perfect for family game night, ages 6+.",
+  },
+  {
+    title: "Drone with Camera HD",
+    slug: "drone-with-camera",
+    brand: "SkyView",
+    price: 199.99,
+    discount: 20,
+    stock: 20,
+    featured: true,
+    description:
+      "Foldable drone with 4K camera, GPS positioning, 30-min flight time, and one-key return.",
+  },
 ];
 
 const automotiveProducts: ProductDef[] = [
-  { title: "Dashboard Camera 4K", slug: "dashboard-camera-4k", brand: "DriveCam", price: 129.99, discount: 0, stock: 70, featured: false, description: "4K dash cam with night vision, parking mode, and wide-angle lens. 64GB included." },
-  { title: "Car Phone Mount Magnetic", slug: "car-phone-mount-magnetic", brand: "MountPro", price: 29.99, discount: 0, stock: 400, featured: false, description: "Strong magnetic phone mount for dashboard/vent. 360° rotation, one-hand operation." },
-  { title: "Portable Jump Starter", slug: "portable-jump-starter", brand: "PowerPack", price: 89.99, discount: 10, stock: 45, featured: true, description: "2000A peak jump starter with USB power bank. Starts engines up to 8L gas/6L diesel." },
-  { title: "Car Vacuum Cleaner Handheld", slug: "car-vacuum-handheld", brand: "CleanBot", price: 49.99, discount: 5, stock: 80, featured: false, description: "Cordless handheld vacuum with HEPA filter, LED light, and crevice tool. 8000Pa suction." },
-  { title: "LED Interior Lights Kit", slug: "led-interior-lights-kit", brand: "LightUp", price: 24.99, discount: 0, stock: 200, featured: false, description: "App-controlled RGB LED strip kit with 16 colors, music sync, and 4 strips for full interior." },
-  { title: "Tire Inflator Portable", slug: "tire-inflator-portable", brand: "AirFlow", price: 44.99, discount: 0, stock: 110, featured: false, description: "Digital tire inflator with auto shut-off. Inflates car tire in 5 minutes. LED light included." },
-  { title: "Car Seat Organizer", slug: "car-seat-organizer", brand: "TravelGear", price: 19.99, discount: 0, stock: 280, featured: false, description: "Waterproof backseat organizer with tablet holder, 5 pockets, and snack pouch." },
-  { title: "Windshield Sun Shade", slug: "windshield-sun-shade", brand: "CoolShade", price: 22.99, discount: 20, stock: 160, featured: false, description: "Custom-fit reflective sun shade. Blocks 99% of UV rays, reduces interior temperature." },
+  {
+    title: "Dashboard Camera 4K",
+    slug: "dashboard-camera-4k",
+    brand: "DriveCam",
+    price: 129.99,
+    discount: 0,
+    stock: 70,
+    featured: false,
+    description:
+      "4K dash cam with night vision, parking mode, and wide-angle lens. 64GB included.",
+  },
+  {
+    title: "Car Phone Mount Magnetic",
+    slug: "car-phone-mount-magnetic",
+    brand: "MountPro",
+    price: 29.99,
+    discount: 0,
+    stock: 400,
+    featured: false,
+    description:
+      "Strong magnetic phone mount for dashboard/vent. 360° rotation, one-hand operation.",
+  },
+  {
+    title: "Portable Jump Starter",
+    slug: "portable-jump-starter",
+    brand: "PowerPack",
+    price: 89.99,
+    discount: 10,
+    stock: 45,
+    featured: true,
+    description:
+      "2000A peak jump starter with USB power bank. Starts engines up to 8L gas/6L diesel.",
+  },
+  {
+    title: "Car Vacuum Cleaner Handheld",
+    slug: "car-vacuum-handheld",
+    brand: "CleanBot",
+    price: 49.99,
+    discount: 5,
+    stock: 80,
+    featured: false,
+    description:
+      "Cordless handheld vacuum with HEPA filter, LED light, and crevice tool. 8000Pa suction.",
+  },
+  {
+    title: "LED Interior Lights Kit",
+    slug: "led-interior-lights-kit",
+    brand: "LightUp",
+    price: 24.99,
+    discount: 0,
+    stock: 200,
+    featured: false,
+    description:
+      "App-controlled RGB LED strip kit with 16 colors, music sync, and 4 strips for full interior.",
+  },
+  {
+    title: "Tire Inflator Portable",
+    slug: "tire-inflator-portable",
+    brand: "AirFlow",
+    price: 44.99,
+    discount: 0,
+    stock: 110,
+    featured: false,
+    description:
+      "Digital tire inflator with auto shut-off. Inflates car tire in 5 minutes. LED light included.",
+  },
+  {
+    title: "Car Seat Organizer",
+    slug: "car-seat-organizer",
+    brand: "TravelGear",
+    price: 19.99,
+    discount: 0,
+    stock: 280,
+    featured: false,
+    description:
+      "Waterproof backseat organizer with tablet holder, 5 pockets, and snack pouch.",
+  },
+  {
+    title: "Windshield Sun Shade",
+    slug: "windshield-sun-shade",
+    brand: "CoolShade",
+    price: 22.99,
+    discount: 20,
+    stock: 160,
+    featured: false,
+    description:
+      "Custom-fit reflective sun shade. Blocks 99% of UV rays, reduces interior temperature.",
+  },
 ];
 
 const foodProducts: ProductDef[] = [
-  { title: "Organic Coffee Beans Medium Roast", slug: "organic-coffee-beans", brand: "FreshBrew", price: 24.99, discount: 0, stock: 150, featured: false, description: "Single-origin organic Arabica coffee beans. Medium roast with chocolate and citrus notes." },
-  { title: "Premium Matcha Green Tea Powder", slug: "premium-matcha-powder", brand: "ZenTea", price: 34.99, discount: 10, stock: 80, featured: false, description: "Ceremonial grade Japanese matcha. Stone-ground, vibrant green, smooth taste." },
-  { title: "Artisan Dark Chocolate Collection", slug: "artisan-dark-chocolate", brand: "CacaoFine", price: 29.99, discount: 0, stock: 120, featured: true, description: "Set of 6 single-origin dark chocolate bars from Peru, Madagascar, and Ghana." },
-  { title: "Extra Virgin Olive Oil Cold Pressed", slug: "extra-virgin-olive-oil", brand: "TuscanyGold", price: 39.99, discount: 5, stock: 60, featured: false, description: "First cold-pressed Italian olive oil from Tuscany. Rich, peppery finish." },
-  { title: "Trail Mix Deluxe 2lb", slug: "trail-mix-deluxe", brand: "NutHouse", price: 18.99, discount: 0, stock: 200, featured: false, description: "Premium trail mix with almonds, cashews, dried cranberries, dark chocolate chips." },
-  { title: "Organic Honey Raw Wildflower", slug: "organic-honey-wildflower", brand: "BeePure", price: 16.99, discount: 0, stock: 90, featured: false, description: "Unfiltered raw wildflower honey from California. Never heated, never processed." },
-  { title: "Protein Bars Variety Pack (12)", slug: "protein-bars-variety-pack", brand: "FitFuel", price: 28.99, discount: 15, stock: 300, featured: false, description: "12 plant-based protein bars in 4 flavors. 20g protein, 5g fiber, no artificial sweeteners." },
-  { title: "Hot Sauce Collection Set", slug: "hot-sauce-collection", brand: "FireBottle", price: 32.99, discount: 0, stock: 75, featured: false, description: "6 artisan hot sauces ranging from mild to extreme. Small-batch fermented, no additives." },
+  {
+    title: "Organic Coffee Beans Medium Roast",
+    slug: "organic-coffee-beans",
+    brand: "FreshBrew",
+    price: 24.99,
+    discount: 0,
+    stock: 150,
+    featured: false,
+    description:
+      "Single-origin organic Arabica coffee beans. Medium roast with chocolate and citrus notes.",
+  },
+  {
+    title: "Premium Matcha Green Tea Powder",
+    slug: "premium-matcha-powder",
+    brand: "ZenTea",
+    price: 34.99,
+    discount: 10,
+    stock: 80,
+    featured: false,
+    description:
+      "Ceremonial grade Japanese matcha. Stone-ground, vibrant green, smooth taste.",
+  },
+  {
+    title: "Artisan Dark Chocolate Collection",
+    slug: "artisan-dark-chocolate",
+    brand: "CacaoFine",
+    price: 29.99,
+    discount: 0,
+    stock: 120,
+    featured: true,
+    description:
+      "Set of 6 single-origin dark chocolate bars from Peru, Madagascar, and Ghana.",
+  },
+  {
+    title: "Extra Virgin Olive Oil Cold Pressed",
+    slug: "extra-virgin-olive-oil",
+    brand: "TuscanyGold",
+    price: 39.99,
+    discount: 5,
+    stock: 60,
+    featured: false,
+    description:
+      "First cold-pressed Italian olive oil from Tuscany. Rich, peppery finish.",
+  },
+  {
+    title: "Trail Mix Deluxe 2lb",
+    slug: "trail-mix-deluxe",
+    brand: "NutHouse",
+    price: 18.99,
+    discount: 0,
+    stock: 200,
+    featured: false,
+    description:
+      "Premium trail mix with almonds, cashews, dried cranberries, dark chocolate chips.",
+  },
+  {
+    title: "Organic Honey Raw Wildflower",
+    slug: "organic-honey-wildflower",
+    brand: "BeePure",
+    price: 16.99,
+    discount: 0,
+    stock: 90,
+    featured: false,
+    description:
+      "Unfiltered raw wildflower honey from California. Never heated, never processed.",
+  },
+  {
+    title: "Protein Bars Variety Pack (12)",
+    slug: "protein-bars-variety-pack",
+    brand: "FitFuel",
+    price: 28.99,
+    discount: 15,
+    stock: 300,
+    featured: false,
+    description:
+      "12 plant-based protein bars in 4 flavors. 20g protein, 5g fiber, no artificial sweeteners.",
+  },
+  {
+    title: "Hot Sauce Collection Set",
+    slug: "hot-sauce-collection",
+    brand: "FireBottle",
+    price: 32.99,
+    discount: 0,
+    stock: 75,
+    featured: false,
+    description:
+      "6 artisan hot sauces ranging from mild to extreme. Small-batch fermented, no additives.",
+  },
 ];
 
 const musicProducts: ProductDef[] = [
-  { title: "Acoustic Guitar Dreadnought", slug: "acoustic-guitar-dreadnought", brand: "MelodyCraft", price: 299.99, discount: 10, stock: 15, featured: true, description: "Full-size dreadnought acoustic guitar with solid spruce top and mahogany back and sides." },
-  { title: "Digital Audio Workstation USB Mic", slug: "usb-microphone-daw", brand: "SoundCapture", price: 149.99, discount: 0, stock: 40, featured: false, description: "Condenser USB microphone for recording and streaming. Built-in pop filter and gain control." },
-  { title: "Vinyl Record Player Turntable", slug: "vinyl-record-player-turntable", brand: "RetroSound", price: 199.99, discount: 15, stock: 25, featured: false, description: "Belt-driven turntable with built-in speakers, Bluetooth output, and USB recording." },
-  { title: "Studio Monitor Headphones", slug: "studio-monitor-headphones", brand: "SoundCapture", price: 179.99, discount: 0, stock: 35, featured: false, description: "Closed-back reference headphones with flat frequency response. 45mm neodymium drivers." },
-  { title: "Electronic Keyboard 61-Key", slug: "electronic-keyboard-61key", brand: "MelodyCraft", price: 249.99, discount: 20, stock: 20, featured: false, description: "61-key portable keyboard with 500 sounds, 200 rhythms, and LCD display." },
-  { title: "Ukulele Soprano Starter Kit", slug: "ukulele-soprano-starter", brand: "MelodyCraft", price: 49.99, discount: 0, stock: 60, featured: false, description: "Soprano ukulele with carrying bag, tuner, and online lesson access. Mahogany construction." },
-  { title: "Bluetooth Earbuds True Wireless", slug: "bt-earbuds-true-wireless", brand: "SoundWave", price: 129.99, discount: 10, stock: 145, featured: false, description: "True wireless earbuds with ANC, IPX5 water resistance, and 30-hour total battery." },
-  { title: "Guitar Pedal Multi-Effects", slug: "guitar-pedal-multi-effects", brand: "SoundCapture", price: 219.99, discount: 0, stock: 18, featured: false, description: "Multi-effects processor with 100+ effects, looper, drum machine, and expression pedal input." },
+  {
+    title: "Acoustic Guitar Dreadnought",
+    slug: "acoustic-guitar-dreadnought",
+    brand: "MelodyCraft",
+    price: 299.99,
+    discount: 10,
+    stock: 15,
+    featured: true,
+    description:
+      "Full-size dreadnought acoustic guitar with solid spruce top and mahogany back and sides.",
+  },
+  {
+    title: "Digital Audio Workstation USB Mic",
+    slug: "usb-microphone-daw",
+    brand: "SoundCapture",
+    price: 149.99,
+    discount: 0,
+    stock: 40,
+    featured: false,
+    description:
+      "Condenser USB microphone for recording and streaming. Built-in pop filter and gain control.",
+  },
+  {
+    title: "Vinyl Record Player Turntable",
+    slug: "vinyl-record-player-turntable",
+    brand: "RetroSound",
+    price: 199.99,
+    discount: 15,
+    stock: 25,
+    featured: false,
+    description:
+      "Belt-driven turntable with built-in speakers, Bluetooth output, and USB recording.",
+  },
+  {
+    title: "Studio Monitor Headphones",
+    slug: "studio-monitor-headphones",
+    brand: "SoundCapture",
+    price: 179.99,
+    discount: 0,
+    stock: 35,
+    featured: false,
+    description:
+      "Closed-back reference headphones with flat frequency response. 45mm neodymium drivers.",
+  },
+  {
+    title: "Electronic Keyboard 61-Key",
+    slug: "electronic-keyboard-61key",
+    brand: "MelodyCraft",
+    price: 249.99,
+    discount: 20,
+    stock: 20,
+    featured: false,
+    description:
+      "61-key portable keyboard with 500 sounds, 200 rhythms, and LCD display.",
+  },
+  {
+    title: "Ukulele Soprano Starter Kit",
+    slug: "ukulele-soprano-starter",
+    brand: "MelodyCraft",
+    price: 49.99,
+    discount: 0,
+    stock: 60,
+    featured: false,
+    description:
+      "Soprano ukulele with carrying bag, tuner, and online lesson access. Mahogany construction.",
+  },
+  {
+    title: "Bluetooth Earbuds True Wireless",
+    slug: "bt-earbuds-true-wireless",
+    brand: "SoundWave",
+    price: 129.99,
+    discount: 10,
+    stock: 145,
+    featured: false,
+    description:
+      "True wireless earbuds with ANC, IPX5 water resistance, and 30-hour total battery.",
+  },
+  {
+    title: "Guitar Pedal Multi-Effects",
+    slug: "guitar-pedal-multi-effects",
+    brand: "SoundCapture",
+    price: 219.99,
+    discount: 0,
+    stock: 18,
+    featured: false,
+    description:
+      "Multi-effects processor with 100+ effects, looper, drum machine, and expression pedal input.",
+  },
 ];
 
 const allProductDefs = [
@@ -389,8 +1239,6 @@ const allProductDefs = [
   ...foodProducts.map((p) => ({ ...p, categoryIdx: 9 })),
   ...musicProducts.map((p) => ({ ...p, categoryIdx: 10 })),
 ];
-
-const brands = ["SoundWave", "ViewPro", "GameType", "ConnectPro", "ErgoTech", "HomeSync", "UrbanWear", "ApexStyle", "StridePro", "VaultCraft", "KitchenCraft", "GreenThumb", "SleepWell", "AmbientGlow", "CleanBot", "TechPress", "StarBooks", "CulinaryPress", "PageTurner", "ArtCraft", "WealthPress", "GreenLife", "DesignPress", "FlexFit", "IronForce", "HydroMax", "SpeedGear", "TrailBlazer", "GlowLab", "SmileBright", "StyleCraft", "AromaZen", "RelaxPro", "BuildFun", "TurboToys", "GameNight", "SnuggleHug", "BrainLab", "PuzzleCraft", "SkyView", "DriveCam", "MountPro", "PowerPack", "LightUp", "AirFlow", "TravelGear", "CoolShade", "FreshBrew", "ZenTea", "CacaoFine", "TuscanyGold", "NutHouse", "BeePure", "FitFuel", "FireBottle", "MelodyCraft", "SoundCapture", "RetroSound"];
 
 const reviewComments = [
   "Excellent quality, exceeded my expectations. Would highly recommend.",
@@ -410,7 +1258,9 @@ const reviewComments = [
   "Pretty good overall. A few small design flaws but nothing major.",
 ];
 
-async function seedProductsAndImages(categoryRecords: Awaited<ReturnType<typeof seedCategories>>) {
+async function seedProductsAndImages(
+  categoryRecords: Awaited<ReturnType<typeof seedCategories>>,
+) {
   const categoryMap = new Map(categoryRecords.map((c) => [c.slug, c]));
 
   const productRecords: (typeof products.$inferInsert)[] = [];
@@ -483,8 +1333,8 @@ async function seedReviews(
         rating,
         comment: reviewComments[commentIdx],
         status: "approved",
-        createdAt: new Date(2025, 2, 1 + (pi * 3 + ri) % 200),
-        updatedAt: new Date(2025, 2, 1 + (pi * 3 + ri) % 200),
+        createdAt: new Date(2025, 2, 1 + ((pi * 3 + ri) % 200)),
+        updatedAt: new Date(2025, 2, 1 + ((pi * 3 + ri) % 200)),
       });
     }
   }
@@ -496,7 +1346,9 @@ async function seedReviews(
   return reviewRecords;
 }
 
-async function seedAddresses(userRecords: Awaited<ReturnType<typeof seedUsers>>) {
+async function seedAddresses(
+  userRecords: Awaited<ReturnType<typeof seedUsers>>,
+) {
   const customerRecords = userRecords.slice(1);
   const addressRecords: (typeof addresses.$inferInsert)[] = [];
   const cities = [
@@ -582,7 +1434,7 @@ async function seedWishlistItems(
         id: seedId("wishlist", i * 10 + j),
         userId: customerRecords[i].id!,
         productId: productRecords[productIdx].id!,
-        createdAt: new Date(2025, 3, 1 + (i * 5 + j) % 30),
+        createdAt: new Date(2025, 3, 1 + ((i * 5 + j) % 30)),
       });
     }
   }
@@ -599,31 +1451,181 @@ async function seedOrders(
   const orderItemsRecords: (typeof orderItems.$inferInsert)[] = [];
 
   const orderDefs = [
-    { userIdx: 0, status: "delivered" as const, paymentStatus: "completed" as const, daysAgo: 60, itemCount: 2 },
-    { userIdx: 0, status: "delivered" as const, paymentStatus: "completed" as const, daysAgo: 45, itemCount: 3 },
-    { userIdx: 0, status: "delivered" as const, paymentStatus: "completed" as const, daysAgo: 20, itemCount: 1 },
-    { userIdx: 1, status: "delivered" as const, paymentStatus: "completed" as const, daysAgo: 55, itemCount: 4 },
-    { userIdx: 1, status: "shipped" as const, paymentStatus: "completed" as const, daysAgo: 5, itemCount: 2 },
-    { userIdx: 2, status: "delivered" as const, paymentStatus: "completed" as const, daysAgo: 30, itemCount: 1 },
-    { userIdx: 2, status: "processing" as const, paymentStatus: "completed" as const, daysAgo: 3, itemCount: 3 },
-    { userIdx: 3, status: "delivered" as const, paymentStatus: "completed" as const, daysAgo: 90, itemCount: 2 },
-    { userIdx: 3, status: "cancelled" as const, paymentStatus: "failed" as const, daysAgo: 10, itemCount: 1 },
-    { userIdx: 3, status: "pending" as const, paymentStatus: "pending" as const, daysAgo: 0, itemCount: 2 },
-    { userIdx: 4, status: "delivered" as const, paymentStatus: "completed" as const, daysAgo: 40, itemCount: 3 },
-    { userIdx: 4, status: "delivered" as const, paymentStatus: "completed" as const, daysAgo: 15, itemCount: 2 },
-    { userIdx: 5, status: "paid" as const, paymentStatus: "completed" as const, daysAgo: 2, itemCount: 1 },
-    { userIdx: 5, status: "delivered" as const, paymentStatus: "completed" as const, daysAgo: 70, itemCount: 4 },
-    { userIdx: 6, status: "cancelled" as const, paymentStatus: "refunded" as const, daysAgo: 25, itemCount: 2 },
-    { userIdx: 6, status: "processing" as const, paymentStatus: "completed" as const, daysAgo: 4, itemCount: 1 },
-    { userIdx: 6, status: "delivered" as const, paymentStatus: "completed" as const, daysAgo: 50, itemCount: 3 },
-    { userIdx: 1, status: "delivered" as const, paymentStatus: "completed" as const, daysAgo: 80, itemCount: 2 },
-    { userIdx: 2, status: "shipped" as const, paymentStatus: "completed" as const, daysAgo: 7, itemCount: 1 },
-    { userIdx: 4, status: "pending" as const, paymentStatus: "pending" as const, daysAgo: 0, itemCount: 3 },
-    { userIdx: 0, status: "delivered" as const, paymentStatus: "completed" as const, daysAgo: 100, itemCount: 5 },
-    { userIdx: 3, status: "delivered" as const, paymentStatus: "completed" as const, daysAgo: 35, itemCount: 2 },
-    { userIdx: 5, status: "delivered" as const, paymentStatus: "completed" as const, daysAgo: 65, itemCount: 1 },
-    { userIdx: 6, status: "paid" as const, paymentStatus: "completed" as const, daysAgo: 1, itemCount: 2 },
-    { userIdx: 2, status: "cancelled" as const, paymentStatus: "failed" as const, daysAgo: 12, itemCount: 2 },
+    {
+      userIdx: 0,
+      status: "delivered" as const,
+      paymentStatus: "completed" as const,
+      daysAgo: 60,
+      itemCount: 2,
+    },
+    {
+      userIdx: 0,
+      status: "delivered" as const,
+      paymentStatus: "completed" as const,
+      daysAgo: 45,
+      itemCount: 3,
+    },
+    {
+      userIdx: 0,
+      status: "delivered" as const,
+      paymentStatus: "completed" as const,
+      daysAgo: 20,
+      itemCount: 1,
+    },
+    {
+      userIdx: 1,
+      status: "delivered" as const,
+      paymentStatus: "completed" as const,
+      daysAgo: 55,
+      itemCount: 4,
+    },
+    {
+      userIdx: 1,
+      status: "shipped" as const,
+      paymentStatus: "completed" as const,
+      daysAgo: 5,
+      itemCount: 2,
+    },
+    {
+      userIdx: 2,
+      status: "delivered" as const,
+      paymentStatus: "completed" as const,
+      daysAgo: 30,
+      itemCount: 1,
+    },
+    {
+      userIdx: 2,
+      status: "processing" as const,
+      paymentStatus: "completed" as const,
+      daysAgo: 3,
+      itemCount: 3,
+    },
+    {
+      userIdx: 3,
+      status: "delivered" as const,
+      paymentStatus: "completed" as const,
+      daysAgo: 90,
+      itemCount: 2,
+    },
+    {
+      userIdx: 3,
+      status: "cancelled" as const,
+      paymentStatus: "failed" as const,
+      daysAgo: 10,
+      itemCount: 1,
+    },
+    {
+      userIdx: 3,
+      status: "pending" as const,
+      paymentStatus: "pending" as const,
+      daysAgo: 0,
+      itemCount: 2,
+    },
+    {
+      userIdx: 4,
+      status: "delivered" as const,
+      paymentStatus: "completed" as const,
+      daysAgo: 40,
+      itemCount: 3,
+    },
+    {
+      userIdx: 4,
+      status: "delivered" as const,
+      paymentStatus: "completed" as const,
+      daysAgo: 15,
+      itemCount: 2,
+    },
+    {
+      userIdx: 5,
+      status: "paid" as const,
+      paymentStatus: "completed" as const,
+      daysAgo: 2,
+      itemCount: 1,
+    },
+    {
+      userIdx: 5,
+      status: "delivered" as const,
+      paymentStatus: "completed" as const,
+      daysAgo: 70,
+      itemCount: 4,
+    },
+    {
+      userIdx: 6,
+      status: "cancelled" as const,
+      paymentStatus: "refunded" as const,
+      daysAgo: 25,
+      itemCount: 2,
+    },
+    {
+      userIdx: 6,
+      status: "processing" as const,
+      paymentStatus: "completed" as const,
+      daysAgo: 4,
+      itemCount: 1,
+    },
+    {
+      userIdx: 6,
+      status: "delivered" as const,
+      paymentStatus: "completed" as const,
+      daysAgo: 50,
+      itemCount: 3,
+    },
+    {
+      userIdx: 1,
+      status: "delivered" as const,
+      paymentStatus: "completed" as const,
+      daysAgo: 80,
+      itemCount: 2,
+    },
+    {
+      userIdx: 2,
+      status: "shipped" as const,
+      paymentStatus: "completed" as const,
+      daysAgo: 7,
+      itemCount: 1,
+    },
+    {
+      userIdx: 4,
+      status: "pending" as const,
+      paymentStatus: "pending" as const,
+      daysAgo: 0,
+      itemCount: 3,
+    },
+    {
+      userIdx: 0,
+      status: "delivered" as const,
+      paymentStatus: "completed" as const,
+      daysAgo: 100,
+      itemCount: 5,
+    },
+    {
+      userIdx: 3,
+      status: "delivered" as const,
+      paymentStatus: "completed" as const,
+      daysAgo: 35,
+      itemCount: 2,
+    },
+    {
+      userIdx: 5,
+      status: "delivered" as const,
+      paymentStatus: "completed" as const,
+      daysAgo: 65,
+      itemCount: 1,
+    },
+    {
+      userIdx: 6,
+      status: "paid" as const,
+      paymentStatus: "completed" as const,
+      daysAgo: 1,
+      itemCount: 2,
+    },
+    {
+      userIdx: 2,
+      status: "cancelled" as const,
+      paymentStatus: "failed" as const,
+      daysAgo: 12,
+      itemCount: 2,
+    },
   ];
 
   let orderItemIdx = 0;
@@ -749,31 +1751,31 @@ async function seedCouponUsages(
     {
       id: seedId("couponUsage", 1),
       couponId: couponRecords[0].id!, // SAVE10
-      userId: userRecords[2].id!,     // John
+      userId: userRecords[2].id!, // John
       usedAt: new Date(Date.now() - 20 * 86400000),
     },
     {
       id: seedId("couponUsage", 2),
       couponId: couponRecords[1].id!, // FLAT50
-      userId: userRecords[3].id!,     // Jane
+      userId: userRecords[3].id!, // Jane
       usedAt: new Date(Date.now() - 55 * 86400000),
     },
     {
       id: seedId("couponUsage", 3),
       couponId: couponRecords[3].id!, // NEWUSER
-      userId: userRecords[6].id!,     // Charlie
+      userId: userRecords[6].id!, // Charlie
       usedAt: new Date(Date.now() - 70 * 86400000),
     },
     {
       id: seedId("couponUsage", 4),
       couponId: couponRecords[3].id!, // NEWUSER
-      userId: userRecords[7].id!,     // Diana
+      userId: userRecords[7].id!, // Diana
       usedAt: new Date(Date.now() - 50 * 86400000),
     },
     {
       id: seedId("couponUsage", 5),
       couponId: couponRecords[0].id!, // SAVE10
-      userId: userRecords[4].id!,     // Bob
+      userId: userRecords[4].id!, // Bob
       usedAt: new Date(Date.now() - 30 * 86400000),
     },
   ];

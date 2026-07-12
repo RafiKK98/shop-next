@@ -1,17 +1,17 @@
 "use client";
 
-import { useState, useTransition } from "react";
-import Image from "next/image";
-import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
-import { Button } from "@/components/ui";
-import { formatCurrency } from "@/utils/format";
-import { computeCartTotals } from "@/utils/checkout";
 import { placeOrder } from "@/actions/checkout";
-import { CouponInput } from "./coupon-input";
+import { Button } from "@/components/ui";
 import { ROUTES } from "@/constants";
 import type { CartItemWithProduct } from "@/lib/cart";
+import { computeCartTotals } from "@/utils/checkout";
+import { formatCurrency } from "@/utils/format";
+import { ArrowLeft } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { useState, useTransition } from "react";
 import type { Address, CouponState } from "./checkout-page";
+import { CouponInput } from "./coupon-input";
 
 interface ReviewStepProps {
   items: CartItemWithProduct[];
@@ -21,10 +21,16 @@ interface ReviewStepProps {
   onCouponChange: (coupon: CouponState | null) => void;
 }
 
-export function ReviewStep({ items, selectedAddress, onBack, appliedCoupon, onCouponChange }: ReviewStepProps) {
+export function ReviewStep({
+  items,
+  selectedAddress,
+  onBack,
+  appliedCoupon,
+  onCouponChange,
+}: ReviewStepProps) {
   const [serverError, setServerError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
-  const { subtotal, discountAmount, discountedSubtotal, shipping, tax, total } = computeCartTotals(
+  const { subtotal, discountAmount, shipping, tax, total } = computeCartTotals(
     items,
     appliedCoupon?.discountAmount ?? 0,
   );
@@ -49,7 +55,8 @@ export function ReviewStep({ items, selectedAddress, onBack, appliedCoupon, onCo
       <div>
         <h2 className="text-xl font-semibold">Review Your Order</h2>
         <p className="mt-1 text-sm text-base-content/60">
-          Please review your items and shipping address before placing the order.
+          Please review your items and shipping address before placing the
+          order.
         </p>
       </div>
 
@@ -60,15 +67,22 @@ export function ReviewStep({ items, selectedAddress, onBack, appliedCoupon, onCo
             Shipping To
           </h3>
           <div className="text-sm">
-            {selectedAddress.fullName && <p className="font-medium">{selectedAddress.fullName}</p>}
+            {selectedAddress.fullName && (
+              <p className="font-medium">{selectedAddress.fullName}</p>
+            )}
             <p>{selectedAddress.street}</p>
-            {selectedAddress.addressLine2 && <p>{selectedAddress.addressLine2}</p>}
+            {selectedAddress.addressLine2 && (
+              <p>{selectedAddress.addressLine2}</p>
+            )}
             <p>
-              {selectedAddress.city}, {selectedAddress.state} {selectedAddress.postalCode}
+              {selectedAddress.city}, {selectedAddress.state}{" "}
+              {selectedAddress.postalCode}
             </p>
             <p>{selectedAddress.country}</p>
             {selectedAddress.phone && (
-              <p className="mt-1 text-base-content/50">{selectedAddress.phone}</p>
+              <p className="mt-1 text-base-content/50">
+                {selectedAddress.phone}
+              </p>
             )}
           </div>
         </div>
@@ -93,7 +107,8 @@ export function ReviewStep({ items, selectedAddress, onBack, appliedCoupon, onCo
           {items.map((item) => {
             const price = parseFloat(item.product.price);
             const discount = parseFloat(item.product.discount || "0");
-            const unitPrice = discount > 0 ? price * (1 - discount / 100) : price;
+            const unitPrice =
+              discount > 0 ? price * (1 - discount / 100) : price;
 
             return (
               <li key={item.id} className="flex gap-3 px-4 py-3">

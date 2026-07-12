@@ -1,17 +1,16 @@
 "use client";
 
-import { useId } from "react";
-import {
-  ResponsiveContainer,
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  Tooltip,
-  CartesianGrid,
-} from "recharts";
 import type { DailyRevenue } from "@/services/admin/analytics";
 import { formatCurrency, formatDateShort } from "@/utils/format";
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
 
 interface RevenueChartProps {
   data: DailyRevenue[];
@@ -23,12 +22,13 @@ function formatChartDate(dateStr: string): string {
 }
 
 export function RevenueChart({ data }: RevenueChartProps) {
-  const id = useId();
-
   return (
     <div className="h-64 w-full">
       <ResponsiveContainer width="100%" height="100%">
-        <BarChart data={data} margin={{ top: 8, right: 8, left: -16, bottom: 0 }}>
+        <BarChart
+          data={data}
+          margin={{ top: 8, right: 8, left: -16, bottom: 0 }}
+        >
           <CartesianGrid strokeDasharray="3 3" className="stroke-base-200" />
           <XAxis
             dataKey="date"
@@ -46,11 +46,7 @@ export function RevenueChart({ data }: RevenueChartProps) {
             axisLine={false}
             className="text-base-content/40"
           />
-          <Tooltip
-            content={
-              <CustomTooltip />
-            }
-          />
+          <Tooltip content={<CustomTooltip />} />
           <Bar
             dataKey="revenue"
             fill="var(--color-primary, oklch(0.546 0.245 262.881))"
@@ -63,12 +59,24 @@ export function RevenueChart({ data }: RevenueChartProps) {
   );
 }
 
-function CustomTooltip({ active, payload, label }: any) {
+function CustomTooltip({
+  active,
+  payload,
+  label,
+}: {
+  active?: boolean;
+  payload?: { value: number }[];
+  label?: string;
+}) {
   if (!active || !payload?.length) return null;
   return (
     <div className="rounded-lg border border-base-200 bg-base-100 px-3 py-2 shadow-lg">
-      <p className="text-xs text-base-content/50">{formatDateShort(label + "T00:00:00")}</p>
-      <p className="text-sm font-semibold">{formatCurrency(payload[0].value)}</p>
+      <p className="text-xs text-base-content/50">
+        {formatDateShort(label + "T00:00:00")}
+      </p>
+      <p className="text-sm font-semibold">
+        {formatCurrency(payload[0].value)}
+      </p>
     </div>
   );
 }

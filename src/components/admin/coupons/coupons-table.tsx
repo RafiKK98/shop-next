@@ -14,6 +14,7 @@ import {
   Percent,
   Search,
 } from "lucide-react";
+import type { Route } from "next";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useTransition } from "react";
@@ -34,7 +35,6 @@ export function CouponsTable({
   coupons,
   total,
   page,
-  pageSize,
   totalPages,
   search,
   sort,
@@ -58,7 +58,7 @@ export function CouponsTable({
   };
 
   const navigate = (url: string) => {
-    router.push(url as any);
+    router.push(url as Route);
   };
 
   const toggleSort = (column: string) => {

@@ -75,11 +75,11 @@ export function OrderStatusChart({ data }: OrderStatusChartProps) {
   );
 }
 
-function StatusTooltip({ active, payload, label }: any) {
+function StatusTooltip({ active, payload, label }: { active?: boolean; payload?: { value: number }[]; label?: string }) {
   if (!active || !payload?.length) return null;
   return (
     <div className="rounded-lg border border-base-200 bg-base-100 px-3 py-2 shadow-lg">
-      <p className="text-xs font-medium">{STATUS_LABELS[label] ?? label}</p>
+      <p className="text-xs font-medium">{label ? (STATUS_LABELS[label] ?? label) : "—"}</p>
       <p className="text-sm font-semibold">
         {payload[0].value} order{payload[0].value !== 1 ? "s" : ""}
       </p>

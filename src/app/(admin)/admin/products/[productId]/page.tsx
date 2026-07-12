@@ -1,12 +1,13 @@
-import { notFound, redirect } from "next/navigation";
-import Link from "next/link";
-import { SITE } from "@/constants";
 import { AdminPageHeader } from "@/components/admin/admin-page-header";
-import { Button, Badge } from "@/components/ui";
+import { Badge, Button } from "@/components/ui";
+import { SITE } from "@/constants";
 import { getAdminProductById } from "@/services/admin/products";
 import { formatCurrency, formatDate } from "@/utils/format";
-import { Package, Star, ArrowLeft } from "lucide-react";
+import { Package, Star } from "lucide-react";
 import type { Metadata } from "next";
+import Image from "next/image";
+import Link from "next/link";
+import { notFound } from "next/navigation";
 
 export const metadata: Metadata = {
   title: `Product Details | Admin | ${SITE.name}`,
@@ -42,12 +43,13 @@ export default async function ProductDetailPage({ params }: PageProps) {
                 {product.images.map((img) => (
                   <div
                     key={img.id}
-                    className="flex aspect-square items-center justify-center overflow-hidden rounded-lg border border-base-200"
+                    className="flex relative aspect-square items-center justify-center overflow-hidden rounded-lg border border-base-200"
                   >
-                    <img
+                    <Image
                       src={img.url}
                       alt={img.alt ?? product.title}
                       className="size-full object-cover"
+                      fill
                     />
                   </div>
                 ))}
@@ -62,35 +64,64 @@ export default async function ProductDetailPage({ params }: PageProps) {
           <div className="lg:col-span-2">
             <div className="grid gap-6 sm:grid-cols-2">
               <div>
-                <p className="text-xs font-medium uppercase tracking-wider text-base-content/40">Price</p>
-                <p className="text-2xl font-bold">{formatCurrency(product.price)}</p>
+                <p className="text-xs font-medium uppercase tracking-wider text-base-content/40">
+                  Price
+                </p>
+                <p className="text-2xl font-bold">
+                  {formatCurrency(product.price)}
+                </p>
                 {product.discount && Number(product.discount) > 0 && (
                   <p className="text-sm text-error">-{product.discount}% off</p>
                 )}
               </div>
               <div>
-                <p className="text-xs font-medium uppercase tracking-wider text-base-content/40">Stock</p>
-                <p className="text-lg font-semibold">{product.stock ?? 0} units</p>
+                <p className="text-xs font-medium uppercase tracking-wider text-base-content/40">
+                  Stock
+                </p>
+                <p className="text-lg font-semibold">
+                  {product.stock ?? 0} units
+                </p>
               </div>
               <div>
-                <p className="text-xs font-medium uppercase tracking-wider text-base-content/40">Category</p>
-                <p>{product.categoryName ?? <span className="text-base-content/30">None</span>}</p>
+                <p className="text-xs font-medium uppercase tracking-wider text-base-content/40">
+                  Category
+                </p>
+                <p>
+                  {product.categoryName ?? (
+                    <span className="text-base-content/30">None</span>
+                  )}
+                </p>
               </div>
               <div>
-                <p className="text-xs font-medium uppercase tracking-wider text-base-content/40">Brand</p>
-                <p>{product.brand ?? <span className="text-base-content/30">None</span>}</p>
+                <p className="text-xs font-medium uppercase tracking-wider text-base-content/40">
+                  Brand
+                </p>
+                <p>
+                  {product.brand ?? (
+                    <span className="text-base-content/30">None</span>
+                  )}
+                </p>
               </div>
               <div>
-                <p className="text-xs font-medium uppercase tracking-wider text-base-content/40">Featured</p>
-                {product.featured ? <Badge variant="primary">Yes</Badge> : <span className="text-base-content/40">No</span>}
+                <p className="text-xs font-medium uppercase tracking-wider text-base-content/40">
+                  Featured
+                </p>
+                {product.featured ? (
+                  <Badge variant="primary">Yes</Badge>
+                ) : (
+                  <span className="text-base-content/40">No</span>
+                )}
               </div>
               <div>
-                <p className="text-xs font-medium uppercase tracking-wider text-base-content/40">Rating</p>
+                <p className="text-xs font-medium uppercase tracking-wider text-base-content/40">
+                  Rating
+                </p>
                 <p className="flex items-center gap-1">
                   {product.avgRating ? (
                     <>
                       <Star className="size-4 fill-warning text-warning" />
-                      {product.avgRating.toFixed(1)} ({product.reviewCount} reviews)
+                      {product.avgRating.toFixed(1)} ({product.reviewCount}{" "}
+                      reviews)
                     </>
                   ) : (
                     <span className="text-base-content/30">No reviews</span>
@@ -101,8 +132,12 @@ export default async function ProductDetailPage({ params }: PageProps) {
 
             {product.description && (
               <div className="mt-6">
-                <p className="text-xs font-medium uppercase tracking-wider text-base-content/40">Description</p>
-                <p className="mt-1 whitespace-pre-wrap text-sm text-base-content/70">{product.description}</p>
+                <p className="text-xs font-medium uppercase tracking-wider text-base-content/40">
+                  Description
+                </p>
+                <p className="mt-1 whitespace-pre-wrap text-sm text-base-content/70">
+                  {product.description}
+                </p>
               </div>
             )}
 
