@@ -1,16 +1,17 @@
 "use server";
 
-import { signIn, signOut } from "@/lib/auth";
 import { db } from "@/db";
 import { users } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { signIn, signOut } from "@/lib/auth";
+import { CredentialsSignin } from "next-auth";
 import { hashPassword } from "@/lib/auth/password";
 import { loginSchema, registerSchema } from "@/lib/validations/auth";
+import { eq } from "drizzle-orm";
 import { redirect as nextRedirect } from "next/navigation";
 
 function safeRedirect(url: string): never {
   if (!url.startsWith("/")) url = "/";
-  return nextRedirect(url as any);
+  return nextRedirect(url as never);
 }
 
 export async function loginAction(formData: FormData) {
@@ -35,7 +36,10 @@ export async function loginAction(formData: FormData) {
     if (result?.error) {
       return { error: "Invalid email or password" };
     }
-  } catch {
+  } catch (error) {
+    if (error instanceof CredentialsSignin) {
+      return { error: "Invalid email or password" };
+    }
     return { error: "An unexpected error occurred. Please try again." };
   }
 

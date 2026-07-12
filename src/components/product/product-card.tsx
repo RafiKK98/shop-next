@@ -10,9 +10,10 @@ import { ROUTES } from "@/constants";
 interface ProductCardProps {
   product: Product;
   priority?: boolean;
+  onQuickView?: () => void;
 }
 
-export function ProductCard({ product, priority }: ProductCardProps) {
+export function ProductCard({ product, priority, onQuickView }: ProductCardProps) {
   const discount = getProductDiscount(product);
   const primaryImage = product.images[0];
   const href = ROUTES.productDetail(product.slug);
@@ -46,7 +47,7 @@ export function ProductCard({ product, priority }: ProductCardProps) {
         </div>
         <Price price={product.price} discount={discount || null} size="sm" />
         <div className="mt-1">
-          <ProductCardActions title={product.title} stockStatus={product.stockStatus} slug={product.slug} />
+          <ProductCardActions title={product.title} stockStatus={product.stockStatus} slug={product.slug} onQuickView={onQuickView} />
         </div>
       </div>
     </div>

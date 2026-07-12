@@ -1,10 +1,11 @@
 "use client";
 
-import { Suspense } from "react";
+import { Suspense, useState } from "react";
 import { Container, Breadcrumb, Section } from "@/components/ui";
 import { NoResults } from "@/components/ui/empty-state";
 import { FilterSidebar, MobileFilterDrawer, Toolbar, ProductGrid, CatalogPagination } from "@/components/catalog";
 import { ProductListView } from "@/components/catalog/product-list-view";
+import { ProductQuickViewModal } from "@/components/product/product-quick-view-modal";
 import { useFilters } from "@/hooks/use-filters";
 import { useSearchParams } from "next/navigation";
 import type { Product } from "@/types/product";
@@ -18,6 +19,10 @@ interface Props {
 function CategoryInner({ category, products }: Props) {
   const searchParams = useSearchParams();
   const view = searchParams.get("view") || "grid";
+  const [quickViewSlug, setQuickViewSlug] = useState<string | null>(null);
+  const quickViewProduct = quickViewSlug
+    ? products.find((p) => p.slug === quickViewSlug) ?? null
+    : null;
 
   const {
     filters,
@@ -37,79 +42,88 @@ function CategoryInner({ category, products }: Props) {
   } = useFilters(products);
 
   return (
-    <Section>
-      <Container>
-        <Breadcrumb
-          className="mb-6"
-          items={[
-            { label: "Home", href: "/" },
-            { label: "Categories", href: "/categories" },
-            { label: category.name },
-          ]}
+    <>
+      <Section>
+        <Container>
+          <Breadcrumb
+            className="mb-6"
+            items={[
+              { label: "Home", href: "/" },
+              { label: "Categories", href: "/categories" },
+              { label: category.name },
+            ]}
+          />
+
+          <div className="mb-6">
+            <h1 className="text-3xl font-bold tracking-tight md:text-4xl">{category.name}</h1>
+            <p className="mt-1 text-base-content/60">{category.count} products</p>
+          </div>
+
+          <div className="flex gap-8">
+            <div className="hidden w-64 shrink-0 lg:block">
+              <FilterSidebar
+                filters={filters}
+                onToggleCategory={(v) => toggleFilter("categories", v)}
+                onToggleBrand={(v) => toggleFilter("brands", v)}
+                onToggleRating={toggleRating}
+                onToggleAvailability={(v) => toggleFilter("availability", v)}
+                onToggleDiscount={toggleDiscount}
+                onPriceChange={setPriceRange}
+              />
+            </div>
+
+            <div className="min-w-0 flex-1">
+              <Toolbar
+                totalProducts={products.length}
+                activeFilterCount={activeFilterCount}
+                pagination={pagination}
+                sortKey={sortKey}
+                searchQuery={searchQuery}
+                mobileFilterButton={
+                  <MobileFilterDrawer
+                    filters={filters}
+                    activeFilterCount={activeFilterCount}
+                    onToggleCategory={(v) => toggleFilter("categories", v)}
+                    onToggleBrand={(v) => toggleFilter("brands", v)}
+                    onToggleRating={toggleRating}
+                    onToggleAvailability={(v) => toggleFilter("availability", v)}
+                    onToggleDiscount={toggleDiscount}
+                    onPriceChange={setPriceRange}
+                  />
+                }
+                onSortChange={setSortKey}
+                onClearFilters={clearFilters}
+                onSearchChange={setSearchQuery}
+              />
+
+              {displayedProducts.length > 0 ? (
+                <>
+                  {view === "list" ? (
+                    <ProductListView products={displayedProducts} onQuickView={setQuickViewSlug} />
+                  ) : (
+                    <ProductGrid products={displayedProducts} onQuickView={setQuickViewSlug} />
+                  )}
+                  <CatalogPagination
+                    currentPage={pagination.currentPage}
+                    totalPages={pagination.totalPages}
+                    onPageChange={setPage}
+                  />
+                </>
+              ) : (
+                <NoResults query={searchQuery} />
+              )}
+            </div>
+          </div>
+        </Container>
+      </Section>
+
+      {quickViewProduct && (
+        <ProductQuickViewModal
+          product={quickViewProduct}
+          onClose={() => setQuickViewSlug(null)}
         />
-
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold tracking-tight md:text-4xl">{category.name}</h1>
-          <p className="mt-1 text-base-content/60">{category.count} products</p>
-        </div>
-
-        <div className="flex gap-8">
-          <div className="hidden w-64 shrink-0 lg:block">
-            <FilterSidebar
-              filters={filters}
-              onToggleCategory={(v) => toggleFilter("categories", v)}
-              onToggleBrand={(v) => toggleFilter("brands", v)}
-              onToggleRating={toggleRating}
-              onToggleAvailability={(v) => toggleFilter("availability", v)}
-              onToggleDiscount={toggleDiscount}
-              onPriceChange={setPriceRange}
-            />
-          </div>
-
-          <div className="min-w-0 flex-1">
-            <Toolbar
-              totalProducts={products.length}
-              activeFilterCount={activeFilterCount}
-              pagination={pagination}
-              sortKey={sortKey}
-              searchQuery={searchQuery}
-              mobileFilterButton={
-                <MobileFilterDrawer
-                  filters={filters}
-                  activeFilterCount={activeFilterCount}
-                  onToggleCategory={(v) => toggleFilter("categories", v)}
-                  onToggleBrand={(v) => toggleFilter("brands", v)}
-                  onToggleRating={toggleRating}
-                  onToggleAvailability={(v) => toggleFilter("availability", v)}
-                  onToggleDiscount={toggleDiscount}
-                  onPriceChange={setPriceRange}
-                />
-              }
-              onSortChange={setSortKey}
-              onClearFilters={clearFilters}
-              onSearchChange={setSearchQuery}
-            />
-
-            {displayedProducts.length > 0 ? (
-              <>
-                {view === "list" ? (
-                  <ProductListView products={displayedProducts} />
-                ) : (
-                  <ProductGrid products={displayedProducts} />
-                )}
-                <CatalogPagination
-                  currentPage={pagination.currentPage}
-                  totalPages={pagination.totalPages}
-                  onPageChange={setPage}
-                />
-              </>
-            ) : (
-              <NoResults query={searchQuery} />
-            )}
-          </div>
-        </div>
-      </Container>
-    </Section>
+      )}
+    </>
   );
 }
 

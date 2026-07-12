@@ -1,15 +1,22 @@
 "use client";
 
+import { Badge, Button } from "@/components/ui";
+import type { ProductListItem } from "@/services/admin/products";
+import { cn } from "@/utils/cn";
+import { formatCurrency, formatDate } from "@/utils/format";
+import {
+  ChevronDown,
+  ChevronUp,
+  Eye,
+  Package,
+  Pencil,
+  Search,
+} from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
-import { Eye, Pencil, Trash2, ChevronUp, ChevronDown, Search, Package } from "lucide-react";
-import { cn } from "@/utils/cn";
-import { formatCurrency, formatDate } from "@/utils/format";
-import type { ProductListItem } from "@/services/admin/products";
 import { DeleteProductButton } from "./delete-product-button";
 import { ProductDetailModal } from "./product-detail-modal";
-import { Badge, Button } from "@/components/ui";
 
 interface ProductTableProps {
   products: ProductListItem[];
@@ -46,7 +53,7 @@ export function ProductTable({
   };
 
   const navigate = (url: string) => {
-    router.push(url as any);
+    router.push(url as never);
   };
 
   const toggleSort = (column: string) => {
@@ -94,9 +101,12 @@ export function ProductTable({
                   className="flex items-center gap-1"
                 >
                   Product
-                  {sort === "title" && (
-                    order === "asc" ? <ChevronUp className="size-3" /> : <ChevronDown className="size-3" />
-                  )}
+                  {sort === "title" &&
+                    (order === "asc" ? (
+                      <ChevronUp className="size-3" />
+                    ) : (
+                      <ChevronDown className="size-3" />
+                    ))}
                 </button>
               </th>
               <th className="hidden md:table-cell">Category</th>
@@ -108,9 +118,12 @@ export function ProductTable({
                   className="flex items-center gap-1"
                 >
                   Price
-                  {sort === "price" && (
-                    order === "asc" ? <ChevronUp className="size-3" /> : <ChevronDown className="size-3" />
-                  )}
+                  {sort === "price" &&
+                    (order === "asc" ? (
+                      <ChevronUp className="size-3" />
+                    ) : (
+                      <ChevronDown className="size-3" />
+                    ))}
                 </button>
               </th>
               <th>
@@ -120,9 +133,12 @@ export function ProductTable({
                   className="flex items-center gap-1"
                 >
                   Stock
-                  {sort === "stock" && (
-                    order === "asc" ? <ChevronUp className="size-3" /> : <ChevronDown className="size-3" />
-                  )}
+                  {sort === "stock" &&
+                    (order === "asc" ? (
+                      <ChevronUp className="size-3" />
+                    ) : (
+                      <ChevronDown className="size-3" />
+                    ))}
                 </button>
               </th>
               <th className="hidden sm:table-cell">
@@ -132,9 +148,12 @@ export function ProductTable({
                   className="flex items-center gap-1"
                 >
                   Featured
-                  {sort === "featured" && (
-                    order === "asc" ? <ChevronUp className="size-3" /> : <ChevronDown className="size-3" />
-                  )}
+                  {sort === "featured" &&
+                    (order === "asc" ? (
+                      <ChevronUp className="size-3" />
+                    ) : (
+                      <ChevronDown className="size-3" />
+                    ))}
                 </button>
               </th>
               <th className="hidden xl:table-cell">Created</th>
@@ -144,7 +163,10 @@ export function ProductTable({
           <tbody>
             {products.length === 0 ? (
               <tr>
-                <td colSpan={9} className="py-16 text-center text-sm text-base-content/40">
+                <td
+                  colSpan={9}
+                  className="py-16 text-center text-sm text-base-content/40"
+                >
                   {search ? "No products match your search" : "No products yet"}
                 </td>
               </tr>
@@ -172,18 +194,26 @@ export function ProductTable({
                     >
                       {product.title}
                     </button>
-                    <p className="text-xs text-base-content/40">{product.slug}</p>
+                    <p className="text-xs text-base-content/40">
+                      {product.slug}
+                    </p>
                   </td>
                   <td className="hidden text-sm md:table-cell">
-                    {product.categoryName ?? <span className="text-base-content/30">&mdash;</span>}
+                    {product.categoryName ?? (
+                      <span className="text-base-content/30">&mdash;</span>
+                    )}
                   </td>
                   <td className="hidden text-sm lg:table-cell">
-                    {product.brand ?? <span className="text-base-content/30">&mdash;</span>}
+                    {product.brand ?? (
+                      <span className="text-base-content/30">&mdash;</span>
+                    )}
                   </td>
                   <td className="text-sm font-medium">
                     {formatCurrency(product.price)}
                     {product.discount && Number(product.discount) > 0 && (
-                      <span className="ml-1 text-xs text-error">-{product.discount}%</span>
+                      <span className="ml-1 text-xs text-error">
+                        -{product.discount}%
+                      </span>
                     )}
                   </td>
                   <td>
@@ -202,7 +232,9 @@ export function ProductTable({
                   </td>
                   <td className="hidden sm:table-cell">
                     {product.featured ? (
-                      <Badge variant="primary" size="xs">Yes</Badge>
+                      <Badge variant="primary" size="xs">
+                        Yes
+                      </Badge>
                     ) : (
                       <span className="text-xs text-base-content/30">No</span>
                     )}

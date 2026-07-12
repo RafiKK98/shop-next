@@ -21,7 +21,6 @@ export function ProductDetailModal({
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    setLoading(true);
     fetch(`/api/admin/products/${productId}`)
       .then((res) => res.json())
       .then((data) => {

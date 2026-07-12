@@ -6,9 +6,10 @@ interface ProductCardActionsProps {
   title: string;
   stockStatus: StockStatus;
   slug: string;
+  onQuickView?: () => void;
 }
 
-export function ProductCardActions({ title, stockStatus, slug }: ProductCardActionsProps) {
+export function ProductCardActions({ title, stockStatus, slug, onQuickView }: ProductCardActionsProps) {
   const isOutOfStock = stockStatus === "out_of_stock";
 
   return (
@@ -23,6 +24,7 @@ export function ProductCardActions({ title, stockStatus, slug }: ProductCardActi
       </AddToCartButton>
       <button
         type="button"
+        onClick={onQuickView}
         className="btn btn-ghost btn-square btn-sm"
         aria-label={`Quick view ${title}`}
       >
