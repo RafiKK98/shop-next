@@ -20,7 +20,7 @@ export function ProductCard({ product, priority, onQuickView }: ProductCardProps
 
   return (
     <div className="group card card-compact bg-base-100 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
-      <Link href={href as any} className="relative">
+      <Link href={href} className="relative">
         <ProductCardImage src={primaryImage} alt={product.title} priority={priority} />
         <ProductCardBadges
           discount={discount}
@@ -33,11 +33,11 @@ export function ProductCard({ product, priority, onQuickView }: ProductCardProps
         </div>
       </Link>
       <div className="card-body p-3 md:p-4">
-        <Link href={href as any} className="text-xs font-medium uppercase tracking-wider text-base-content/50 hover:text-base-content transition-colors">
+        <Link href={href} className="text-xs font-medium uppercase tracking-wider text-base-content/50 hover:text-base-content transition-colors">
           {product.brand}
         </Link>
         <h3 className="card-title text-sm md:text-base leading-tight line-clamp-2">
-          <Link href={href as any} className="hover:text-primary transition-colors">
+          <Link href={href} className="hover:text-primary transition-colors">
             {product.title}
           </Link>
         </h3>

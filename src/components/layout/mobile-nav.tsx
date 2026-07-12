@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import type { Route } from "next";
 import { Menu, X, Search, Heart, ShoppingCart, User, LayoutDashboard, Package, LogOut, Shield } from "lucide-react";
 import { NAVIGATION } from "@/constants/navigation";
 import { ROUTES } from "@/constants";
@@ -57,7 +58,7 @@ export function MobileNav({ user }: MobileNavProps) {
                 {NAVIGATION.main.map((item) => (
                   <li key={item.href}>
                     <Link
-                      href={item.href as unknown as any}
+                      href={item.href as Route}
                       className="block py-2 text-base font-medium hover:text-primary"
                       onClick={() => setOpen(false)}
                     >
@@ -83,7 +84,7 @@ export function MobileNav({ user }: MobileNavProps) {
                   <ul className="flex flex-col gap-2">
                     <li>
                       <Link
-                        href={ROUTES.dashboard as unknown as any}
+                        href={ROUTES.dashboard as Route}
                         className="flex items-center gap-3 py-2 text-base"
                         onClick={() => setOpen(false)}
                       >
@@ -93,7 +94,7 @@ export function MobileNav({ user }: MobileNavProps) {
                     </li>
                     <li>
                       <Link
-                        href={ROUTES.dashboardOrders as unknown as any}
+                        href={ROUTES.dashboardOrders as Route}
                         className="flex items-center gap-3 py-2 text-base"
                         onClick={() => setOpen(false)}
                       >
@@ -106,7 +107,7 @@ export function MobileNav({ user }: MobileNavProps) {
                     <>
                       <hr className="my-4 border-base-200" />
                       <Link
-                        href={ROUTES.admin as unknown as any}
+                        href={ROUTES.admin}
                         className="flex items-center gap-3 py-2 text-base text-warning"
                         onClick={() => setOpen(false)}
                       >
@@ -131,7 +132,7 @@ export function MobileNav({ user }: MobileNavProps) {
                 <ul className="flex flex-col gap-2">
                   <li>
                     <Link
-                      href={ROUTES.login as unknown as any}
+                      href={ROUTES.login}
                       className="flex items-center gap-3 py-2 text-base"
                       onClick={() => setOpen(false)}
                     >
@@ -141,7 +142,7 @@ export function MobileNav({ user }: MobileNavProps) {
                   </li>
                   <li>
                     <Link
-                      href={ROUTES.register as unknown as any}
+                      href={ROUTES.register}
                       className="flex items-center gap-3 py-2 text-base font-medium text-primary"
                       onClick={() => setOpen(false)}
                     >
@@ -166,7 +167,7 @@ export function MobileNav({ user }: MobileNavProps) {
                 </li>
                 <li>
                   <Link
-                      href={ROUTES.wishlist as unknown as any}
+                      href={ROUTES.wishlist}
                     className="flex items-center gap-3 py-2 text-base"
                     onClick={() => setOpen(false)}
                   >
@@ -176,7 +177,7 @@ export function MobileNav({ user }: MobileNavProps) {
                 </li>
                 <li>
                   <Link
-                    href={ROUTES.cart as unknown as any}
+                    href={ROUTES.cart}
                     className="flex items-center gap-3 py-2 text-base"
                     onClick={() => setOpen(false)}
                   >

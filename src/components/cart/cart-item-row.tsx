@@ -58,7 +58,7 @@ export function CartItemRow({ item }: CartItemRowProps) {
       )}
     >
       <Link
-        href={ROUTES.productDetail(item.product.slug) as unknown as any}
+        href={ROUTES.productDetail(item.product.slug)}
         className="relative h-24 w-24 shrink-0 overflow-hidden rounded-lg bg-base-200"
       >
         {item.product.image ? (
@@ -79,7 +79,7 @@ export function CartItemRow({ item }: CartItemRowProps) {
       <div className="flex min-w-0 flex-1 flex-col justify-between gap-2">
         <div className="min-w-0">
           <Link
-            href={ROUTES.productDetail(item.product.slug) as unknown as any}
+            href={ROUTES.productDetail(item.product.slug)}
             className="text-sm font-medium hover:text-primary transition-colors line-clamp-2"
           >
             {item.product.title}

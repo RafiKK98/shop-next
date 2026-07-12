@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { Route } from "next";
 import { cn } from "@/utils/cn";
 
 interface BreadcrumbItem {
@@ -23,7 +24,7 @@ export function Breadcrumb({ className, items, ...props }: BreadcrumbProps) {
                   {item.label}
                 </span>
               ) : (
-                <Link href={item.href as unknown as any} className="text-base-content/60 hover:text-base-content">
+                <Link href={item.href as Route} className="text-base-content/60 hover:text-base-content">
                   {item.label}
                 </Link>
               )}

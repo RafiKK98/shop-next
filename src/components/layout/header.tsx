@@ -27,7 +27,7 @@ export async function Header() {
     <header className="sticky top-0 z-30 border-b border-base-200 bg-base-100/95 backdrop-blur supports-backdrop-filter:bg-base-100/80">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <Link
-          href={ROUTES.home as unknown as any}
+          href={ROUTES.home}
           className="text-xl font-bold tracking-tight hover:text-primary transition-colors"
         >
           {SITE.name}
@@ -46,7 +46,7 @@ export async function Header() {
 
           {session?.user?.role === "admin" && (
             <Link
-              href={ROUTES.admin as unknown as any}
+              href={ROUTES.admin}
               className="btn btn-ghost btn-square text-warning"
               aria-label="Admin Panel"
             >

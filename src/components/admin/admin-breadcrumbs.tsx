@@ -2,6 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import Link from "next/link";
+import type { Route } from "next";
 import { ADMIN_NAV } from "./admin-nav";
 import { ChevronRight, Home } from "lucide-react";
 
@@ -35,7 +36,7 @@ export function AdminBreadcrumbs() {
             {isLast ? (
               <span className="font-medium text-base-content">{item.label}</span>
             ) : (
-              <Link href={item.href as any || "#"} className="hover:text-base-content">
+              <Link href={item.href as Route} className="hover:text-base-content">
                 {item.label}
               </Link>
             )}

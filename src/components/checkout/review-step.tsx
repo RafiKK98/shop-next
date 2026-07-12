@@ -98,7 +98,7 @@ export function ReviewStep({ items, selectedAddress, onBack, appliedCoupon, onCo
             return (
               <li key={item.id} className="flex gap-3 px-4 py-3">
                 <Link
-                  href={ROUTES.productDetail(item.product.slug) as unknown as any}
+                  href={ROUTES.productDetail(item.product.slug)}
                   className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg bg-base-200"
                 >
                   {item.product.image ? (
@@ -119,7 +119,7 @@ export function ReviewStep({ items, selectedAddress, onBack, appliedCoupon, onCo
                 <div className="flex min-w-0 flex-1 items-center justify-between gap-2">
                   <div className="min-w-0">
                     <Link
-                      href={ROUTES.productDetail(item.product.slug) as unknown as any}
+                      href={ROUTES.productDetail(item.product.slug)}
                       className="text-sm font-medium hover:text-primary transition-colors line-clamp-1"
                     >
                       {item.product.title}

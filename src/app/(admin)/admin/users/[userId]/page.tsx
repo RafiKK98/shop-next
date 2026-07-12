@@ -1,58 +1,66 @@
-import Link from "next/link";
-import { notFound } from "next/navigation";
-import { ChevronLeft, User, ShoppingBag, Heart, DollarSign, MapPin, Clock } from "lucide-react";
-import { SITE } from "@/constants";
-import { AdminPageHeader } from "@/components/admin/admin-page-header";
 import { AdminBreadcrumbs } from "@/components/admin/admin-breadcrumbs";
-import { Badge, Avatar, Button } from "@/components/ui";
+import { AdminPageHeader } from "@/components/admin/admin-page-header";
 import { UserEditForm } from "@/components/admin/users";
+import { Avatar, Badge, Button } from "@/components/ui";
+import { BadgeProps } from "@/components/ui/feedback";
+import { SITE } from "@/constants";
+import { auth } from "@/lib/auth/config";
+import {
+  USER_ROLE_LABEL,
+  USER_STATUS_LABEL,
+} from "@/services/admin/user-types";
 import {
   getAdminUserById,
   getUserRecentOrders,
   getUserRecentWishlistItems,
 } from "@/services/admin/users";
-import {
-  USER_ROLE_LABEL,
-  USER_STATUS_LABEL,
-  type UserRole,
-  type UserStatus,
-} from "@/services/admin/user-types";
-import { auth } from "@/lib/auth/config";
 import { formatCurrency, formatDate } from "@/utils/format";
+import {
+  ChevronLeft,
+  DollarSign,
+  Heart,
+  MapPin,
+  ShoppingBag,
+  User,
+} from "lucide-react";
 import type { Metadata } from "next";
+import Link from "next/link";
+import { notFound } from "next/navigation";
 
 interface PageProps {
   params: Promise<{ userId: string }>;
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
   const { userId } = await params;
   return {
     title: `User | Admin | ${SITE.name}`,
   };
 }
 
-const statusBadgeVariant: Record<string, string> = {
+const statusBadgeVariant: Record<string, BadgeProps["variant"]> = {
   active: "success",
   suspended: "warning",
   disabled: "error",
 };
 
-const roleBadgeVariant: Record<string, string> = {
+const roleBadgeVariant: Record<string, BadgeProps["variant"]> = {
   customer: "ghost",
   admin: "primary",
 };
 
-export default async function AdminUserDetailPage({ params, searchParams }: PageProps) {
+export default async function AdminUserDetailPage({
+  params,
+  searchParams,
+}: PageProps) {
   const { userId } = await params;
   const sp = await searchParams;
   const isEditing = sp.edit === "true";
 
-  const [user, session] = await Promise.all([
-    getAdminUserById(userId),
-    auth(),
-  ]);
+  const [user, session] = await Promise.all([getAdminUserById(userId), auth()]);
 
   if (!user) notFound();
 
@@ -123,21 +131,29 @@ export default async function AdminUserDetailPage({ params, searchParams }: Page
             <div className="rounded-xl border border-base-200 bg-base-100 p-4">
               <div className="flex items-center gap-2 text-base-content/50">
                 <ShoppingBag className="size-4" />
-                <span className="text-xs font-medium uppercase tracking-wider">Orders</span>
+                <span className="text-xs font-medium uppercase tracking-wider">
+                  Orders
+                </span>
               </div>
               <p className="mt-2 text-2xl font-bold">{user.orderCount}</p>
             </div>
             <div className="rounded-xl border border-base-200 bg-base-100 p-4">
               <div className="flex items-center gap-2 text-base-content/50">
                 <DollarSign className="size-4" />
-                <span className="text-xs font-medium uppercase tracking-wider">Total Spent</span>
+                <span className="text-xs font-medium uppercase tracking-wider">
+                  Total Spent
+                </span>
               </div>
-              <p className="mt-2 text-2xl font-bold">{formatCurrency(user.totalSpent)}</p>
+              <p className="mt-2 text-2xl font-bold">
+                {formatCurrency(user.totalSpent)}
+              </p>
             </div>
             <div className="rounded-xl border border-base-200 bg-base-100 p-4">
               <div className="flex items-center gap-2 text-base-content/50">
                 <Heart className="size-4" />
-                <span className="text-xs font-medium uppercase tracking-wider">Wishlist</span>
+                <span className="text-xs font-medium uppercase tracking-wider">
+                  Wishlist
+                </span>
               </div>
               <p className="mt-2 text-2xl font-bold">{user.wishlistCount}</p>
             </div>
@@ -178,12 +194,18 @@ export default async function AdminUserDetailPage({ params, searchParams }: Page
                         #{order.id.slice(0, 8)}
                       </p>
                       <p className="text-xs text-base-content/40">
-                        {order.itemCount} item{order.itemCount === 1 ? "" : "s"} · {formatDate(order.createdAt)}
+                        {order.itemCount} item{order.itemCount === 1 ? "" : "s"}{" "}
+                        · {formatDate(order.createdAt)}
                       </p>
                     </div>
                     <div className="text-right">
-                      <p className="text-sm font-medium">{formatCurrency(order.total)}</p>
-                      <Badge variant={(statusBadgeVariant as any)[order.status] ?? "ghost"} size="xs">
+                      <p className="text-sm font-medium">
+                        {formatCurrency(order.total)}
+                      </p>
+                      <Badge
+                        variant={statusBadgeVariant[order.status] ?? "ghost"}
+                        size="xs"
+                      >
                         {order.status}
                       </Badge>
                     </div>
@@ -263,7 +285,7 @@ export default async function AdminUserDetailPage({ params, searchParams }: Page
                 <div className="flex justify-between">
                   <dt className="text-base-content/50">Role</dt>
                   <dd>
-                    <Badge variant={roleBadgeVariant[user.role] as any} size="xs">
+                    <Badge variant={roleBadgeVariant[user.role]} size="xs">
                       {USER_ROLE_LABEL[user.role]}
                     </Badge>
                   </dd>
@@ -271,7 +293,7 @@ export default async function AdminUserDetailPage({ params, searchParams }: Page
                 <div className="flex justify-between">
                   <dt className="text-base-content/50">Status</dt>
                   <dd>
-                    <Badge variant={statusBadgeVariant[user.status] as any} size="xs">
+                    <Badge variant={statusBadgeVariant[user.status]} size="xs">
                       {USER_STATUS_LABEL[user.status]}
                     </Badge>
                   </dd>
@@ -290,7 +312,9 @@ export default async function AdminUserDetailPage({ params, searchParams }: Page
                 </div>
                 <div className="flex justify-between">
                   <dt className="text-base-content/50">Member since</dt>
-                  <dd className="text-base-content/70">{formatDate(user.createdAt)}</dd>
+                  <dd className="text-base-content/70">
+                    {formatDate(user.createdAt)}
+                  </dd>
                 </div>
               </dl>
             </div>
@@ -315,13 +339,17 @@ export default async function AdminUserDetailPage({ params, searchParams }: Page
                   <p>{user.defaultAddress.street}</p>
                   <p>
                     {user.defaultAddress.city}
-                    {user.defaultAddress.state && `, ${user.defaultAddress.state}`}
-                    {user.defaultAddress.postalCode && ` ${user.defaultAddress.postalCode}`}
+                    {user.defaultAddress.state &&
+                      `, ${user.defaultAddress.state}`}
+                    {user.defaultAddress.postalCode &&
+                      ` ${user.defaultAddress.postalCode}`}
                   </p>
                   <p>{user.defaultAddress.country}</p>
                 </div>
               ) : (
-                <p className="text-sm text-base-content/40">No address on file</p>
+                <p className="text-sm text-base-content/40">
+                  No address on file
+                </p>
               )}
             </div>
           </div>

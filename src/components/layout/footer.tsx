@@ -4,6 +4,7 @@ import { ROUTES, SITE } from "@/constants";
 import { NAVIGATION } from "@/constants/navigation";
 import { Camera, Globe, Hash, Mail, Play } from "lucide-react";
 import Link from "next/link";
+import type { Route } from "next";
 
 async function Copyright() {
   "use cache";
@@ -31,7 +32,7 @@ export function Footer() {
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-5">
           <div className="lg:col-span-1">
             <Link
-              href={ROUTES.home as unknown as any}
+              href={ROUTES.home}
               className="text-xl font-bold tracking-tight hover:text-primary transition-colors"
             >
               {SITE.name}
@@ -43,7 +44,7 @@ export function Footer() {
               {NAVIGATION.social.map((social) => (
                 <Link
                   key={social.label}
-                  href={social.href as unknown as any}
+                  href={social.href as Route}
                   className="btn btn-ghost btn-sm btn-square text-base-content/50 hover:text-primary"
                   aria-label={social.label}
                 >
@@ -62,7 +63,7 @@ export function Footer() {
                 {section.links.map((link) => (
                   <li key={link.label}>
                     <Link
-                      href={link.href as unknown as any}
+                      href={link.href as Route}
                       className="text-sm text-base-content/60 transition-colors hover:text-primary"
                     >
                       {link.label}

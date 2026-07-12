@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import type { Route } from "next";
 import { Heart } from "lucide-react";
 
 interface WishlistCountProps {
@@ -11,7 +12,7 @@ interface WishlistCountProps {
 export function WishlistCount({ count, href }: WishlistCountProps) {
   return (
     <Link
-      href={href as unknown as any}
+      href={href as Route}
       className="btn btn-ghost btn-square relative"
       aria-label={`Wishlist${count > 0 ? ` (${count} items)` : ""}`}
     >

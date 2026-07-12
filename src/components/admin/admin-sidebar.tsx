@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import type { Route } from "next";
 import { usePathname } from "next/navigation";
 import { ChevronLeft, LogOut } from "lucide-react";
 import { cn } from "@/utils/cn";
@@ -43,7 +44,7 @@ export function AdminSidebar() {
             return (
               <li key={item.href}>
                 <Link
-                  href={item.href as any}
+                  href={item.href as Route}
                   className={cn(
                     "flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors",
                     collapsed && "justify-center px-2",

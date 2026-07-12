@@ -26,7 +26,7 @@ export function ProductListView({ products, onQuickView }: ProductListViewProps)
             key={product.id}
             className="flex flex-col gap-4 py-5 sm:flex-row sm:items-start"
           >
-            <Link href={href as any} className="relative w-full shrink-0 sm:w-48">
+            <Link href={href} className="relative w-full shrink-0 sm:w-48">
               <div className="aspect-[4/3] overflow-hidden rounded-lg bg-base-200">
                 <ProductCardImage src={primaryImage} alt={product.title} />
               </div>
@@ -42,13 +42,13 @@ export function ProductListView({ products, onQuickView }: ProductListViewProps)
               <div className="flex items-start justify-between gap-2">
                 <div>
                   <Link
-                    href={href as any}
+                    href={href}
                     className="text-xs font-medium uppercase tracking-wider text-base-content/50 hover:text-base-content transition-colors"
                   >
                     {product.brand}
                   </Link>
                   <h3 className="mt-1 text-lg font-semibold leading-tight">
-                    <Link href={href as any} className="hover:text-primary transition-colors">
+                    <Link href={href} className="hover:text-primary transition-colors">
                       {product.title}
                     </Link>
                   </h3>
@@ -88,7 +88,7 @@ export function ProductListView({ products, onQuickView }: ProductListViewProps)
                     </button>
                   )}
                   <Link
-                    href={href as any}
+                    href={href}
                     className="btn btn-primary btn-sm"
                   >
                     View Details

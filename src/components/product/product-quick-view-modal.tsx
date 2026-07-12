@@ -88,7 +88,7 @@ export function ProductQuickViewModal({
               </AddToCartButton>
               <WishlistButton slug={product.slug} showLabel size="md" />
               <Link
-                href={ROUTES.productDetail(product.slug) as any}
+                href={ROUTES.productDetail(product.slug)}
                 className="btn btn-outline btn-sm w-full"
                 onClick={onClose}
               >

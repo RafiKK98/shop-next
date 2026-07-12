@@ -42,7 +42,7 @@ export function CartPageContent({ items }: CartPageContentProps) {
           title="Your cart is empty"
           description="Looks like you haven't added anything to your cart yet. Browse our products and find something you love!"
           action={
-            <Link href={ROUTES.products as unknown as any}>
+            <Link href={ROUTES.products}>
               <Button variant="primary" size="lg">
                 Continue Shopping
               </Button>
@@ -113,14 +113,14 @@ export function CartPageContent({ items }: CartPageContentProps) {
             </div>
 
             <div className="space-y-3 pt-2">
-              <Link href={ROUTES.checkout as unknown as any}>
+              <Link href={ROUTES.checkout}>
                 <Button className="w-full" size="lg">
                   Proceed to Checkout
                   <ArrowRight className="ml-2 size-4" />
                 </Button>
               </Link>
               <Link
-                href={ROUTES.products as unknown as any}
+                href={ROUTES.products}
                 className="btn btn-ghost btn-sm w-full gap-2"
               >
                 <ArrowLeft className="size-4" />

@@ -1,21 +1,34 @@
+import { AdminBreadcrumbs } from "@/components/admin/admin-breadcrumbs";
+import { AdminPageHeader } from "@/components/admin/admin-page-header";
+import {
+  OrderStatusSelect,
+  PaymentStatusSelect,
+} from "@/components/admin/orders";
+import { Badge, Button } from "@/components/ui";
+import { BadgeProps } from "@/components/ui/feedback";
+import { SITE } from "@/constants";
+import { ORDER_STATUS_LABEL } from "@/services/admin/order-types";
+import { getAdminOrderById } from "@/services/admin/orders";
+import { formatCurrency, formatDate } from "@/utils/format";
+import {
+  ChevronLeft,
+  Clock,
+  CreditCard,
+  MapPin,
+  Package,
+  User,
+} from "lucide-react";
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ChevronLeft, Package, User, MapPin, CreditCard, Clock } from "lucide-react";
-import { SITE } from "@/constants";
-import { AdminPageHeader } from "@/components/admin/admin-page-header";
-import { AdminBreadcrumbs } from "@/components/admin/admin-breadcrumbs";
-import { Badge, Button } from "@/components/ui";
-import { OrderStatusSelect, PaymentStatusSelect } from "@/components/admin/orders";
-import { getAdminOrderById } from "@/services/admin/orders";
-import { ORDER_STATUS_LABEL, PAYMENT_STATUS_LABEL } from "@/services/admin/order-types";
-import { formatCurrency, formatDate } from "@/utils/format";
-import type { Metadata } from "next";
 
 interface PageProps {
   params: Promise<{ orderId: string }>;
 }
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
   const { orderId } = await params;
   return {
     title: `Order #${orderId.slice(0, 8)} | Admin | ${SITE.name}`,
@@ -152,7 +165,9 @@ export default async function AdminOrderDetailPage({ params }: PageProps) {
                 <div>
                   <p className="text-sm font-medium">Current status</p>
                   <Badge
-                    variant={statusBadgeVariant[order.status] as any}
+                    variant={
+                      statusBadgeVariant[order.status] as BadgeProps["variant"]
+                    }
                     size="sm"
                   >
                     {ORDER_STATUS_LABEL[order.status]}

@@ -8,6 +8,7 @@ import { registerSchema, type RegisterInput } from "@/lib/validations/auth";
 import { registerAction } from "@/actions/auth";
 import { Button } from "@/components/ui";
 import Link from "next/link";
+import type { Route } from "next";
 
 interface RegisterFormProps {
   callbackUrl?: string;
@@ -166,7 +167,7 @@ export function RegisterForm({ callbackUrl = "/" }: RegisterFormProps) {
       <p className="text-center text-sm text-base-content/60">
         Already have an account?{" "}
         <Link
-          href={`/login${callbackUrl !== "/" ? `?callbackUrl=${encodeURIComponent(callbackUrl)}` : ""}` as any}
+          href={`/login${callbackUrl !== "/" ? `?callbackUrl=${encodeURIComponent(callbackUrl)}` : ""}` as Route}
           className="font-medium text-primary hover:underline"
         >
           Sign in

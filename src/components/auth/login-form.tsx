@@ -8,6 +8,7 @@ import { loginSchema, type LoginInput } from "@/lib/validations/auth";
 import { loginAction } from "@/actions/auth";
 import { Button } from "@/components/ui";
 import Link from "next/link";
+import type { Route } from "next";
 
 interface LoginFormProps {
   callbackUrl?: string;
@@ -117,7 +118,7 @@ export function LoginForm({ callbackUrl = "/" }: LoginFormProps) {
       <p className="text-center text-sm text-base-content/60">
         Don&apos;t have an account?{" "}
         <Link
-          href={`/register${callbackUrl !== "/" ? `?callbackUrl=${encodeURIComponent(callbackUrl)}` : ""}` as any}
+          href={`/register${callbackUrl !== "/" ? `?callbackUrl=${encodeURIComponent(callbackUrl)}` : ""}` as Route}
           className="font-medium text-primary hover:underline"
         >
           Create one

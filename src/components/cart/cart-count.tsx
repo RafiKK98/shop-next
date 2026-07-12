@@ -11,7 +11,7 @@ interface CartCountProps {
 export function CartCount({ count }: CartCountProps) {
   return (
     <Link
-      href={ROUTES.cart as unknown as any}
+      href={ROUTES.cart}
       className="btn btn-ghost btn-square relative"
       aria-label={`Cart${count > 0 ? ` (${count} items)` : ""}`}
     >

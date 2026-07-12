@@ -6,7 +6,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
     <div className="flex min-h-screen flex-col items-center justify-center bg-base-200 px-4 py-12">
       <div className="w-full max-w-md">
         <Link
-          href={ROUTES.home as any}
+          href={ROUTES.home}
           className="mb-8 block text-center text-2xl font-bold tracking-tight hover:text-primary transition-colors"
         >
           ShopNext

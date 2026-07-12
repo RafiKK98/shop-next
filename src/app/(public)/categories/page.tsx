@@ -39,7 +39,7 @@ export default function CategoriesPage() {
             return (
               <Link
                 key={category.id}
-                href={ROUTES.categoryDetail(category.slug) as any}
+                href={ROUTES.categoryDetail(category.slug)}
                 className="group relative overflow-hidden rounded-xl bg-base-200 transition-all duration-300 hover:shadow-lg"
               >
                 <div className="aspect-[16/9] overflow-hidden">

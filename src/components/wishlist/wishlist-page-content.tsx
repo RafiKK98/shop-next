@@ -33,7 +33,7 @@ export function WishlistPageContent({ items }: WishlistPageContentProps) {
           title="Your wishlist is empty"
           description="Save items you love by tapping the heart icon. They'll appear here for easy access!"
           action={
-            <Link href={ROUTES.products as unknown as any}>
+            <Link href={ROUTES.products}>
               <Button variant="primary" size="lg">
                 Continue Shopping
               </Button>
@@ -64,7 +64,7 @@ export function WishlistPageContent({ items }: WishlistPageContentProps) {
               className="group card card-compact bg-base-100 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md"
             >
               <Link
-                href={ROUTES.productDetail(item.product.slug) as unknown as any}
+                href={ROUTES.productDetail(item.product.slug)}
                 className="relative"
               >
                 <div className="relative aspect-[4/3] overflow-hidden rounded-t-box bg-base-200">
@@ -90,7 +90,7 @@ export function WishlistPageContent({ items }: WishlistPageContentProps) {
 
               <div className="card-body p-3 md:p-4">
                 <Link
-                  href={ROUTES.productDetail(item.product.slug) as unknown as any}
+                  href={ROUTES.productDetail(item.product.slug)}
                   className="text-xs font-medium uppercase tracking-wider text-base-content/50 hover:text-base-content transition-colors"
                 >
                   Brand
@@ -98,7 +98,7 @@ export function WishlistPageContent({ items }: WishlistPageContentProps) {
 
                 <h3 className="card-title text-sm md:text-base leading-tight line-clamp-2">
                   <Link
-                    href={ROUTES.productDetail(item.product.slug) as unknown as any}
+                    href={ROUTES.productDetail(item.product.slug)}
                     className="hover:text-primary transition-colors"
                   >
                     {item.product.title}

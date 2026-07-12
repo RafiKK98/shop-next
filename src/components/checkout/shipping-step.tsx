@@ -33,7 +33,7 @@ export function ShippingStep({
         title="Your cart is empty"
         description="Add some items to your cart before checking out."
         action={
-          <a href={ROUTES.products as unknown as any}>
+          <a href={ROUTES.products}>
             <Button variant="primary" size="lg">
               Continue Shopping
             </Button>

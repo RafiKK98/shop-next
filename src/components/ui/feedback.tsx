@@ -27,8 +27,18 @@ export function Alert({ className, variant, children, ...props }: AlertProps) {
 
 /* ── Badge ── */
 
-interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
-  variant?: "neutral" | "primary" | "secondary" | "accent" | "ghost" | "outline" | "success" | "error" | "warning" | "info";
+export interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
+  variant?:
+    | "neutral"
+    | "primary"
+    | "secondary"
+    | "accent"
+    | "ghost"
+    | "outline"
+    | "success"
+    | "error"
+    | "warning"
+    | "info";
   size?: "xs" | "sm" | "md" | "lg";
 }
 
@@ -52,10 +62,21 @@ const badgeSizeClass: Record<string, string> = {
   lg: "badge-lg",
 };
 
-export function Badge({ className, variant, size = "sm", children, ...props }: BadgeProps) {
+export function Badge({
+  className,
+  variant,
+  size = "sm",
+  children,
+  ...props
+}: BadgeProps) {
   return (
     <span
-      className={cn("badge", variant && badgeVariantClass[variant], badgeSizeClass[size], className)}
+      className={cn(
+        "badge",
+        variant && badgeVariantClass[variant],
+        badgeSizeClass[size],
+        className,
+      )}
       {...props}
     >
       {children}
@@ -63,8 +84,15 @@ export function Badge({ className, variant, size = "sm", children, ...props }: B
   );
 }
 
-export function DiscountBadge({ discount, className }: { discount: number | string; className?: string }) {
-  const numericDiscount = typeof discount === "string" ? Number(discount) : discount;
+export function DiscountBadge({
+  discount,
+  className,
+}: {
+  discount: number | string;
+  className?: string;
+}) {
+  const numericDiscount =
+    typeof discount === "string" ? Number(discount) : discount;
   if (numericDiscount <= 0) return null;
 
   return (
@@ -89,7 +117,11 @@ const spinnerSizeClass: Record<string, string> = {
 export function Spinner({ className, size = "md", ...props }: SpinnerProps) {
   return (
     <span
-      className={cn("loading loading-spinner", spinnerSizeClass[size], className)}
+      className={cn(
+        "loading loading-spinner",
+        spinnerSizeClass[size],
+        className,
+      )}
       aria-label="Loading"
       {...props}
     />
@@ -109,7 +141,11 @@ const skeletonVariantClass: Record<string, string> = {
   thumbnail: "size-20 rounded-box",
 };
 
-export function Skeleton({ className, variant = "text", ...props }: SkeletonProps) {
+export function Skeleton({
+  className,
+  variant = "text",
+  ...props
+}: SkeletonProps) {
   return (
     <div
       className={cn("skeleton", skeletonVariantClass[variant], className)}
@@ -122,7 +158,13 @@ export function Skeleton({ className, variant = "text", ...props }: SkeletonProp
 /* ── Progress ── */
 
 interface ProgressProps extends React.ProgressHTMLAttributes<HTMLProgressElement> {
-  variant?: "primary" | "secondary" | "accent" | "success" | "warning" | "error";
+  variant?:
+    | "primary"
+    | "secondary"
+    | "accent"
+    | "success"
+    | "warning"
+    | "error";
 }
 
 const progressVariantClass: Record<string, string> = {
@@ -134,10 +176,20 @@ const progressVariantClass: Record<string, string> = {
   error: "progress-error",
 };
 
-export function Progress({ className, variant, value, max = 100, ...props }: ProgressProps) {
+export function Progress({
+  className,
+  variant,
+  value,
+  max = 100,
+  ...props
+}: ProgressProps) {
   return (
     <progress
-      className={cn("progress w-full", variant && progressVariantClass[variant], className)}
+      className={cn(
+        "progress w-full",
+        variant && progressVariantClass[variant],
+        className,
+      )}
       value={value}
       max={max}
       {...props}

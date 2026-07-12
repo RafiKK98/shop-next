@@ -35,13 +35,13 @@ export function UserMenu({ user }: UserMenuProps) {
     return (
       <div className="hidden items-center gap-2 md:flex">
         <Link
-          href={ROUTES.login as unknown as any}
+          href={ROUTES.login}
           className="btn btn-ghost btn-sm"
         >
           Sign In
         </Link>
         <Link
-          href={ROUTES.register as unknown as any}
+          href={ROUTES.register}
           className="btn btn-primary btn-sm"
         >
           Register
@@ -78,7 +78,7 @@ export function UserMenu({ user }: UserMenuProps) {
           </div>
           <div className="p-2">
             <Link
-              href={ROUTES.accountDashboard as unknown as any}
+              href={ROUTES.accountDashboard}
               className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm hover:bg-base-200"
               onClick={() => setOpen(false)}
             >
@@ -86,7 +86,7 @@ export function UserMenu({ user }: UserMenuProps) {
               Dashboard
             </Link>
             <Link
-              href={ROUTES.accountOrders as unknown as any}
+              href={ROUTES.accountOrders}
               className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm hover:bg-base-200"
               onClick={() => setOpen(false)}
             >
@@ -94,7 +94,7 @@ export function UserMenu({ user }: UserMenuProps) {
               Orders
             </Link>
             <Link
-              href={ROUTES.wishlist as unknown as any}
+              href={ROUTES.wishlist}
               className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm hover:bg-base-200"
               onClick={() => setOpen(false)}
             >

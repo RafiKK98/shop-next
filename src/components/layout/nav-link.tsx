@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import type { Route } from "next";
 import { usePathname } from "next/navigation";
 import { cn } from "@/utils/cn";
 
@@ -18,7 +19,7 @@ export function NavLink({ href, children, className, activeClassName, exact = fa
 
   return (
     <Link
-      href={href as unknown as any}
+      href={href as Route}
       className={cn(
         "text-sm font-medium transition-colors hover:text-primary",
         isActive ? (activeClassName ?? "text-primary") : "text-base-content/70",
