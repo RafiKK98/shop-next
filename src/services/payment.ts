@@ -1,16 +1,16 @@
 import "server-only";
 
-import { stripe } from "@/lib/stripe";
 import { db } from "@/db";
 import {
-  orders,
-  orderItems,
-  products,
-  coupons,
-  couponUsages,
   cartItems,
   carts,
+  coupons,
+  couponUsages,
+  orderItems,
+  orders,
+  products,
 } from "@/db/schema";
+import { stripe } from "@/lib/stripe";
 import { and, eq, sql } from "drizzle-orm";
 
 interface OrderForCheckout {
@@ -78,8 +78,7 @@ export async function createCheckoutSession(
     );
 
     if (itemsSubtotal + taxCents !== Math.round(parseFloat(total) * 100)) {
-      const diff =
-        Math.round(parseFloat(total) * 100) - itemsSubtotal;
+      const diff = Math.round(parseFloat(total) * 100) - itemsSubtotal;
       if (diff !== 0) {
         lineItems.push({
           price_data: {
@@ -102,7 +101,11 @@ export async function createCheckoutSession(
     }
   }
 
-  const baseUrl = process.env.NEXT_PUBLIC_URL || "http://localhost:3000";
+  const baseUrl =
+    process.env.NEXT_PUBLIC_URL ||
+    (process.env.VERCEL_URL
+      ? `https://${process.env.VERCEL_URL}`
+      : "http://localhost:3000");
 
   const session = await stripe.checkout.sessions.create({
     mode: "payment",
@@ -120,13 +123,11 @@ export async function createCheckoutSession(
   return { url: session.url, sessionId: session.id };
 }
 
-export async function handleCheckoutSessionCompleted(
-  session: {
-    id: string;
-    metadata: Record<string, string> | null;
-    payment_intent: string | { id: string } | null;
-  },
-): Promise<void> {
+export async function handleCheckoutSessionCompleted(session: {
+  id: string;
+  metadata: Record<string, string> | null;
+  payment_intent: string | { id: string } | null;
+}): Promise<void> {
   const orderId = session.metadata?.orderId;
   if (!orderId) {
     console.warn("[webhook] Missing orderId in session metadata");
