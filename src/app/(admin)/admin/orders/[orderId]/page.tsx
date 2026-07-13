@@ -206,6 +206,46 @@ export default async function AdminOrderDetailPage({ params }: PageProps) {
             </div>
           </div>
 
+          {/* Payment */}
+          <div className="rounded-xl border border-base-200 bg-base-100">
+            <div className="flex items-center gap-2 border-b border-base-200 px-5 py-4">
+              <CreditCard className="size-4 text-base-content/50" />
+              <h2 className="text-sm font-semibold uppercase tracking-wider text-base-content/50">
+                Payment
+              </h2>
+            </div>
+            <div className="space-y-2 px-5 py-4">
+              <div>
+                <p className="text-xs text-base-content/50">Payment Method</p>
+                <p className="text-sm font-medium">
+                  {order.stripePaymentIntentId ? "Stripe" : "—"}
+                </p>
+              </div>
+              <div>
+                <p className="text-xs text-base-content/50">Payment Status</p>
+                <p className="text-sm font-medium capitalize">
+                  {order.paymentStatus}
+                </p>
+              </div>
+              {order.stripePaymentIntentId && (
+                <div>
+                  <p className="text-xs text-base-content/50">Payment ID</p>
+                  <p className="break-all text-xs text-base-content/70">
+                    {order.stripePaymentIntentId}
+                  </p>
+                </div>
+              )}
+              {order.stripeCheckoutSessionId && (
+                <div>
+                  <p className="text-xs text-base-content/50">Checkout Session</p>
+                  <p className="break-all text-xs text-base-content/70">
+                    {order.stripeCheckoutSessionId}
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+
           {/* Customer */}
           <div className="rounded-xl border border-base-200 bg-base-100">
             <div className="flex items-center gap-2 border-b border-base-200 px-5 py-4">

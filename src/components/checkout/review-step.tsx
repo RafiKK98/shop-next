@@ -47,6 +47,7 @@ export function ReviewStep({
       }
       const result = await placeOrder(fd);
       if (result?.error) setServerError(result.error);
+      if (result?.url) window.location.href = result.url;
     });
   };
 

@@ -112,7 +112,7 @@ export function CartPageContent({ items }: CartPageContentProps) {
               </div>
             </div>
 
-            <div className="space-y-3 pt-2">
+            <div className="flex flex-col gap-3 pt-2">
               <Link href={ROUTES.checkout}>
                 <Button className="w-full" size="lg">
                   Proceed to Checkout

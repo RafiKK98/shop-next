@@ -45,6 +45,8 @@ export interface OrderDetail {
   total: string;
   status: OrderStatus;
   paymentStatus: PaymentStatus;
+  stripeCheckoutSessionId: string | null;
+  stripePaymentIntentId: string | null;
   createdAt: Date;
   updatedAt: Date;
   customer: {

@@ -132,6 +132,8 @@ export const getAdminOrderById = cache(async function getAdminOrderById(
       total: orders.total,
       status: orders.status,
       paymentStatus: orders.paymentStatus,
+      stripeCheckoutSessionId: orders.stripeCheckoutSessionId,
+      stripePaymentIntentId: orders.stripePaymentIntentId,
       createdAt: orders.createdAt,
       updatedAt: orders.updatedAt,
       customerName: users.name,
@@ -183,6 +185,8 @@ export const getAdminOrderById = cache(async function getAdminOrderById(
     total: order.total,
     status: order.status,
     paymentStatus: order.paymentStatus,
+    stripeCheckoutSessionId: order.stripeCheckoutSessionId,
+    stripePaymentIntentId: order.stripePaymentIntentId,
     createdAt: order.createdAt,
     updatedAt: order.updatedAt,
     customer: order.customerName

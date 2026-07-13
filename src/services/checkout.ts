@@ -315,3 +315,178 @@ export async function createOrder(
 
   return result;
 }
+
+export interface PendingOrderResult {
+  orderId: string;
+  subtotal: number;
+  shipping: number;
+  tax: number;
+  total: string;
+  items: {
+    productName: string;
+    productImage: string | null;
+    price: string;
+    quantity: number;
+  }[];
+  couponId: string | null;
+  couponCode: string | null;
+  discountAmount: string | null;
+}
+
+export async function createPendingOrder(
+  userId: string,
+  addressId: string,
+  couponId?: string,
+): Promise<PendingOrderResult | CreateOrderError> {
+  const address = await db
+    .select()
+    .from(addresses)
+    .where(and(eq(addresses.id, addressId), eq(addresses.userId, userId)))
+    .then((r) => r[0] ?? null);
+
+  if (!address) {
+    return { error: "Invalid shipping address" };
+  }
+
+  const cart = await db
+    .select()
+    .from(carts)
+    .where(eq(carts.userId, userId))
+    .then((r) => r[0] ?? null);
+
+  if (!cart) {
+    return { error: "Your cart is empty" };
+  }
+
+  const items = await db
+    .select()
+    .from(cartItems)
+    .where(eq(cartItems.cartId, cart.id));
+
+  if (items.length === 0) {
+    return { error: "Your cart is empty" };
+  }
+
+  const validatedItems: {
+    product: ProductForOrder;
+    quantity: number;
+  }[] = [];
+
+  for (const item of items) {
+    const product = await fetchProduct(item.productId);
+
+    if (!product) {
+      await db.delete(cartItems).where(eq(cartItems.id, item.id));
+      return { error: "Some items in your cart are no longer available" };
+    }
+
+    const stock = product.stock ?? 0;
+    if (stock < 1) {
+      return { error: `"${product.title}" is no longer in stock` };
+    }
+
+    if (item.quantity > stock) {
+      return {
+        error: `Only ${stock} of "${product.title}" are available (you requested ${item.quantity})`,
+      };
+    }
+
+    validatedItems.push({
+      product,
+      quantity: item.quantity,
+    });
+  }
+
+  const subtotal = validatedItems.reduce((sum, vi) => {
+    return sum + computeUnitPrice(vi.product) * vi.quantity;
+  }, 0);
+
+  let discountAmount = 0;
+  let couponCode: string | null = null;
+  let resolvedCouponId: string | null = null;
+
+  if (couponId) {
+    const coupon = await db
+      .select()
+      .from(coupons)
+      .where(eq(coupons.id, couponId))
+      .then((r) => r[0] ?? null);
+
+    if (!coupon) {
+      return { error: "Coupon not found" };
+    }
+
+    const validation = await validateCoupon(coupon.code, subtotal);
+
+    if (!validation.valid) {
+      return { error: validation.error };
+    }
+
+    discountAmount = validation.discountAmount;
+    couponCode = validation.coupon.code;
+    resolvedCouponId = validation.coupon.id;
+  }
+
+  const totals = computeOrderTotals(validatedItems, discountAmount);
+
+  try {
+    const result = await db.transaction(async (tx) => {
+      const [order] = await tx
+        .insert(orders)
+        .values({
+          userId,
+          total: totals.total.toFixed(2),
+          couponId: resolvedCouponId,
+          couponCode,
+          discountAmount:
+            discountAmount > 0 ? discountAmount.toFixed(2) : null,
+          status: "pending",
+          paymentStatus: "pending",
+        })
+        .returning();
+
+      const orderItemsData = await Promise.all(
+        validatedItems.map(async (vi) => {
+          const image = await getFirstProductImage(vi.product.id);
+          return {
+            orderId: order.id,
+            productId: vi.product.id,
+            quantity: vi.quantity,
+            price: computeUnitPrice(vi.product).toFixed(2),
+            productName: vi.product.title,
+            productImage: image,
+          };
+        }),
+      );
+
+      await tx.insert(orderItems).values(orderItemsData);
+
+      return { orderId: order.id };
+    });
+
+    return {
+      orderId: result.orderId,
+      subtotal: totals.subtotal,
+      shipping: totals.shipping,
+      tax: totals.tax,
+      total: totals.total.toFixed(2),
+      items: validatedItems.map((vi) => ({
+        productName: vi.product.title,
+        productImage: vi.product.image,
+        price: computeUnitPrice(vi.product).toFixed(2),
+        quantity: vi.quantity,
+      })),
+      couponId: resolvedCouponId,
+      couponCode,
+      discountAmount:
+        discountAmount > 0 ? discountAmount.toFixed(2) : null,
+    };
+  } catch (err) {
+    const details = parseDbError(err);
+    console.error("[createPendingOrder] transaction failed:", details, err);
+    return {
+      error:
+        "A database error occurred while placing your order. Please try again.",
+    };
+  }
+}

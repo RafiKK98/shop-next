@@ -6,7 +6,11 @@ interface ProductCardImageProps {
   priority?: boolean;
 }
 
-export function ProductCardImage({ src, alt, priority }: ProductCardImageProps) {
+export function ProductCardImage({
+  src,
+  alt,
+  priority,
+}: ProductCardImageProps) {
   return (
     <div className="relative aspect-square overflow-hidden rounded-t-box bg-base-200">
       <Image
@@ -19,7 +23,7 @@ export function ProductCardImage({ src, alt, priority }: ProductCardImageProps) 
         priority={priority}
       />
       {/* gradient overlay at bottom for text readability */}
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/5 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+      <div className="pointer-events-none absolute inset-0 bg-linear-to-t from-black/5 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
     </div>
   );
 }

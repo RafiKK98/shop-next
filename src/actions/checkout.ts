@@ -1,12 +1,17 @@
 "use server";
 
 import { auth } from "@/lib/auth";
-import { createOrder } from "@/services/checkout";
-import { redirect } from "next/navigation";
+import { db } from "@/db";
+import { orders } from "@/db/schema";
+import { eq } from "drizzle-orm";
+import { createPendingOrder } from "@/services/checkout";
+import { createCheckoutSession } from "@/services/payment";
 import { revalidatePath, updateTag } from "next/cache";
 import { CACHE_TAGS } from "@/lib/cache";
 
-export async function placeOrder(formData: FormData) {
+export async function placeOrder(
+  formData: FormData,
+): Promise<{ url?: string; error?: string }> {
   const session = await auth();
   if (!session?.user?.id) {
     return { error: "You must be logged in to place an order" };
@@ -19,18 +24,41 @@ export async function placeOrder(formData: FormData) {
 
   const couponId = (formData.get("couponId") as string) || undefined;
 
-  const result = await createOrder(session.user.id, addressId, couponId);
+  const result = await createPendingOrder(
+    session.user.id,
+    addressId,
+    couponId,
+  );
 
   if ("error" in result) {
     return { error: result.error };
   }
 
+  const { url, sessionId } = await createCheckoutSession(
+    {
+      id: result.orderId,
+      userId: session.user.id,
+      total: result.total,
+      couponId: result.couponId,
+      couponCode: result.couponCode,
+      discountAmount: result.discountAmount,
+      subtotal: result.subtotal,
+      shipping: result.shipping,
+      tax: result.tax,
+      items: result.items,
+    },
+    session.user.email ?? null,
+  );
+
+  await db
+    .update(orders)
+    .set({ stripeCheckoutSessionId: sessionId })
+    .where(eq(orders.id, result.orderId));
+
   revalidatePath("/");
   revalidatePath("/cart");
   revalidatePath("/checkout");
-  revalidatePath("/products");
   updateTag(CACHE_TAGS.ORDERS);
-  updateTag(CACHE_TAGS.PRODUCTS);
 
-  redirect(`/checkout/success?orderId=${result.orderId}`);
+  return { url };
 }

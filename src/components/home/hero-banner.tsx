@@ -1,4 +1,6 @@
 import { Button, Container } from "@/components/ui";
+import { Route } from "next";
+import Link from "next/link";
 
 const heroContent = {
   title: "Discover What's Next in Style & Innovation",
@@ -21,7 +23,9 @@ export function HeroBanner() {
               {heroContent.description}
             </p>
             <div className="flex flex-wrap items-center justify-center gap-4 lg:justify-start">
-              <Button size="lg">{heroContent.primaryCta.label}</Button>
+              <Link href={heroContent.primaryCta.href as Route}>
+                <Button size="lg">{heroContent.primaryCta.label}</Button>
+              </Link>
               <Button variant="outline" size="lg">
                 {heroContent.secondaryCta.label}
               </Button>

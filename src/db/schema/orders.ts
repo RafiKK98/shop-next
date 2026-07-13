@@ -17,6 +17,8 @@ export const orders = pgTable(
     discountAmount: numeric("discount_amount", { precision: 10, scale: 2 }),
     status: orderStatusEnum("status").default("pending").notNull(),
     paymentStatus: paymentStatusEnum("payment_status").default("pending").notNull(),
+    stripeCheckoutSessionId: text("stripe_checkout_session_id"),
+    stripePaymentIntentId: text("stripe_payment_intent_id"),
     createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
     updatedAt: timestamp("updated_at", { mode: "date" }).defaultNow().notNull(),
   },
