@@ -102,10 +102,10 @@ export async function createCheckoutSession(
   }
 
   const baseUrl =
-    process.env.NEXT_PUBLIC_URL ||
-    (process.env.VERCEL_URL
-      ? `https://${process.env.VERCEL_URL}`
-      : "http://localhost:3000");
+    process.env.NODE_ENV === "development"
+      ? process.env.NEXT_PUBLIC_URL || "http://localhost:3000"
+      : process.env.NEXT_PUBLIC_VERCEL_URL ||
+        "https://shop-next-five-olive.vercel.app";
 
   const session = await stripe.checkout.sessions.create({
     mode: "payment",
