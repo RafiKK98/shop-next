@@ -11,6 +11,7 @@ import { ChevronDown, ChevronUp, Eye, Pencil, Search } from "lucide-react";
 import type { Route } from "next";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
+import { type ChangeEvent } from "react";
 
 interface UsersTableProps {
   users: UserListItem[];
@@ -84,7 +85,7 @@ export function UsersTable({
     navigate(createUrl({ sort: column, order: newOrder, page: "1" }));
   };
 
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     const sp = new URLSearchParams(searchParams);
     if (value) sp.set("search", value);

@@ -48,9 +48,8 @@ export function ProfileForm({ user }: ProfileFormProps) {
       fd.set("name", data.name);
       fd.set("phone", data.phone || "");
       const result = await updateProfile(fd);
-      if (result?.error) {
-        setServerError(result.error);
-      } else {
+      if (result?.error) setServerError(result.error);
+      else {
         setSuccess(true);
         setTimeout(() => setSuccess(false), 3000);
       }

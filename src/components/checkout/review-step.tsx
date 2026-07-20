@@ -9,7 +9,7 @@ import { formatCurrency } from "@/utils/format";
 import { ArrowLeft } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useState, useTransition } from "react";
+import { type ChangeEvent, useState, useTransition } from "react";
 import type { Address, CouponState } from "./checkout-page";
 import { CouponInput } from "./coupon-input";
 
@@ -35,16 +35,15 @@ export function ReviewStep({
     appliedCoupon?.discountAmount ?? 0,
   );
 
-  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const onSubmit = (e: ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!selectedAddress) return;
     setServerError(null);
     startTransition(async () => {
       const fd = new FormData();
       fd.set("addressId", selectedAddress.id);
-      if (appliedCoupon) {
-        fd.set("couponId", appliedCoupon.couponId);
-      }
+      if (appliedCoupon) fd.set("couponId", appliedCoupon.couponId);
+
       const result = await placeOrder(fd);
       if (result?.error) setServerError(result.error);
       if (result?.url) window.location.href = result.url;

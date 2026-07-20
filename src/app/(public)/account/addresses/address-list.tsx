@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
-import { Plus, MapPin } from "lucide-react";
-import { Button, EmptyState } from "@/components/ui";
 import { AddressCard } from "@/components/checkout/address-card";
 import { AddressForm } from "@/components/checkout/address-form";
 import type { Address } from "@/components/checkout/checkout-page";
+import { Button, EmptyState } from "@/components/ui";
+import { MapPin, Plus } from "lucide-react";
+import { useState } from "react";
 
 interface AddressListProps {
   addresses: Address[];
@@ -29,7 +29,7 @@ export function AddressList({ addresses }: AddressListProps) {
     setEditingAddress(address);
   };
 
-  if (showForm || editingAddress) {
+  if (showForm || editingAddress)
     return (
       <AddressForm
         initialData={editingAddress}
@@ -37,9 +37,8 @@ export function AddressList({ addresses }: AddressListProps) {
         onCancel={handleFormCancel}
       />
     );
-  }
 
-  if (addresses.length === 0) {
+  if (addresses.length === 0)
     return (
       <div className="space-y-6">
         <EmptyState
@@ -59,7 +58,6 @@ export function AddressList({ addresses }: AddressListProps) {
         />
       </div>
     );
-  }
 
   return (
     <div className="space-y-4">

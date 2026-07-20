@@ -1,8 +1,9 @@
 import { cn } from "@/utils/cn";
+import type { HTMLAttributes, ProgressHTMLAttributes } from "react";
 
 /* ── Alert ── */
 
-interface AlertProps extends React.HTMLAttributes<HTMLDivElement> {
+interface AlertProps extends HTMLAttributes<HTMLDivElement> {
   variant?: "info" | "success" | "warning" | "error";
 }
 
@@ -27,7 +28,7 @@ export function Alert({ className, variant, children, ...props }: AlertProps) {
 
 /* ── Badge ── */
 
-export interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
+export interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
   variant?:
     | "neutral"
     | "primary"
@@ -104,7 +105,7 @@ export function DiscountBadge({
 
 /* ── Spinner ── */
 
-interface SpinnerProps extends React.HTMLAttributes<HTMLSpanElement> {
+interface SpinnerProps extends HTMLAttributes<HTMLSpanElement> {
   size?: "sm" | "md" | "lg";
 }
 
@@ -130,7 +131,7 @@ export function Spinner({ className, size = "md", ...props }: SpinnerProps) {
 
 /* ── Skeleton ── */
 
-interface SkeletonProps extends React.HTMLAttributes<HTMLDivElement> {
+interface SkeletonProps extends HTMLAttributes<HTMLDivElement> {
   variant?: "text" | "avatar" | "card" | "thumbnail";
 }
 
@@ -157,7 +158,7 @@ export function Skeleton({
 
 /* ── Progress ── */
 
-interface ProgressProps extends React.ProgressHTMLAttributes<HTMLProgressElement> {
+interface ProgressProps extends ProgressHTMLAttributes<HTMLProgressElement> {
   variant?:
     | "primary"
     | "secondary"

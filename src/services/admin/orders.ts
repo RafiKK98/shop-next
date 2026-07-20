@@ -1,27 +1,23 @@
 import "server-only";
 
-import { cache } from "react";
-import { cacheLife, cacheTag } from "next/cache";
-import { CACHE_TAGS } from "@/lib/cache";
 import { db } from "@/db";
-import {
-  orders,
-  orderItems,
-  users,
-  addresses,
-} from "@/db/schema";
+import { addresses, orderItems, orders, users } from "@/db/schema";
+import { CACHE_TAGS } from "@/lib/cache";
 import { and, asc, count, desc, eq, gte, lte, or, sql } from "drizzle-orm";
-import type { OrderStatus, PaymentStatus } from "./order-types";
-import {
-  VALID_ORDER_TRANSITIONS,
-  VALID_PAYMENT_TRANSITIONS,
-  ORDER_STATUS_LABEL,
-  PAYMENT_STATUS_LABEL,
-} from "./order-types";
+import { cacheLife, cacheTag } from "next/cache";
+import { cache } from "react";
 import type {
+  OrderDetail,
   OrdersResponse,
   OrderStats,
-  OrderDetail,
+  OrderStatus,
+  PaymentStatus,
+} from "./order-types";
+import {
+  ORDER_STATUS_LABEL,
+  PAYMENT_STATUS_LABEL,
+  VALID_ORDER_TRANSITIONS,
+  VALID_PAYMENT_TRANSITIONS,
 } from "./order-types";
 
 // ── Queries ─────────────────────────────────────────────────────────────
@@ -45,7 +41,7 @@ export async function getAdminOrders(params: {
 
   const whereConditions = [];
 
-  if (search) {
+  if (search)
     whereConditions.push(
       or(
         sql`${users.name}::text ilike ${`%${search}%`}`,
@@ -53,25 +49,20 @@ export async function getAdminOrders(params: {
         sql`${orders.id}::text ilike ${`%${search}%`}`,
       ),
     );
-  }
 
-  if (params.status) {
-    whereConditions.push(eq(orders.status, params.status));
-  }
+  if (params.status) whereConditions.push(eq(orders.status, params.status));
 
-  if (params.paymentStatus) {
+  if (params.paymentStatus)
     whereConditions.push(eq(orders.paymentStatus, params.paymentStatus));
-  }
 
-  if (params.dateFrom) {
+  if (params.dateFrom)
     whereConditions.push(gte(orders.createdAt, new Date(params.dateFrom)));
-  }
 
-  if (params.dateTo) {
+  if (params.dateTo)
     whereConditions.push(lte(orders.createdAt, new Date(params.dateTo)));
-  }
 
-  const where = whereConditions.length > 0 ? and(...whereConditions) : undefined;
+  const where =
+    whereConditions.length > 0 ? and(...whereConditions) : undefined;
 
   const sortColumn =
     sort === "total"
@@ -171,7 +162,9 @@ export const getAdminOrderById = cache(async function getAdminOrderById(
         country: addresses.country,
       })
       .from(addresses)
-      .where(and(eq(addresses.userId, order.userId), eq(addresses.isDefault, true)))
+      .where(
+        and(eq(addresses.userId, order.userId), eq(addresses.isDefault, true)),
+      )
       .then((r) => r[0] ?? null),
   ]);
 
@@ -251,11 +244,10 @@ export async function updateOrderStatusDb(
   if (!order) throw new Error("Order not found");
 
   const allowed = VALID_ORDER_TRANSITIONS[order.status as OrderStatus];
-  if (!allowed.includes(newStatus)) {
+  if (!allowed.includes(newStatus))
     throw new Error(
       `Cannot change order status from "${ORDER_STATUS_LABEL[order.status as OrderStatus]}" to "${ORDER_STATUS_LABEL[newStatus]}"`,
     );
-  }
 
   await db
     .update(orders)
@@ -275,12 +267,12 @@ export async function updatePaymentStatusDb(
 
   if (!order) throw new Error("Order not found");
 
-  const allowed = VALID_PAYMENT_TRANSITIONS[order.paymentStatus as PaymentStatus];
-  if (!allowed.includes(newStatus)) {
+  const allowed =
+    VALID_PAYMENT_TRANSITIONS[order.paymentStatus as PaymentStatus];
+  if (!allowed.includes(newStatus))
     throw new Error(
       `Cannot change payment status from "${PAYMENT_STATUS_LABEL[order.paymentStatus as PaymentStatus]}" to "${PAYMENT_STATUS_LABEL[newStatus]}"`,
     );
-  }
 
   await db
     .update(orders)

@@ -1,7 +1,8 @@
 import { cn } from "@/utils/cn";
 import Image from "next/image";
+import { type HTMLAttributes } from "react";
 
-interface AvatarProps extends React.HTMLAttributes<HTMLDivElement> {
+interface AvatarProps extends HTMLAttributes<HTMLDivElement> {
   src?: string | null;
   alt: string;
   size?: "xs" | "sm" | "md" | "lg" | "xl";

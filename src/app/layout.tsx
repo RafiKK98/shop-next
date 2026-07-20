@@ -1,8 +1,8 @@
-import { Suspense } from "react";
+import { SITE } from "@/constants";
+import { Providers, ThemeScript } from "@/providers";
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
-import { Providers, ThemeScript } from "@/providers";
-import { SITE } from "@/constants";
+import { type ReactNode, Suspense } from "react";
 import "./globals.css";
 
 const inter = Inter({
@@ -37,13 +37,17 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+interface RootLayoutProps {
+  children: ReactNode;
+}
+
+export default function RootLayout({ children }: Readonly<RootLayoutProps>) {
   return (
-    <html lang="en" className={`${inter.variable} h-full`} suppressHydrationWarning>
+    <html
+      lang="en"
+      className={`${inter.variable} h-full`}
+      suppressHydrationWarning
+    >
       <head>
         <ThemeScript />
       </head>

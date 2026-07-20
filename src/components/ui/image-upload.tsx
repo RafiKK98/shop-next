@@ -3,15 +3,21 @@
 import { uploadImageAction } from "@/actions/upload";
 import { notify } from "@/lib/notifications";
 import {
-  ACCEPTED_IMAGE_TYPES_SET,
   ACCEPTED_IMAGE_TYPES,
+  ACCEPTED_IMAGE_TYPES_SET,
   MAX_FILE_SIZE,
   UPLOAD_FOLDERS,
   type UploadFolder,
 } from "@/lib/upload";
-import { Upload, X, Loader2 } from "lucide-react";
+import { Loader2, Upload, X } from "lucide-react";
 import Image from "next/image";
-import { useCallback, useRef, useState } from "react";
+import {
+  type ChangeEvent,
+  type DragEvent,
+  useCallback,
+  useRef,
+  useState,
+} from "react";
 
 interface ImageUploadProps {
   value: string[];
@@ -48,7 +54,9 @@ export function ImageUpload({
         }
         if (file.size > MAX_FILE_SIZE) {
           const mb = (file.size / 1024 / 1024).toFixed(1);
-          notify.error(`"${file.name}" is too large (${mb}MB). Maximum: ${MAX_FILE_SIZE / 1024 / 1024}MB.`);
+          notify.error(
+            `"${file.name}" is too large (${mb}MB). Maximum: ${MAX_FILE_SIZE / 1024 / 1024}MB.`,
+          );
           continue;
         }
 
@@ -57,11 +65,8 @@ export function ImageUpload({
         fd.set("folder", folder);
 
         const result = await uploadImageAction(fd);
-        if ("error" in result) {
-          notify.error(result.error);
-        } else {
-          onChange([...value, result.url]);
-        }
+        if ("error" in result) notify.error(result.error);
+        else onChange([...value, result.url]);
       }
 
       setUploading(false);
@@ -70,7 +75,7 @@ export function ImageUpload({
   );
 
   const handleDrop = useCallback(
-    (e: React.DragEvent) => {
+    (e: DragEvent) => {
       e.preventDefault();
       setDragOver(false);
       if (disabled || uploading) return;
@@ -80,7 +85,7 @@ export function ImageUpload({
   );
 
   const handleInputChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
+    (e: ChangeEvent<HTMLInputElement>) => {
       if (!e.target.files?.length) return;
       uploadFiles(e.target.files);
       e.target.value = "";
@@ -139,11 +144,13 @@ export function ImageUpload({
                 Drop images here or click to browse
               </p>
               <p className="mt-1 text-xs text-base-content/40">
-                JPEG, PNG, WebP, GIF, or AVIF &bull; Max {MAX_FILE_SIZE / 1024 / 1024}MB each
+                JPEG, PNG, WebP, GIF, or AVIF &bull; Max{" "}
+                {MAX_FILE_SIZE / 1024 / 1024}MB each
               </p>
               {maxFiles < Infinity && (
                 <p className="text-xs text-base-content/40">
-                  {remaining} of {maxFiles} slot{maxFiles !== 1 ? "s" : ""} remaining
+                  {remaining} of {maxFiles} slot{maxFiles !== 1 ? "s" : ""}{" "}
+                  remaining
                 </p>
               )}
             </>

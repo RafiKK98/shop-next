@@ -63,20 +63,18 @@ export async function getAdminUsers(params: {
   const order = params.order ?? "desc";
 
   const whereConditions = [];
-  if (search) {
+  if (search)
     whereConditions.push(
       or(
         sql`${users.name}::text ilike ${`%${search}%`}`,
         sql`${users.email}::text ilike ${`%${search}%`}`,
       ),
     );
-  }
-  if (params.role) {
-    whereConditions.push(eq(users.role, params.role));
-  }
-  if (params.status) {
-    whereConditions.push(eq(users.status, params.status));
-  }
+
+  if (params.role) whereConditions.push(eq(users.role, params.role));
+
+  if (params.status) whereConditions.push(eq(users.status, params.status));
+
   const where =
     whereConditions.length > 0 ? and(...whereConditions) : undefined;
 
@@ -244,9 +242,8 @@ export async function updateUserDb(
 
   const isSelf = user.id === actorId;
 
-  if (isSelf && data.role !== user.role && data.role !== "admin") {
+  if (isSelf && data.role !== user.role && data.role !== "admin")
     throw new Error("You cannot remove your own admin role");
-  }
 
   const result = await db
     .update(users)
@@ -260,7 +257,5 @@ export async function updateUserDb(
     .where(eq(users.id, id))
     .returning({ id: users.id });
 
-  if (result.length === 0) {
-    throw new Error("User not found");
-  }
+  if (result.length === 0) throw new Error("User not found");
 }

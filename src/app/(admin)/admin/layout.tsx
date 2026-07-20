@@ -1,13 +1,14 @@
-import { auth } from "@/lib/auth";
-import { AdminSidebar } from "@/components/admin/admin-sidebar";
-import { AdminHeader } from "@/components/admin/admin-header";
 import { AdminContainer } from "@/components/admin/admin-container";
+import { AdminHeader } from "@/components/admin/admin-header";
+import { AdminSidebar } from "@/components/admin/admin-sidebar";
+import { auth } from "@/lib/auth";
+import { type ReactNode } from "react";
 
-export default async function AdminLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+interface AdminLayoutProps {
+  children: ReactNode;
+}
+
+export default async function AdminLayout({ children }: AdminLayoutProps) {
   const session = await auth();
   const user = {
     name: session?.user?.name ?? null,
@@ -25,7 +26,11 @@ export default async function AdminLayout({
         </main>
       </div>
       <div className="drawer-side z-40">
-        <label htmlFor="admin-drawer" className="drawer-overlay" aria-label="Close sidebar" />
+        <label
+          htmlFor="admin-drawer"
+          className="drawer-overlay"
+          aria-label="Close sidebar"
+        />
         <AdminSidebar />
       </div>
     </div>

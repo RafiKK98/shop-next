@@ -1,15 +1,23 @@
 "use client";
 
-import { useCallback, useMemo } from "react";
-import type { Route } from "next";
-import { useSearchParams, useRouter, usePathname } from "next/navigation";
-import type { Product } from "@/types/product";
+import { DEFAULT_SORT, PAGINATION as PAGE_CONST } from "@/constants";
 import type { FilterState } from "@/lib/filters";
-import { parseFilterParams, applyFilters, getActiveFilterCount } from "@/lib/filters";
+import {
+  applyFilters,
+  getActiveFilterCount,
+  parseFilterParams,
+} from "@/lib/filters";
+import {
+  getPaginationInfo,
+  paginateProducts,
+  type PaginationInfo,
+} from "@/lib/pagination";
 import { searchProducts } from "@/lib/search";
 import { sortProducts } from "@/lib/sort";
-import { paginateProducts, getPaginationInfo, type PaginationInfo } from "@/lib/pagination";
-import { DEFAULT_SORT, PAGINATION as PAGE_CONST } from "@/constants";
+import type { Product } from "@/types/product";
+import type { Route } from "next";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useCallback, useMemo } from "react";
 
 interface UseFiltersReturn {
   filters: FilterState;
@@ -22,7 +30,10 @@ interface UseFiltersReturn {
   setSortKey: (key: string) => void;
   setPage: (page: number) => void;
   setFilter: (key: string, value: string | string[] | null) => void;
-  toggleFilter: (group: keyof Pick<FilterState, "categories" | "brands" | "availability">, value: string) => void;
+  toggleFilter: (
+    group: keyof Pick<FilterState, "categories" | "brands" | "availability">,
+    value: string,
+  ) => void;
   toggleRating: (value: number) => void;
   toggleDiscount: (value: number) => void;
   setPriceRange: (min: number | null, max: number | null) => void;
@@ -36,7 +47,10 @@ export function useFilters(products: Product[]): UseFiltersReturn {
 
   const baseUrl = pathname;
 
-  const filters = useMemo(() => parseFilterParams(searchParams), [searchParams]);
+  const filters = useMemo(
+    () => parseFilterParams(searchParams),
+    [searchParams],
+  );
 
   const sortKey = searchParams.get("sort") || DEFAULT_SORT;
 
@@ -51,7 +65,10 @@ export function useFilters(products: Product[]): UseFiltersReturn {
     [products, searchQuery],
   );
 
-  const filteredProducts = useMemo(() => applyFilters(searchedProducts, filters), [searchedProducts, filters]);
+  const filteredProducts = useMemo(
+    () => applyFilters(searchedProducts, filters),
+    [searchedProducts, filters],
+  );
 
   const sortedProducts = useMemo(
     () => sortProducts(filteredProducts, sortKey),
@@ -68,13 +85,18 @@ export function useFilters(products: Product[]): UseFiltersReturn {
     [sortedProducts, pagination.currentPage, pageSize],
   );
 
-  const activeFilterCount = useMemo(() => getActiveFilterCount(filters), [filters]);
+  const activeFilterCount = useMemo(
+    () => getActiveFilterCount(filters),
+    [filters],
+  );
 
   const navigateWithParams = useCallback(
     (newParams: URLSearchParams, options?: { resetPage?: boolean }) => {
       if (options?.resetPage) newParams.delete("page");
       const qs = newParams.toString();
-      router.replace((qs ? `${baseUrl}?${qs}` : baseUrl) as Route, { scroll: false });
+      router.replace((qs ? `${baseUrl}?${qs}` : baseUrl) as Route, {
+        scroll: false,
+      });
     },
     [baseUrl, router],
   );
@@ -82,25 +104,31 @@ export function useFilters(products: Product[]): UseFiltersReturn {
   const setFilter = useCallback(
     (key: string, value: string | string[] | null) => {
       const newParams = new URLSearchParams(searchParams.toString());
-      if (value === null || (Array.isArray(value) && value.length === 0)) {
+      if (value === null || (Array.isArray(value) && value.length === 0))
         newParams.delete(key);
-      } else if (Array.isArray(value)) {
-        newParams.set(key, value.join(","));
-      } else {
-        newParams.set(key, value);
-      }
+      else if (Array.isArray(value)) newParams.set(key, value.join(","));
+      else newParams.set(key, value);
+
       navigateWithParams(newParams, { resetPage: true });
     },
     [searchParams, navigateWithParams],
   );
 
   const toggleFilter = useCallback(
-    (group: keyof Pick<FilterState, "categories" | "brands" | "availability">, value: string) => {
+    (
+      group: keyof Pick<FilterState, "categories" | "brands" | "availability">,
+      value: string,
+    ) => {
       const current = filters[group] as string[];
       const next = current.includes(value)
         ? current.filter((v) => v !== value)
         : [...current, value];
-      const urlKey = group === "categories" ? "category" : group === "brands" ? "brand" : "availability";
+      const urlKey =
+        group === "categories"
+          ? "category"
+          : group === "brands"
+            ? "brand"
+            : "availability";
       const newParams = new URLSearchParams(searchParams.toString());
       if (next.length > 0) newParams.set(urlKey, next.join(","));
       else newParams.delete(urlKey);
@@ -113,11 +141,9 @@ export function useFilters(products: Product[]): UseFiltersReturn {
     (value: number) => {
       const current = filters.minRating;
       const newParams = new URLSearchParams(searchParams.toString());
-      if (current === value) {
-        newParams.delete("rating");
-      } else {
-        newParams.set("rating", String(value));
-      }
+      if (current === value) newParams.delete("rating");
+      else newParams.set("rating", String(value));
+
       navigateWithParams(newParams, { resetPage: true });
     },
     [filters.minRating, searchParams, navigateWithParams],
@@ -127,11 +153,9 @@ export function useFilters(products: Product[]): UseFiltersReturn {
     (value: number) => {
       const current = filters.minDiscount;
       const newParams = new URLSearchParams(searchParams.toString());
-      if (current === value) {
-        newParams.delete("discount");
-      } else {
-        newParams.set("discount", String(value));
-      }
+      if (current === value) newParams.delete("discount");
+      else newParams.set("discount", String(value));
+
       navigateWithParams(newParams, { resetPage: true });
     },
     [filters.minDiscount, searchParams, navigateWithParams],
@@ -152,11 +176,9 @@ export function useFilters(products: Product[]): UseFiltersReturn {
   const setSortKey = useCallback(
     (key: string) => {
       const newParams = new URLSearchParams(searchParams.toString());
-      if (key === DEFAULT_SORT) {
-        newParams.delete("sort");
-      } else {
-        newParams.set("sort", key);
-      }
+      if (key === DEFAULT_SORT) newParams.delete("sort");
+      else newParams.set("sort", key);
+
       navigateWithParams(newParams);
     },
     [searchParams, navigateWithParams],
@@ -165,11 +187,9 @@ export function useFilters(products: Product[]): UseFiltersReturn {
   const setPage = useCallback(
     (page: number) => {
       const newParams = new URLSearchParams(searchParams.toString());
-      if (page <= 1) {
-        newParams.delete("page");
-      } else {
-        newParams.set("page", String(page));
-      }
+      if (page <= 1) newParams.delete("page");
+      else newParams.set("page", String(page));
+
       navigateWithParams(newParams);
     },
     [searchParams, navigateWithParams],
@@ -178,11 +198,9 @@ export function useFilters(products: Product[]): UseFiltersReturn {
   const setSearchQuery = useCallback(
     (query: string) => {
       const newParams = new URLSearchParams(searchParams.toString());
-      if (query) {
-        newParams.set("q", query);
-      } else {
-        newParams.delete("q");
-      }
+      if (query) newParams.set("q", query);
+      else newParams.delete("q");
+
       navigateWithParams(newParams, { resetPage: true });
     },
     [searchParams, navigateWithParams],

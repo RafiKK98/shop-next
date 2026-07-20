@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import type { Product } from "@/types/product";
+import { useEffect, useState } from "react";
 import { CategoryDetailContent } from "./catalog-content";
 
 interface CategoryPageLoaderProps {
@@ -24,17 +24,21 @@ export function CategoryPageLoader({ slug }: CategoryPageLoaderProps) {
     })();
   }, [slug]);
 
-  if (data === null) {
+  if (data === null)
     return (
       <div className="flex min-h-[50vh] items-center justify-center">
         <span className="loading loading-spinner loading-lg" />
       </div>
     );
-  }
 
-  if (!data.category) {
-    return <p className="py-16 text-center text-base-content/40">Category not found</p>;
-  }
+  if (!data.category)
+    return (
+      <p className="py-16 text-center text-base-content/40">
+        Category not found
+      </p>
+    );
 
-  return <CategoryDetailContent category={data.category} products={data.products} />;
+  return (
+    <CategoryDetailContent category={data.category} products={data.products} />
+  );
 }

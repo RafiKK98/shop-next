@@ -1,18 +1,20 @@
-import { ThemeProvider } from "./theme";
+import { type ReactNode } from "react";
 import { SessionProvider } from "./session";
+import { ThemeProvider } from "./theme";
 import { ToastProvider } from "./toast";
 
-export function Providers({ children }: { children: React.ReactNode }) {
+interface ProvidersProps {
+  children: ReactNode;
+}
+
+export function Providers({ children }: ProvidersProps) {
   return (
     <SessionProvider>
       <ThemeProvider>
-        <ToastProvider>
-          {children}
-        </ToastProvider>
+        <ToastProvider>{children}</ToastProvider>
       </ThemeProvider>
     </SessionProvider>
   );
 }
 
-export { ThemeScript } from "./theme";
-export { useTheme } from "./theme";
+export { ThemeScript, useTheme } from "./theme";

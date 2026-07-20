@@ -1,14 +1,27 @@
 import { cn } from "@/utils/cn";
+import { type HTMLAttributes } from "react";
 
-interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
+interface CardProps extends HTMLAttributes<HTMLDivElement> {
   compact?: boolean;
   bordered?: boolean;
 }
 
-export function Card({ className, compact, bordered, children, ...props }: CardProps) {
+export function Card({
+  className,
+  compact,
+  bordered,
+  children,
+  ...props
+}: CardProps) {
   return (
     <div
-      className={cn("card", compact && "card-compact", bordered && "border border-base-200", "bg-base-100", className)}
+      className={cn(
+        "card",
+        compact && "card-compact",
+        bordered && "border border-base-200",
+        "bg-base-100",
+        className,
+      )}
       {...props}
     >
       {children}
@@ -16,7 +29,11 @@ export function Card({ className, compact, bordered, children, ...props }: CardP
   );
 }
 
-export function CardBody({ className, children, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+export function CardBody({
+  className,
+  children,
+  ...props
+}: HTMLAttributes<HTMLDivElement>) {
   return (
     <div className={cn("card-body", className)} {...props}>
       {children}
@@ -24,7 +41,11 @@ export function CardBody({ className, children, ...props }: React.HTMLAttributes
   );
 }
 
-export function CardTitle({ className, children, ...props }: React.HTMLAttributes<HTMLHeadingElement>) {
+export function CardTitle({
+  className,
+  children,
+  ...props
+}: HTMLAttributes<HTMLHeadingElement>) {
   return (
     <h2 className={cn("card-title", className)} {...props}>
       {children}
@@ -32,7 +53,11 @@ export function CardTitle({ className, children, ...props }: React.HTMLAttribute
   );
 }
 
-export function CardActions({ className, children, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+export function CardActions({
+  className,
+  children,
+  ...props
+}: HTMLAttributes<HTMLDivElement>) {
   return (
     <div className={cn("card-actions justify-end", className)} {...props}>
       {children}
@@ -40,7 +65,11 @@ export function CardActions({ className, children, ...props }: React.HTMLAttribu
   );
 }
 
-export function CardImage({ className, children, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+export function CardImage({
+  className,
+  children,
+  ...props
+}: HTMLAttributes<HTMLDivElement>) {
   return (
     <div className={cn("p-4", className)} {...props}>
       {children}

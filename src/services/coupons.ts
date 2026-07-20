@@ -69,12 +69,11 @@ export async function validateCoupon(
 
   if (coupon.minPurchase !== null) {
     const minAmount = parseFloat(coupon.minPurchase);
-    if (subtotal < minAmount) {
+    if (subtotal < minAmount)
       return {
         valid: false,
         error: `Minimum order amount of $${minAmount.toFixed(2)} required for this coupon`,
       };
-    }
   }
 
   const value = parseFloat(coupon.value);

@@ -26,12 +26,11 @@ function parseDbError(err: unknown): string {
     code?: string;
     constraint?: string;
   };
-  if (e.code === "23505" && e.constraint?.includes("slug")) {
+  if (e.code === "23505" && e.constraint?.includes("slug"))
     return "A product with this slug already exists";
-  }
-  if (e.code === "23503") {
-    return "Referenced category does not exist";
-  }
+
+  if (e.code === "23503") return "Referenced category does not exist";
+
   if (e.message) return e.message;
   return "An unexpected database error occurred";
 }
@@ -72,7 +71,7 @@ export async function createProduct(formData: FormData): Promise<ActionResult> {
         })
         .returning();
 
-      if (data.images && data.images.length > 0) {
+      if (data.images && data.images.length > 0)
         await tx.insert(productImages).values(
           data.images.map((url, i) => ({
             productId: p.id,
@@ -81,7 +80,6 @@ export async function createProduct(formData: FormData): Promise<ActionResult> {
             order: i,
           })),
         );
-      }
 
       return [p];
     });
@@ -148,7 +146,7 @@ export async function updateProduct(
         .delete(productImages)
         .where(eq(productImages.productId, productId));
 
-      if (data.images && data.images.length > 0) {
+      if (data.images && data.images.length > 0)
         await tx.insert(productImages).values(
           data.images.map((url, i) => ({
             productId,
@@ -157,7 +155,6 @@ export async function updateProduct(
             order: i,
           })),
         );
-      }
     });
 
     revalidatePath("/admin/products");
@@ -197,11 +194,11 @@ export async function deleteProduct(productId: string): Promise<ActionResult> {
       code?: string;
       message?: string;
     };
-    if (e.code === "23503") {
+    if (e.code === "23503")
       return {
         error: `"${existing.title}" cannot be deleted because it is referenced by orders or other records`,
       };
-    }
+
     return { error: e.message || "Failed to delete product" };
   }
 }

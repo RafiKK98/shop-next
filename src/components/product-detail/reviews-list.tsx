@@ -7,13 +7,12 @@ interface ReviewsListProps {
 }
 
 export function ReviewsList({ reviews }: ReviewsListProps) {
-  if (reviews.length === 0) {
+  if (reviews.length === 0)
     return (
       <p className="py-8 text-center text-sm text-base-content/40">
         No reviews yet. Be the first to review this product!
       </p>
     );
-  }
 
   return (
     <div className="space-y-4">
@@ -31,7 +30,9 @@ export function ReviewsList({ reviews }: ReviewsListProps) {
             <div className="min-w-0 flex-1">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <div>
-                  <h3 className="font-semibold">{review.authorName ?? "Anonymous"}</h3>
+                  <h3 className="font-semibold">
+                    {review.authorName ?? "Anonymous"}
+                  </h3>
                   <div className="mt-0.5 flex items-center gap-2">
                     <Rating value={review.rating} size="xs" />
                     <span className="text-xs text-base-content/40">

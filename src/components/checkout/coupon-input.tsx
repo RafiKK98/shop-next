@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useTransition } from "react";
-import { Tag, X } from "lucide-react";
 import { validateCouponAction } from "@/actions/coupons";
-import { formatCurrency } from "@/utils/format";
 import { notify } from "@/lib/notifications";
+import { formatCurrency } from "@/utils/format";
+import { Tag, X } from "lucide-react";
+import { useState, useTransition } from "react";
 
 interface CouponState {
   code: string;
@@ -18,7 +18,11 @@ interface CouponInputProps {
   appliedCoupon: CouponState | null;
 }
 
-export function CouponInput({ subtotal, onCouponApplied, appliedCoupon }: CouponInputProps) {
+export function CouponInput({
+  subtotal,
+  onCouponApplied,
+  appliedCoupon,
+}: CouponInputProps) {
   const [code, setCode] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -41,7 +45,9 @@ export function CouponInput({ subtotal, onCouponApplied, appliedCoupon }: Coupon
         discountAmount: result.discountAmount,
         couponId: result.coupon.id,
       });
-      notify.success(`Coupon "${result.coupon.code}" applied! ${formatCurrency(result.discountAmount)} off`);
+      notify.success(
+        `Coupon "${result.coupon.code}" applied! ${formatCurrency(result.discountAmount)} off`,
+      );
       setCode("");
     });
   };
@@ -51,16 +57,14 @@ export function CouponInput({ subtotal, onCouponApplied, appliedCoupon }: Coupon
     notify.info("Coupon removed");
   };
 
-  if (appliedCoupon) {
+  if (appliedCoupon)
     return (
       <div className="rounded-xl border border-success/30 bg-success/5 p-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Tag className="size-4 text-success" />
             <div>
-              <p className="text-sm font-medium">
-                {appliedCoupon.code}
-              </p>
+              <p className="text-sm font-medium">{appliedCoupon.code}</p>
               <p className="text-xs text-success">
                 -{formatCurrency(appliedCoupon.discountAmount)}
               </p>
@@ -77,7 +81,6 @@ export function CouponInput({ subtotal, onCouponApplied, appliedCoupon }: Coupon
         </div>
       </div>
     );
-  }
 
   return (
     <div className="rounded-xl border border-base-200 bg-base-100 p-4">
@@ -108,12 +111,14 @@ export function CouponInput({ subtotal, onCouponApplied, appliedCoupon }: Coupon
           disabled={isPending || !code.trim()}
           className="btn btn-primary btn-sm"
         >
-          {isPending ? <span className="loading loading-spinner loading-xs" /> : "Apply"}
+          {isPending ? (
+            <span className="loading loading-spinner loading-xs" />
+          ) : (
+            "Apply"
+          )}
         </button>
       </div>
-      {error && (
-        <p className="mt-1 text-xs text-error">{error}</p>
-      )}
+      {error && <p className="mt-1 text-xs text-error">{error}</p>}
     </div>
   );
 }

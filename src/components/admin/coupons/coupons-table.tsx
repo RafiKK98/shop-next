@@ -17,7 +17,7 @@ import {
 import type { Route } from "next";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState, useTransition } from "react";
+import { type ChangeEvent, useState, useTransition } from "react";
 
 interface CouponsTableProps {
   coupons: AdminCouponListItem[];
@@ -57,16 +57,14 @@ export function CouponsTable({
     return `/admin/coupons?${sp.toString()}`;
   };
 
-  const navigate = (url: string) => {
-    router.push(url as Route);
-  };
+  const navigate = (url: string) => router.push(url as Route);
 
   const toggleSort = (column: string) => {
     const newOrder = sort === column && order === "asc" ? "desc" : "asc";
     navigate(createUrl({ sort: column, order: newOrder, page: "1" }));
   };
 
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     const sp = new URLSearchParams(searchParams);
     if (value) sp.set("search", value);

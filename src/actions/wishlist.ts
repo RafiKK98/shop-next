@@ -38,9 +38,9 @@ export async function toggleWishlist(formData: FormData) {
     )
     .then((r) => r[0] ?? null);
 
-  if (existing) {
+  if (existing)
     await db.delete(wishlistItems).where(eq(wishlistItems.id, existing.id));
-  } else {
+  else {
     await db.insert(wishlistItems).values({
       userId: session.user.id,
       productId: product.id,

@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { toggleWishlist } from "@/actions/wishlist";
+import { cn } from "@/utils/cn";
+import { Heart } from "lucide-react";
 import type { Route } from "next";
 import { useRouter } from "next/navigation";
-import { Heart } from "lucide-react";
-import { cn } from "@/utils/cn";
-import { toggleWishlist } from "@/actions/wishlist";
+import { type MouseEvent, useState, useTransition } from "react";
 
 interface WishlistButtonProps {
   slug: string;
@@ -28,7 +28,7 @@ export function WishlistButton({
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
 
-  const handleClick = (e: React.MouseEvent) => {
+  const handleClick = (e: MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
 
@@ -48,9 +48,7 @@ export function WishlistButton({
         return;
       }
 
-      if (result?.error) {
-        setIsWishlisted(prev);
-      }
+      if (result?.error) setIsWishlisted(prev);
     });
   };
 
@@ -62,7 +60,11 @@ export function WishlistButton({
   return (
     <button
       type="button"
-      className={cn(btnClass, isPending && "pointer-events-none opacity-50", className)}
+      className={cn(
+        btnClass,
+        isPending && "pointer-events-none opacity-50",
+        className,
+      )}
       onClick={handleClick}
       aria-label={
         isWishlisted

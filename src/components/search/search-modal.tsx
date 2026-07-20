@@ -24,13 +24,19 @@ import {
 } from "lucide-react";
 import type { Route } from "next";
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  type ReactNode,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 
 interface SearchLink {
   label: string;
   href: string;
   group: string;
-  icon: React.ReactNode;
+  icon: ReactNode;
   requiresAuth?: boolean;
   requiresGuest?: boolean;
   requiresAdmin?: boolean;

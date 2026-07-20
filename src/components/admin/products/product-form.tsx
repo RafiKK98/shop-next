@@ -1,16 +1,23 @@
 "use client";
 
 import { createProduct, updateProduct } from "@/actions/admin/products";
-import { Button, Checkbox, FormError, Label, Select, ImageUpload } from "@/components/ui";
+import {
+  Button,
+  Checkbox,
+  FormError,
+  ImageUpload,
+  Label,
+  Select,
+} from "@/components/ui";
+import { crud, notify } from "@/lib/notifications";
 import {
   productFormSchema,
   type ProductFormValues,
 } from "@/lib/validations/product";
-import { notify, crud } from "@/lib/notifications";
 import { slugify } from "@/utils/slug";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { useCallback, useState, useTransition } from "react";
+import { useCallback, useState, useTransition, type ChangeEvent } from "react";
 import { useForm, useWatch, type Resolver } from "react-hook-form";
 
 interface CategoryOption {
@@ -36,7 +43,9 @@ export function ProductForm({
   const [isPending, startTransition] = useTransition();
 
   const form = useForm<ProductFormValues>({
-    resolver: zodResolver(productFormSchema) as unknown as Resolver<ProductFormValues>,
+    resolver: zodResolver(
+      productFormSchema,
+    ) as unknown as Resolver<ProductFormValues>,
     defaultValues: defaultValues ?? {
       title: "",
       slug: "",
@@ -52,15 +61,14 @@ export function ProductForm({
   });
 
   const handleTitleChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
+    (e: ChangeEvent<HTMLInputElement>) => {
       const title = e.target.value;
       if (
         !form.getValues("slug") ||
         form.getValues("slug") ===
           slugify(form.formState.defaultValues?.title ?? "")
-      ) {
+      )
         form.setValue("slug", slugify(title));
-      }
     },
     [form],
   );
@@ -92,7 +100,9 @@ export function ProductForm({
         setServerError(result.error);
         notify.error(result.error);
       } else if (result.success) {
-        notify.success(crud[mode === "create" ? "created" : "updated"]("Product"));
+        notify.success(
+          crud[mode === "create" ? "created" : "updated"]("Product"),
+        );
         router.push("/admin/products");
         router.refresh();
       }
@@ -236,7 +246,9 @@ export function ProductForm({
         </h2>
         <ImageUpload
           value={images}
-          onChange={(urls) => form.setValue("images", urls, { shouldDirty: true })}
+          onChange={(urls) =>
+            form.setValue("images", urls, { shouldDirty: true })
+          }
           maxFiles={10}
         />
       </div>

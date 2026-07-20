@@ -1,7 +1,12 @@
-import { Header } from "./header";
+import { type ReactNode } from "react";
 import { Footer } from "./footer";
+import { Header } from "./header";
 
-export function MainLayout({ children }: { children: React.ReactNode }) {
+interface MainLayoutProps {
+  children: ReactNode;
+}
+
+export function MainLayout({ children }: MainLayoutProps) {
   return (
     <div className="flex min-h-screen flex-col">
       <Header />

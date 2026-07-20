@@ -59,7 +59,7 @@ export async function createCheckoutSession(
     quantity: item.quantity,
   }));
 
-  if (shipping > 0) {
+  if (shipping > 0)
     lineItems.push({
       price_data: {
         currency: "usd",
@@ -68,7 +68,6 @@ export async function createCheckoutSession(
       },
       quantity: 1,
     });
-  }
 
   if (tax > 0) {
     const taxCents = Math.round(tax * 100);
@@ -79,7 +78,7 @@ export async function createCheckoutSession(
 
     if (itemsSubtotal + taxCents !== Math.round(parseFloat(total) * 100)) {
       const diff = Math.round(parseFloat(total) * 100) - itemsSubtotal;
-      if (diff !== 0) {
+      if (diff !== 0)
         lineItems.push({
           price_data: {
             currency: "usd",
@@ -88,7 +87,6 @@ export async function createCheckoutSession(
           },
           quantity: 1,
         });
-      }
     } else {
       lineItems.push({
         price_data: {
@@ -116,9 +114,7 @@ export async function createCheckoutSession(
     cancel_url: `${baseUrl}/checkout/cancel?orderId=${order.id}`,
   });
 
-  if (!session.url) {
-    throw new Error("Stripe session URL is missing");
-  }
+  if (!session.url) throw new Error("Stripe session URL is missing");
 
   return { url: session.url, sessionId: session.id };
 }
@@ -216,8 +212,6 @@ export async function handleCheckoutSessionCompleted(session: {
       .where(eq(carts.userId, order.userId))
       .then((r) => r[0] ?? null);
 
-    if (cart) {
-      await tx.delete(cartItems).where(eq(cartItems.cartId, cart.id));
-    }
+    if (cart) await tx.delete(cartItems).where(eq(cartItems.cartId, cart.id));
   });
 }

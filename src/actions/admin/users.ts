@@ -30,14 +30,10 @@ export async function updateUser(formData: FormData): Promise<ActionResult> {
   if (!name?.trim()) return { error: "Name is required" };
 
   const validRoles = userRoleEnum.enumValues;
-  if (!validRoles.includes(role)) {
-    return { error: "Invalid role" };
-  }
+  if (!validRoles.includes(role)) return { error: "Invalid role" };
 
   const validStatuses = userStatusEnum.enumValues;
-  if (!validStatuses.includes(status)) {
-    return { error: "Invalid status" };
-  }
+  if (!validStatuses.includes(status)) return { error: "Invalid status" };
 
   try {
     await updateUserDb(

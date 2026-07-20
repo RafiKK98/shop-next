@@ -1,9 +1,9 @@
 import "server-only";
 
-import { cache } from "react";
 import { db } from "@/db";
 import { coupons } from "@/db/schema";
 import { and, asc, count, desc, eq, sql } from "drizzle-orm";
+import { cache } from "react";
 
 export interface AdminCouponListItem {
   id: string;
@@ -64,17 +64,14 @@ export async function getAdminCoupons(params: {
 
   const whereConditions = [];
 
-  if (search) {
+  if (search)
     whereConditions.push(
       sql`(${coupons.code}::text ilike ${`%${search}%`} OR ${coupons.description}::text ilike ${`%${search}%`})`,
     );
-  }
 
-  if (status === "active") {
-    whereConditions.push(eq(coupons.isActive, true));
-  } else if (status === "inactive") {
+  if (status === "active") whereConditions.push(eq(coupons.isActive, true));
+  else if (status === "inactive")
     whereConditions.push(eq(coupons.isActive, false));
-  }
 
   const where =
     whereConditions.length > 0 ? and(...whereConditions) : undefined;

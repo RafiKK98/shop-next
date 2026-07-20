@@ -41,9 +41,7 @@ function parseDbError(err: unknown): string {
     return parts.join(" | ");
   }
 
-  if (err instanceof Error) {
-    return err.message;
-  }
+  if (err instanceof Error) return err.message;
 
   return "An unexpected database error occurred";
 }
@@ -126,9 +124,7 @@ export async function createOrder(
     .where(and(eq(addresses.id, addressId), eq(addresses.userId, userId)))
     .then((r) => r[0] ?? null);
 
-  if (!address) {
-    return { error: "Invalid shipping address" };
-  }
+  if (!address) return { error: "Invalid shipping address" };
 
   // 2. Load the latest cart from the database
   const cart = await db
@@ -137,9 +133,7 @@ export async function createOrder(
     .where(eq(carts.userId, userId))
     .then((r) => r[0] ?? null);
 
-  if (!cart) {
-    return { error: "Your cart is empty" };
-  }
+  if (!cart) return { error: "Your cart is empty" };
 
   // 3. Load cart items
   const items = await db
@@ -147,9 +141,7 @@ export async function createOrder(
     .from(cartItems)
     .where(eq(cartItems.cartId, cart.id));
 
-  if (items.length === 0) {
-    return { error: "Your cart is empty" };
-  }
+  if (items.length === 0) return { error: "Your cart is empty" };
 
   // 4. Validate every product
   const validatedItems: {
@@ -167,15 +159,12 @@ export async function createOrder(
     }
 
     const stock = product.stock ?? 0;
-    if (stock < 1) {
-      return { error: `"${product.title}" is no longer in stock` };
-    }
+    if (stock < 1) return { error: `"${product.title}" is no longer in stock` };
 
-    if (item.quantity > stock) {
+    if (item.quantity > stock)
       return {
         error: `Only ${stock} of "${product.title}" are available (you requested ${item.quantity})`,
       };
-    }
 
     validatedItems.push({
       cartItemId: item.id,
@@ -201,15 +190,11 @@ export async function createOrder(
       .where(eq(coupons.id, couponId))
       .then((r) => r[0] ?? null);
 
-    if (!coupon) {
-      return { error: "Coupon not found" };
-    }
+    if (!coupon) return { error: "Coupon not found" };
 
     const validation = await validateCoupon(coupon.code, subtotal);
 
-    if (!validation.valid) {
-      return { error: validation.error };
-    }
+    if (!validation.valid) return { error: validation.error };
 
     discountAmount = validation.discountAmount;
     couponCode = validation.coupon.code;
@@ -307,11 +292,10 @@ export async function createOrder(
     };
   }
 
-  if (!result) {
+  if (!result)
     return {
       error: "Some items could not be fulfilled due to insufficient stock",
     };
-  }
 
   return result;
 }
@@ -344,9 +328,7 @@ export async function createPendingOrder(
     .where(and(eq(addresses.id, addressId), eq(addresses.userId, userId)))
     .then((r) => r[0] ?? null);
 
-  if (!address) {
-    return { error: "Invalid shipping address" };
-  }
+  if (!address) return { error: "Invalid shipping address" };
 
   const cart = await db
     .select()
@@ -354,18 +336,14 @@ export async function createPendingOrder(
     .where(eq(carts.userId, userId))
     .then((r) => r[0] ?? null);
 
-  if (!cart) {
-    return { error: "Your cart is empty" };
-  }
+  if (!cart) return { error: "Your cart is empty" };
 
   const items = await db
     .select()
     .from(cartItems)
     .where(eq(cartItems.cartId, cart.id));
 
-  if (items.length === 0) {
-    return { error: "Your cart is empty" };
-  }
+  if (items.length === 0) return { error: "Your cart is empty" };
 
   const validatedItems: {
     product: ProductForOrder;
@@ -381,15 +359,12 @@ export async function createPendingOrder(
     }
 
     const stock = product.stock ?? 0;
-    if (stock < 1) {
-      return { error: `"${product.title}" is no longer in stock` };
-    }
+    if (stock < 1) return { error: `"${product.title}" is no longer in stock` };
 
-    if (item.quantity > stock) {
+    if (item.quantity > stock)
       return {
         error: `Only ${stock} of "${product.title}" are available (you requested ${item.quantity})`,
       };
-    }
 
     validatedItems.push({
       product,
@@ -412,15 +387,11 @@ export async function createPendingOrder(
       .where(eq(coupons.id, couponId))
       .then((r) => r[0] ?? null);
 
-    if (!coupon) {
-      return { error: "Coupon not found" };
-    }
+    if (!coupon) return { error: "Coupon not found" };
 
     const validation = await validateCoupon(coupon.code, subtotal);
 
-    if (!validation.valid) {
-      return { error: validation.error };
-    }
+    if (!validation.valid) return { error: validation.error };
 
     discountAmount = validation.discountAmount;
     couponCode = validation.coupon.code;
@@ -438,8 +409,7 @@ export async function createPendingOrder(
           total: totals.total.toFixed(2),
           couponId: resolvedCouponId,
           couponCode,
-          discountAmount:
-            discountAmount > 0 ? discountAmount.toFixed(2) : null,
+          discountAmount: discountAmount > 0 ? discountAmount.toFixed(2) : null,
           status: "pending",
           paymentStatus: "pending",
         })
@@ -478,8 +448,7 @@ export async function createPendingOrder(
       })),
       couponId: resolvedCouponId,
       couponCode,
-      discountAmount:
-        discountAmount > 0 ? discountAmount.toFixed(2) : null,
+      discountAmount: discountAmount > 0 ? discountAmount.toFixed(2) : null,
     };
   } catch (err) {
     const details = parseDbError(err);

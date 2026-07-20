@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
-import { Plus, ArrowRight, ShoppingCart } from "lucide-react";
 import { Button, EmptyState } from "@/components/ui";
+import { ROUTES } from "@/constants";
+import { ArrowRight, Plus, ShoppingCart } from "lucide-react";
+import { useState } from "react";
 import { AddressCard } from "./address-card";
 import { AddressForm } from "./address-form";
-import { ROUTES } from "@/constants";
 import type { Address } from "./checkout-page";
 
 interface ShippingStepProps {
@@ -26,7 +26,7 @@ export function ShippingStep({
   const [showForm, setShowForm] = useState(false);
   const [editingAddress, setEditingAddress] = useState<Address | null>(null);
 
-  if (cartEmpty) {
+  if (cartEmpty)
     return (
       <EmptyState
         icon={<ShoppingCart className="size-16" />}
@@ -41,7 +41,6 @@ export function ShippingStep({
         }
       />
     );
-  }
 
   const handleFormSuccess = () => {
     setShowForm(false);
@@ -57,7 +56,7 @@ export function ShippingStep({
     setEditingAddress(address);
   };
 
-  if (showForm || editingAddress) {
+  if (showForm || editingAddress)
     return (
       <AddressForm
         initialData={editingAddress}
@@ -65,7 +64,6 @@ export function ShippingStep({
         onCancel={handleFormCancel}
       />
     );
-  }
 
   return (
     <div className="space-y-6">

@@ -1,10 +1,10 @@
 "use server";
 
-import { requireAdmin } from "@/lib/auth/guards";
-import { updateReviewStatus } from "@/services/admin/reviews";
 import { reviewStatusEnum } from "@/db/schema";
-import { revalidatePath, updateTag } from "next/cache";
+import { requireAdmin } from "@/lib/auth/guards";
 import { CACHE_TAGS } from "@/lib/cache";
+import { updateReviewStatus } from "@/services/admin/reviews";
+import { revalidatePath, updateTag } from "next/cache";
 
 interface ActionSuccess {
   success: true;
@@ -26,9 +26,8 @@ export async function moderateReview(
 ): Promise<ActionResult> {
   await requireAdmin();
 
-  if (!VALID_STATUSES.includes(status)) {
+  if (!VALID_STATUSES.includes(status))
     return { error: "Invalid review status" };
-  }
 
   try {
     await updateReviewStatus(reviewId, status);
@@ -36,7 +35,8 @@ export async function moderateReview(
     updateTag(CACHE_TAGS.REVIEWS);
     return { success: true };
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Failed to moderate review";
+    const message =
+      err instanceof Error ? err.message : "Failed to moderate review";
     return { error: message };
   }
 }

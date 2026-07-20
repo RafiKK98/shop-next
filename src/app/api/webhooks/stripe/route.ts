@@ -1,12 +1,11 @@
-import { NextRequest } from "next/server";
 import { stripe } from "@/lib/stripe";
 import { handleCheckoutSessionCompleted } from "@/services/payment";
+import { NextRequest } from "next/server";
 
 export async function POST(request: NextRequest) {
   const sig = request.headers.get("stripe-signature");
-  if (!sig) {
+  if (!sig)
     return new Response("Missing stripe-signature header", { status: 400 });
-  }
 
   const body = await request.text();
 

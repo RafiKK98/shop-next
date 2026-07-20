@@ -1,9 +1,14 @@
 "use client";
 
+import { type ReactNode } from "react";
 import { Toaster } from "sonner";
 import { useTheme } from "./theme";
 
-export function ToastProvider({ children }: { children: React.ReactNode }) {
+interface ToastProviderPorps {
+  children: ReactNode;
+}
+
+export function ToastProvider({ children }: ToastProviderPorps) {
   const { theme } = useTheme();
 
   return (

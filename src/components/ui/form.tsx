@@ -1,9 +1,15 @@
-import { forwardRef } from "react";
 import { cn } from "@/utils/cn";
+import {
+  forwardRef,
+  type HTMLAttributes,
+  type InputHTMLAttributes,
+  type LabelHTMLAttributes,
+  type SelectHTMLAttributes,
+} from "react";
 
 /* ── Label ── */
 
-interface LabelProps extends React.LabelHTMLAttributes<HTMLLabelElement> {
+interface LabelProps extends LabelHTMLAttributes<HTMLLabelElement> {
   required?: boolean;
 }
 
@@ -20,7 +26,11 @@ export function Label({ className, required, children, ...props }: LabelProps) {
 
 /* ── FormError ── */
 
-export function FormError({ className, children, ...props }: React.HTMLAttributes<HTMLSpanElement>) {
+export function FormError({
+  className,
+  children,
+  ...props
+}: HTMLAttributes<HTMLSpanElement>) {
   if (!children) return null;
   return (
     <span className={cn("label-text-alt text-error", className)} {...props}>
@@ -31,10 +41,17 @@ export function FormError({ className, children, ...props }: React.HTMLAttribute
 
 /* ── HelperText ── */
 
-export function HelperText({ className, children, ...props }: React.HTMLAttributes<HTMLSpanElement>) {
+export function HelperText({
+  className,
+  children,
+  ...props
+}: HTMLAttributes<HTMLSpanElement>) {
   if (!children) return null;
   return (
-    <span className={cn("label-text-alt text-base-content/60", className)} {...props}>
+    <span
+      className={cn("label-text-alt text-base-content/60", className)}
+      {...props}
+    >
       {children}
     </span>
   );
@@ -42,15 +59,25 @@ export function HelperText({ className, children, ...props }: React.HTMLAttribut
 
 /* ── Checkbox ── */
 
-interface CheckboxProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "type"> {
+interface CheckboxProps extends Omit<
+  InputHTMLAttributes<HTMLInputElement>,
+  "type"
+> {
   label?: string;
 }
 
 export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
   ({ className, label, id, ...props }, ref) => {
-    const checkId = id || (label ? `checkbox-${label.toLowerCase().replace(/\s+/g, "-")}` : undefined);
+    const checkId =
+      id ||
+      (label
+        ? `checkbox-${label.toLowerCase().replace(/\s+/g, "-")}`
+        : undefined);
     return (
-      <label htmlFor={checkId} className="label cursor-pointer justify-start gap-3">
+      <label
+        htmlFor={checkId}
+        className="label cursor-pointer justify-start gap-3"
+      >
         <input
           ref={ref}
           id={checkId}
@@ -67,15 +94,23 @@ Checkbox.displayName = "Checkbox";
 
 /* ── Radio ── */
 
-interface RadioProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "type"> {
+interface RadioProps extends Omit<
+  InputHTMLAttributes<HTMLInputElement>,
+  "type"
+> {
   label?: string;
 }
 
 export const Radio = forwardRef<HTMLInputElement, RadioProps>(
   ({ className, label, id, ...props }, ref) => {
-    const radioId = id || (label ? `radio-${label.toLowerCase().replace(/\s+/g, "-")}` : undefined);
+    const radioId =
+      id ||
+      (label ? `radio-${label.toLowerCase().replace(/\s+/g, "-")}` : undefined);
     return (
-      <label htmlFor={radioId} className="label cursor-pointer justify-start gap-3">
+      <label
+        htmlFor={radioId}
+        className="label cursor-pointer justify-start gap-3"
+      >
         <input
           ref={ref}
           id={radioId}
@@ -92,15 +127,25 @@ Radio.displayName = "Radio";
 
 /* ── Switch ── */
 
-interface SwitchProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "type"> {
+interface SwitchProps extends Omit<
+  InputHTMLAttributes<HTMLInputElement>,
+  "type"
+> {
   label?: string;
 }
 
 export const Switch = forwardRef<HTMLInputElement, SwitchProps>(
   ({ className, label, id, ...props }, ref) => {
-    const switchId = id || (label ? `switch-${label.toLowerCase().replace(/\s+/g, "-")}` : undefined);
+    const switchId =
+      id ||
+      (label
+        ? `switch-${label.toLowerCase().replace(/\s+/g, "-")}`
+        : undefined);
     return (
-      <label htmlFor={switchId} className="label cursor-pointer justify-start gap-3">
+      <label
+        htmlFor={switchId}
+        className="label cursor-pointer justify-start gap-3"
+      >
         <input
           ref={ref}
           id={switchId}
@@ -117,7 +162,7 @@ Switch.displayName = "Switch";
 
 /* ── Select ── */
 
-interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
+interface SelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
   label?: string;
   error?: string;
   options: { value: string; label: string }[];
@@ -152,9 +197,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
             </option>
           ))}
         </select>
-        {error && (
-          <span className="fieldset-label text-error">{error}</span>
-        )}
+        {error && <span className="fieldset-label text-error">{error}</span>}
       </fieldset>
     );
   },

@@ -1,14 +1,17 @@
-import { forwardRef } from "react";
 import { cn } from "@/utils/cn";
+import { forwardRef, type InputHTMLAttributes } from "react";
 
-interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string;
   error?: string;
   helperText?: string;
 }
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
-  ({ className, label, error, helperText, id, type = "text", ...props }, ref) => {
+  (
+    { className, label, error, helperText, id, type = "text", ...props },
+    ref,
+  ) => {
     const inputId = id || label?.toLowerCase().replace(/\s+/g, "-");
 
     return (
@@ -24,7 +27,13 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           type={type}
           className={cn("input w-full", error && "input-error", className)}
           aria-invalid={!!error}
-          aria-describedby={error ? `${inputId}-error` : helperText ? `${inputId}-helper` : undefined}
+          aria-describedby={
+            error
+              ? `${inputId}-error`
+              : helperText
+                ? `${inputId}-helper`
+                : undefined
+          }
           {...props}
         />
         {error && (
@@ -33,7 +42,10 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           </span>
         )}
         {helperText && !error && (
-          <span id={`${inputId}-helper`} className="fieldset-label text-base-content/60">
+          <span
+            id={`${inputId}-helper`}
+            className="fieldset-label text-base-content/60"
+          >
             {helperText}
           </span>
         )}

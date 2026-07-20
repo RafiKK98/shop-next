@@ -1,16 +1,15 @@
 "use client";
 
 import { moderateReview } from "@/actions/admin/reviews";
+import { Badge, Button, Pagination } from "@/components/ui";
 import { notify } from "@/lib/notifications";
+import type { AdminReviewListItem } from "@/services/admin/reviews";
 import { formatDate } from "@/utils/format";
-import { Badge, Button } from "@/components/ui";
-import { Pagination } from "@/components/ui";
+import { ChevronDown, ChevronUp, Search } from "lucide-react";
 import type { Route } from "next";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Search, ChevronUp, ChevronDown } from "lucide-react";
-import { useCallback, useState } from "react";
-import type { AdminReviewListItem } from "@/services/admin/reviews";
+import { type ChangeEvent, useCallback, useState } from "react";
 
 interface ReviewsTableProps {
   reviews: AdminReviewListItem[];
@@ -55,7 +54,8 @@ function SortIcon({
   sort: string;
   order: "asc" | "desc";
 }) {
-  if (sort !== column) return <ChevronUp className="size-3 text-base-content/20" />;
+  if (sort !== column)
+    return <ChevronUp className="size-3 text-base-content/20" />;
   return order === "asc" ? (
     <ChevronUp className="size-3" />
   ) : (
@@ -90,7 +90,7 @@ export function ReviewsTable({
   );
 
   const handleSearch = useCallback(
-    (e: React.FormEvent) => {
+    (e: ChangeEvent) => {
       e.preventDefault();
       router.push(buildHref({ search, page: "1" }) as Route);
     },
@@ -100,27 +100,33 @@ export function ReviewsTable({
   const handleSort = useCallback(
     (column: string) => {
       const newOrder = sort === column && order === "asc" ? "desc" : "asc";
-      router.push(buildHref({ sort: column, order: newOrder, page: "1" }) as Route);
+      router.push(
+        buildHref({ sort: column, order: newOrder, page: "1" }) as Route,
+      );
     },
     [router, buildHref, sort, order],
   );
 
   const handleStatusFilter = useCallback(
-    (e: React.ChangeEvent<HTMLSelectElement>) => {
+    (e: ChangeEvent<HTMLSelectElement>) => {
       router.push(buildHref({ status: e.target.value, page: "1" }) as Route);
     },
     [router, buildHref],
   );
 
   const handleModerate = useCallback(
-    async (reviewId: string, status: "pending" | "approved" | "rejected" | "hidden") => {
+    async (
+      reviewId: string,
+      status: "pending" | "approved" | "rejected" | "hidden",
+    ) => {
       setModeratingId(reviewId);
       const result = await moderateReview(reviewId, status);
       setModeratingId(null);
-      if ("error" in result) {
-        notify.error(result.error);
-      } else {
-        notify.success(`Review ${STATUS_LABEL[status]?.toLowerCase() ?? status}`);
+      if ("error" in result) notify.error(result.error);
+      else {
+        notify.success(
+          `Review ${STATUS_LABEL[status]?.toLowerCase() ?? status}`,
+        );
         router.refresh();
       }
     },
@@ -196,7 +202,10 @@ export function ReviewsTable({
           <tbody>
             {reviews.length === 0 ? (
               <tr>
-                <td colSpan={7} className="py-16 text-center text-sm text-base-content/40">
+                <td
+                  colSpan={7}
+                  className="py-16 text-center text-sm text-base-content/40"
+                >
                   No reviews found
                 </td>
               </tr>
@@ -214,7 +223,9 @@ export function ReviewsTable({
                   <td>
                     <div className="text-sm">
                       <p>{review.userName || "—"}</p>
-                      <p className="text-xs text-base-content/40">{review.userEmail}</p>
+                      <p className="text-xs text-base-content/40">
+                        {review.userEmail}
+                      </p>
                     </div>
                   </td>
                   <td>
@@ -234,7 +245,15 @@ export function ReviewsTable({
                     </div>
                   </td>
                   <td>
-                    <Badge variant={STATUS_BADGE[review.status] as "warning" | "success" | "error" | "neutral"}>
+                    <Badge
+                      variant={
+                        STATUS_BADGE[review.status] as
+                          | "warning"
+                          | "success"
+                          | "error"
+                          | "neutral"
+                      }
+                    >
                       {STATUS_LABEL[review.status] ?? review.status}
                     </Badge>
                   </td>
@@ -286,7 +305,9 @@ export function ReviewsTable({
       <Pagination
         currentPage={page}
         totalPages={totalPages}
-        onPageChange={(p) => router.push(buildHref({ page: String(p) }) as Route)}
+        onPageChange={(p) =>
+          router.push(buildHref({ page: String(p) }) as Route)
+        }
       />
     </div>
   );

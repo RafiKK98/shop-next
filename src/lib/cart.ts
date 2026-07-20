@@ -49,9 +49,8 @@ export async function getUserCart(userId: string) {
 
 export async function getOrCreateCart(userId: string) {
   let cart = await getUserCart(userId);
-  if (!cart) {
-    cart = (await db.insert(carts).values({ userId }).returning())[0];
-  }
+  if (!cart) cart = (await db.insert(carts).values({ userId }).returning())[0];
+
   return cart;
 }
 

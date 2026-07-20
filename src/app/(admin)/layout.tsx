@@ -1,11 +1,13 @@
 import { requireAdmin } from "@/lib/auth/guards";
-import { ReactNode } from "react";
+import { type ReactNode } from "react";
+
+interface AdminAuthLayoutProps {
+  children: ReactNode;
+}
 
 export default async function AdminAuthLayout({
   children,
-}: {
-  children: ReactNode;
-}) {
+}: AdminAuthLayoutProps) {
   await requireAdmin();
   return <>{children}</>;
 }

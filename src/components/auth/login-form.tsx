@@ -1,14 +1,14 @@
 "use client";
 
-import { useState, useTransition } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Eye, EyeOff } from "lucide-react";
-import { loginSchema, type LoginInput } from "@/lib/validations/auth";
 import { loginAction } from "@/actions/auth";
 import { Button } from "@/components/ui";
-import Link from "next/link";
+import { loginSchema, type LoginInput } from "@/lib/validations/auth";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Eye, EyeOff } from "lucide-react";
 import type { Route } from "next";
+import Link from "next/link";
+import { useState, useTransition } from "react";
+import { useForm } from "react-hook-form";
 
 interface LoginFormProps {
   callbackUrl?: string;
@@ -33,15 +33,15 @@ export function LoginForm({ callbackUrl = "/" }: LoginFormProps) {
       fd.set("callbackUrl", callbackUrl);
 
       const result = await loginAction(fd);
-      if (result?.error) {
-        setServerError(result.error);
-      }
+      if (result?.error) setServerError(result.error);
     });
   });
 
   return (
     <form onSubmit={onSubmit} noValidate className="space-y-5">
-      <h1 className="text-2xl font-bold tracking-tight">Sign in to your account</h1>
+      <h1 className="text-2xl font-bold tracking-tight">
+        Sign in to your account
+      </h1>
       <p className="text-sm text-base-content/60">
         Welcome back! Enter your credentials to continue.
       </p>
@@ -90,7 +90,11 @@ export function LoginForm({ callbackUrl = "/" }: LoginFormProps) {
             onClick={() => setShowPassword(!showPassword)}
             aria-label={showPassword ? "Hide password" : "Show password"}
           >
-            {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+            {showPassword ? (
+              <EyeOff className="size-4" />
+            ) : (
+              <Eye className="size-4" />
+            )}
           </button>
         </div>
         {form.formState.errors.password && (
@@ -118,7 +122,9 @@ export function LoginForm({ callbackUrl = "/" }: LoginFormProps) {
       <p className="text-center text-sm text-base-content/60">
         Don&apos;t have an account?{" "}
         <Link
-          href={`/register${callbackUrl !== "/" ? `?callbackUrl=${encodeURIComponent(callbackUrl)}` : ""}` as Route}
+          href={
+            `/register${callbackUrl !== "/" ? `?callbackUrl=${encodeURIComponent(callbackUrl)}` : ""}` as Route
+          }
           className="font-medium text-primary hover:underline"
         >
           Create one

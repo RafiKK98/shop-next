@@ -1,15 +1,15 @@
 "use client";
 
-import { useState, useTransition } from "react";
-import type { Route } from "next";
-import { useRouter } from "next/navigation";
 import { addToCart } from "@/actions/cart";
 import { Button } from "@/components/ui";
+import type { Route } from "next";
+import { useRouter } from "next/navigation";
+import { type ReactNode, useState, useTransition } from "react";
 
 interface AddToCartButtonProps {
   slug: string;
   quantity?: number;
-  children?: React.ReactNode;
+  children?: ReactNode;
   disabled?: boolean;
   variant?: "primary" | "secondary" | "outline" | "ghost" | "link";
   size?: "sm" | "md" | "lg";

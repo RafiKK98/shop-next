@@ -10,7 +10,12 @@ import {
 import { ReviewSortSelect } from "@/components/reviews/review-sort-select";
 import { Breadcrumb, Container, Divider, Section } from "@/components/ui";
 import { db } from "@/db";
-import { categories, productImages, products, wishlistItems } from "@/db/schema";
+import {
+  categories,
+  productImages,
+  products,
+  wishlistItems,
+} from "@/db/schema";
 import { auth } from "@/lib/auth";
 import { BreadcrumbJsonLd, ProductJsonLd } from "@/lib/json-ld";
 import { createMetadata, type SeoParams } from "@/lib/seo";
@@ -132,9 +137,8 @@ export default async function ProductDetailPage({
     isWishlisted = !!wl;
 
     userReview = await getUserReviewForProduct(session.user.id, dbProduct.id);
-    if (!userReview) {
+    if (!userReview)
       canReview = await hasVerifiedPurchase(session.user.id, dbProduct.id);
-    }
   }
 
   const reviewsData = await getProductReviews(dbProduct.id, {
@@ -208,7 +212,11 @@ export default async function ProductDetailPage({
             <div className="flex flex-col gap-6">
               <ProductInfo
                 product={product}
-                shortDescription={dbProduct.description?.split(". ").slice(0, 2).join(". ").concat(".")}
+                shortDescription={dbProduct.description
+                  ?.split(". ")
+                  .slice(0, 2)
+                  .join(". ")
+                  .concat(".")}
               />
               <PurchaseSection
                 title={dbProduct.title}
@@ -233,7 +241,9 @@ export default async function ProductDetailPage({
             <DescriptionSection
               description={dbProduct.description ?? ""}
               features={dbProduct.features ?? []}
-              specifications={(dbProduct.specifications ?? {}) as Record<string, string>}
+              specifications={
+                (dbProduct.specifications ?? {}) as Record<string, string>
+              }
             />
           </div>
         </Container>

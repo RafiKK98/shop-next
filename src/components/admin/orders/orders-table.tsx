@@ -11,6 +11,7 @@ import { Calendar, ChevronDown, ChevronUp, Eye, Search } from "lucide-react";
 import type { Route } from "next";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
+import { type ChangeEvent } from "react";
 
 interface OrdersTableProps {
   orders: OrderListItem[];
@@ -90,7 +91,7 @@ export function OrdersTable({
     navigate(createUrl({ sort: column, order: newOrder, page: "1" }));
   };
 
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     const sp = new URLSearchParams(searchParams);
     if (value) sp.set("search", value);

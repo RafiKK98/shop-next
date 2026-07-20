@@ -30,9 +30,7 @@ export async function createReview(formData: FormData): Promise<ActionResult> {
   const raw = Object.fromEntries(formData);
   const productId = (raw.productId as string) ?? "";
 
-  if (!productId) {
-    return { error: "Product ID is required" };
-  }
+  if (!productId) return { error: "Product ID is required" };
 
   const parsed = reviewFormServerSchema.safeParse(raw);
   if (!parsed.success) {
@@ -42,15 +40,12 @@ export async function createReview(formData: FormData): Promise<ActionResult> {
 
   // Verified purchase check
   const hasPurchased = await hasVerifiedPurchase(userId, productId);
-  if (!hasPurchased) {
+  if (!hasPurchased)
     return { error: "You must purchase this product before reviewing it" };
-  }
 
   // Duplicate check
   const existing = await getUserReviewForProduct(userId, productId);
-  if (existing) {
-    return { error: "You have already reviewed this product" };
-  }
+  if (existing) return { error: "You have already reviewed this product" };
 
   const data = parsed.data;
 
@@ -85,9 +80,8 @@ export async function updateReview(formData: FormData): Promise<ActionResult> {
   const reviewId = (raw.reviewId as string) ?? "";
   const productId = (raw.productId as string) ?? "";
 
-  if (!reviewId || !productId) {
+  if (!reviewId || !productId)
     return { error: "Review ID and Product ID are required" };
-  }
 
   const parsed = reviewFormServerSchema.safeParse(raw);
   if (!parsed.success) {
@@ -102,12 +96,10 @@ export async function updateReview(formData: FormData): Promise<ActionResult> {
     .where(eq(reviews.id, reviewId))
     .then((r) => r[0] ?? null);
 
-  if (!existing) {
-    return { error: "Review not found" };
-  }
-  if (existing.userId !== userId) {
+  if (!existing) return { error: "Review not found" };
+
+  if (existing.userId !== userId)
     return { error: "You can only edit your own reviews" };
-  }
 
   const data = parsed.data;
 

@@ -1,13 +1,14 @@
-import Link from "next/link";
-import type { Route } from "next";
 import { cn } from "@/utils/cn";
+import type { Route } from "next";
+import Link from "next/link";
+import { type HTMLAttributes } from "react";
 
 interface BreadcrumbItem {
   label: string;
   href?: string;
 }
 
-interface BreadcrumbProps extends React.HTMLAttributes<HTMLDivElement> {
+interface BreadcrumbProps extends HTMLAttributes<HTMLDivElement> {
   items: BreadcrumbItem[];
 }
 
@@ -24,7 +25,10 @@ export function Breadcrumb({ className, items, ...props }: BreadcrumbProps) {
                   {item.label}
                 </span>
               ) : (
-                <Link href={item.href as Route} className="text-base-content/60 hover:text-base-content">
+                <Link
+                  href={item.href as Route}
+                  className="text-base-content/60 hover:text-base-content"
+                >
                   {item.label}
                 </Link>
               )}

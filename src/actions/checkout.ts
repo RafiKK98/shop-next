@@ -1,38 +1,29 @@
 "use server";
 
-import { auth } from "@/lib/auth";
 import { db } from "@/db";
 import { orders } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { auth } from "@/lib/auth";
+import { CACHE_TAGS } from "@/lib/cache";
 import { createPendingOrder } from "@/services/checkout";
 import { createCheckoutSession } from "@/services/payment";
+import { eq } from "drizzle-orm";
 import { revalidatePath, updateTag } from "next/cache";
-import { CACHE_TAGS } from "@/lib/cache";
 
 export async function placeOrder(
   formData: FormData,
 ): Promise<{ url?: string; error?: string }> {
   const session = await auth();
-  if (!session?.user?.id) {
+  if (!session?.user?.id)
     return { error: "You must be logged in to place an order" };
-  }
 
   const addressId = formData.get("addressId") as string;
-  if (!addressId) {
-    return { error: "Please select a shipping address" };
-  }
+  if (!addressId) return { error: "Please select a shipping address" };
 
   const couponId = (formData.get("couponId") as string) || undefined;
 
-  const result = await createPendingOrder(
-    session.user.id,
-    addressId,
-    couponId,
-  );
+  const result = await createPendingOrder(session.user.id, addressId, couponId);
 
-  if ("error" in result) {
-    return { error: result.error };
-  }
+  if ("error" in result) return { error: result.error };
 
   const { url, sessionId } = await createCheckoutSession(
     {

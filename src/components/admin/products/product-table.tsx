@@ -16,7 +16,7 @@ import type { Route } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { type ChangeEvent, useState } from "react";
 import { DeleteProductButton } from "./delete-product-button";
 import { ProductDetailModal } from "./product-detail-modal";
 
@@ -62,7 +62,7 @@ export function ProductTable({
     navigate(createUrl({ sort: column, order: newOrder, page: "1" }));
   };
 
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     const sp = new URLSearchParams(searchParams);
     if (value) sp.set("search", value);

@@ -1,7 +1,12 @@
 import { ROUTES } from "@/constants";
 import Link from "next/link";
+import { type ReactNode } from "react";
 
-export default function AuthLayout({ children }: { children: React.ReactNode }) {
+interface AuthLayoutProps {
+  children: ReactNode;
+}
+
+export default function AuthLayout({ children }: AuthLayoutProps) {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-base-200 px-4 py-12">
       <div className="w-full max-w-md">

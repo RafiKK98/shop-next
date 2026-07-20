@@ -1,17 +1,23 @@
 "use client";
 
 import { createCategory, updateCategory } from "@/actions/admin/categories";
-import { Button, Checkbox, FormError, Label, ImageUpload } from "@/components/ui";
+import {
+  Button,
+  Checkbox,
+  FormError,
+  ImageUpload,
+  Label,
+} from "@/components/ui";
+import { crud, notify } from "@/lib/notifications";
+import { UPLOAD_FOLDERS } from "@/lib/upload";
 import {
   categoryFormSchema,
   type CategoryFormValues,
 } from "@/lib/validations/category";
-import { notify, crud } from "@/lib/notifications";
-import { UPLOAD_FOLDERS } from "@/lib/upload";
 import { slugify } from "@/utils/slug";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { useCallback, useState, useTransition } from "react";
+import { useCallback, useState, useTransition, type ChangeEvent } from "react";
 import { useForm, type Resolver } from "react-hook-form";
 
 interface CategoryFormProps {
@@ -30,7 +36,9 @@ export function CategoryForm({
   const [isPending, startTransition] = useTransition();
 
   const form = useForm<CategoryFormValues>({
-    resolver: zodResolver(categoryFormSchema) as unknown as Resolver<CategoryFormValues>,
+    resolver: zodResolver(
+      categoryFormSchema,
+    ) as unknown as Resolver<CategoryFormValues>,
     defaultValues: defaultValues ?? {
       name: "",
       slug: "",
@@ -46,15 +54,14 @@ export function CategoryForm({
   );
 
   const handleNameChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
+    (e: ChangeEvent<HTMLInputElement>) => {
       const name = e.target.value;
       if (
         !form.getValues("slug") ||
         form.getValues("slug") ===
           slugify(form.formState.defaultValues?.name ?? "")
-      ) {
+      )
         form.setValue("slug", slugify(name));
-      }
     },
     [form],
   );
@@ -79,7 +86,9 @@ export function CategoryForm({
         setServerError(result.error);
         notify.error(result.error);
       } else if (result.success) {
-        notify.success(crud[mode === "create" ? "created" : "updated"]("Category"));
+        notify.success(
+          crud[mode === "create" ? "created" : "updated"]("Category"),
+        );
         router.push("/admin/categories");
         router.refresh();
       }

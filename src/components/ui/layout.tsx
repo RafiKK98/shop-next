@@ -1,14 +1,23 @@
 import { cn } from "@/utils/cn";
+import type { HTMLAttributes } from "react";
 
 /* ── Container ── */
 
-interface ContainerProps extends React.HTMLAttributes<HTMLDivElement> {
+interface ContainerProps extends HTMLAttributes<HTMLDivElement> {
   as?: "div" | "section" | "article" | "main" | "header" | "footer";
 }
 
-export function Container({ className, as: Tag = "div", children, ...props }: ContainerProps) {
+export function Container({
+  className,
+  as: Tag = "div",
+  children,
+  ...props
+}: ContainerProps) {
   return (
-    <Tag className={cn("mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8", className)} {...props}>
+    <Tag
+      className={cn("mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8", className)}
+      {...props}
+    >
       {children}
     </Tag>
   );
@@ -16,11 +25,16 @@ export function Container({ className, as: Tag = "div", children, ...props }: Co
 
 /* ── Section ── */
 
-interface SectionProps extends React.HTMLAttributes<HTMLElement> {
+interface SectionProps extends HTMLAttributes<HTMLElement> {
   as?: "section" | "div";
 }
 
-export function Section({ className, as: Tag = "section", children, ...props }: SectionProps) {
+export function Section({
+  className,
+  as: Tag = "section",
+  children,
+  ...props
+}: SectionProps) {
   return (
     <Tag className={cn("py-8 md:py-12", className)} {...props}>
       {children}
@@ -30,7 +44,7 @@ export function Section({ className, as: Tag = "section", children, ...props }: 
 
 /* ── Stack ── */
 
-interface StackProps extends React.HTMLAttributes<HTMLDivElement> {
+interface StackProps extends HTMLAttributes<HTMLDivElement> {
   direction?: "row" | "column";
   gap?: 0 | 1 | 2 | 3 | 4 | 6 | 8 | 12 | 16;
   align?: "start" | "center" | "end" | "stretch";
@@ -64,7 +78,15 @@ const justifyClass: Record<string, string> = {
   around: "justify-around",
 };
 
-export function Stack({ className, direction = "column", gap = 4, align, justify, children, ...props }: StackProps) {
+export function Stack({
+  className,
+  direction = "column",
+  gap = 4,
+  align,
+  justify,
+  children,
+  ...props
+}: StackProps) {
   return (
     <div
       className={cn(
@@ -84,14 +106,21 @@ export function Stack({ className, direction = "column", gap = 4, align, justify
 
 /* ── Divider ── */
 
-interface DividerProps extends React.HTMLAttributes<HTMLDivElement> {
+interface DividerProps extends HTMLAttributes<HTMLDivElement> {
   orientation?: "horizontal" | "vertical";
 }
 
-export function Divider({ className, orientation = "horizontal", children, ...props }: DividerProps) {
-  if (orientation === "vertical") {
-    return <div className={cn("divider divider-horizontal", className)} {...props} />;
-  }
+export function Divider({
+  className,
+  orientation = "horizontal",
+  children,
+  ...props
+}: DividerProps) {
+  if (orientation === "vertical")
+    return (
+      <div className={cn("divider divider-horizontal", className)} {...props} />
+    );
+
   return (
     <div className={cn("divider", className)} {...props}>
       {children}

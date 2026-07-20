@@ -17,6 +17,7 @@ export const NAVIGATION = {
     { label: "Categories", href: ROUTES.categories },
     { label: "About", href: "/about" },
     { label: "FAQ", href: "/faq" },
+    { label: "Contact", href: "/contact" },
   ] satisfies NavLink[],
 
   footer: {

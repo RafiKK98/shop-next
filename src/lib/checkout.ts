@@ -10,19 +10,17 @@ export async function validateCart(userId: string): Promise<CartValidation> {
   const errors: string[] = [];
   const items = await getCartItems(userId);
 
-  if (items.length === 0) {
+  if (items.length === 0)
     return { valid: false, errors: ["Your cart is empty"], items };
-  }
 
   for (const item of items) {
     const stock = item.product.stock ?? 0;
-    if (stock < 1) {
+    if (stock < 1)
       errors.push(`"${item.product.title}" is no longer available`);
-    } else if (item.quantity > stock) {
+    else if (item.quantity > stock)
       errors.push(
         `Only ${stock} of "${item.product.title}" are available (you requested ${item.quantity})`,
       );
-    }
   }
 
   return { valid: errors.length === 0, errors, items };

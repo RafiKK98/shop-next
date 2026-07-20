@@ -12,7 +12,7 @@ interface ProductGalleryProps {
 export function ProductGallery({ images, title }: ProductGalleryProps) {
   const [selected, setSelected] = useState(0);
 
-  if (images.length === 0) {
+  if (images.length === 0)
     return (
       <div className="flex items-center justify-center aspect-square w-full rounded-xl bg-base-200">
         <div className="text-center text-base-content/40">
@@ -33,7 +33,6 @@ export function ProductGallery({ images, title }: ProductGalleryProps) {
         </div>
       </div>
     );
-  }
 
   return (
     <div className="flex flex-col-reverse gap-4 lg:flex-row">

@@ -27,7 +27,7 @@ function getStockDisplay(stock: number): {
 }
 
 export function WishlistPageContent({ items }: WishlistPageContentProps) {
-  if (items.length === 0) {
+  if (items.length === 0)
     return (
       <div className="flex flex-1 items-center justify-center">
         <EmptyState
@@ -44,7 +44,6 @@ export function WishlistPageContent({ items }: WishlistPageContentProps) {
         />
       </div>
     );
-  }
 
   return (
     <div className="mx-auto max-w-5xl">

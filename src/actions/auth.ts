@@ -3,10 +3,10 @@
 import { db } from "@/db";
 import { users } from "@/db/schema";
 import { signIn, signOut } from "@/lib/auth";
-import { CredentialsSignin } from "next-auth";
 import { hashPassword } from "@/lib/auth/password";
 import { loginSchema, registerSchema } from "@/lib/validations/auth";
 import { eq } from "drizzle-orm";
+import { CredentialsSignin } from "next-auth";
 import { redirect as nextRedirect } from "next/navigation";
 
 function safeRedirect(url: string): never {
@@ -20,9 +20,7 @@ export async function loginAction(formData: FormData) {
     password: formData.get("password"),
   });
 
-  if (!parsed.success) {
-    return { error: "Invalid form data" };
-  }
+  if (!parsed.success) return { error: "Invalid form data" };
 
   const callbackUrl = (formData.get("callbackUrl") as string) || "/";
 
@@ -33,13 +31,11 @@ export async function loginAction(formData: FormData) {
       redirect: false,
     });
 
-    if (result?.error) {
-      return { error: "Invalid email or password" };
-    }
+    if (result?.error) return { error: "Invalid email or password" };
   } catch (error) {
-    if (error instanceof CredentialsSignin) {
+    if (error instanceof CredentialsSignin)
       return { error: "Invalid email or password" };
-    }
+
     return { error: "An unexpected error occurred. Please try again." };
   }
 
@@ -70,9 +66,8 @@ export async function registerAction(formData: FormData) {
     .where(eq(users.email, email))
     .then((res) => res[0] ?? null);
 
-  if (existingUser) {
+  if (existingUser)
     return { error: "An account with this email already exists" };
-  }
 
   const hashedPassword = await hashPassword(password);
 

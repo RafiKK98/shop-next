@@ -1,17 +1,17 @@
 "use client";
 
+import { ROUTES } from "@/constants";
+import { cn } from "@/utils/cn";
+import {
+  Heart,
+  LayoutDashboard,
+  LogOut,
+  MapPin,
+  Package,
+  User,
+} from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { cn } from "@/utils/cn";
-import { ROUTES } from "@/constants";
-import {
-  LayoutDashboard,
-  User,
-  Package,
-  MapPin,
-  Heart,
-  LogOut,
-} from "lucide-react";
 
 const NAV_ITEMS = [
   { label: "Dashboard", href: ROUTES.accountDashboard, icon: LayoutDashboard },
@@ -29,8 +29,10 @@ export function AccountSidebar() {
       <nav aria-label="Account navigation">
         <ul className="menu menu-md rounded-box gap-1">
           {NAV_ITEMS.map((item) => {
-            const isActive = pathname === item.href ||
-              (item.href !== ROUTES.accountDashboard && pathname.startsWith(item.href));
+            const isActive =
+              pathname === item.href ||
+              (item.href !== ROUTES.accountDashboard &&
+                pathname.startsWith(item.href));
 
             return (
               <li key={item.href}>
@@ -75,11 +77,13 @@ export function AccountMobileNav() {
     <nav aria-label="Account navigation" className="md:hidden">
       <div className="flex gap-1 overflow-x-auto pb-2">
         {NAV_ITEMS.map((item) => {
-          const isActive = pathname === item.href ||
-            (item.href !== ROUTES.accountDashboard && pathname.startsWith(item.href));
+          const isActive =
+            pathname === item.href ||
+            (item.href !== ROUTES.accountDashboard &&
+              pathname.startsWith(item.href));
 
-            return (
-              <Link
+          return (
+            <Link
               key={item.href}
               href={item.href}
               className={cn(

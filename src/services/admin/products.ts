@@ -1,11 +1,11 @@
 import "server-only";
 
-import { cache } from "react";
-import { cacheLife, cacheTag } from "next/cache";
-import { CACHE_TAGS } from "@/lib/cache";
 import { db } from "@/db";
-import { products, productImages, categories, reviews } from "@/db/schema";
-import { eq, sql, desc, asc, and, count } from "drizzle-orm";
+import { categories, productImages, products, reviews } from "@/db/schema";
+import { CACHE_TAGS } from "@/lib/cache";
+import { and, asc, count, desc, eq, sql } from "drizzle-orm";
+import { cacheLife, cacheTag } from "next/cache";
+import { cache } from "react";
 
 export interface ProductListItem {
   id: string;
@@ -34,7 +34,12 @@ export interface ProductDetail {
   featured: boolean | null;
   categoryId: string | null;
   categoryName: string | null;
-  images: { id: string; url: string; alt: string | null; order: number | null }[];
+  images: {
+    id: string;
+    url: string;
+    alt: string | null;
+    order: number | null;
+  }[];
   createdAt: Date;
   updatedAt: Date;
   reviewCount: number;
@@ -68,13 +73,13 @@ export async function getAdminProducts(params: {
   const order = params.order ?? "desc";
 
   const whereConditions = [];
-  if (search) {
+  if (search)
     whereConditions.push(
       sql`(${products.title}::text ilike ${`%${search}%`} OR ${products.brand}::text ilike ${`%${search}%`})`,
     );
-  }
 
-  const where = whereConditions.length > 0 ? and(...whereConditions) : undefined;
+  const where =
+    whereConditions.length > 0 ? and(...whereConditions) : undefined;
 
   const sortColumn =
     sort === "title"

@@ -1,10 +1,10 @@
-import { forwardRef } from "react";
 import { cn } from "@/utils/cn";
+import { type ButtonHTMLAttributes, forwardRef } from "react";
 
 type ButtonVariant = "primary" | "secondary" | "outline" | "ghost" | "link";
 type ButtonSize = "sm" | "md" | "lg";
 
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant;
   size?: ButtonSize;
   loading?: boolean;
@@ -25,11 +25,28 @@ const sizeClass: Record<ButtonSize, string> = {
 };
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant = "primary", size = "md", loading, disabled, children, ...props }, ref) => {
+  (
+    {
+      className,
+      variant = "primary",
+      size = "md",
+      loading,
+      disabled,
+      children,
+      ...props
+    },
+    ref,
+  ) => {
     return (
       <button
         ref={ref}
-        className={cn("btn", variantClass[variant], sizeClass[size], loading && "pointer-events-none", className)}
+        className={cn(
+          "btn",
+          variantClass[variant],
+          sizeClass[size],
+          loading && "pointer-events-none",
+          className,
+        )}
         disabled={disabled || loading}
         {...props}
       >
@@ -41,17 +58,18 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 );
 Button.displayName = "Button";
 
-export const IconButton = forwardRef<HTMLButtonElement, Omit<ButtonProps, "variant">>(
-  ({ className, size = "md", children, ...props }, ref) => {
-    return (
-      <button
-        ref={ref}
-        className={cn("btn btn-ghost btn-square", sizeClass[size], className)}
-        {...props}
-      >
-        {children}
-      </button>
-    );
-  },
-);
+export const IconButton = forwardRef<
+  HTMLButtonElement,
+  Omit<ButtonProps, "variant">
+>(({ className, size = "md", children, ...props }, ref) => {
+  return (
+    <button
+      ref={ref}
+      className={cn("btn btn-ghost btn-square", sizeClass[size], className)}
+      {...props}
+    >
+      {children}
+    </button>
+  );
+});
 IconButton.displayName = "IconButton";

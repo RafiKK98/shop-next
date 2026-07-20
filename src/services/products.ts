@@ -72,9 +72,8 @@ export async function getCatalogProducts(): Promise<Product[]> {
     const discount = row.discount ? Number(row.discount) : null;
 
     if (existing) {
-      if (row.imageUrl && !existing.images.includes(row.imageUrl)) {
+      if (row.imageUrl && !existing.images.includes(row.imageUrl))
         existing.images.push(row.imageUrl);
-      }
     } else {
       productMap.set(row.id, {
         id: row.id,

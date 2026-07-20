@@ -1,24 +1,28 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
 import { cn } from "@/utils/cn";
+import { type ReactNode, useEffect, useRef, useState } from "react";
 
 interface DropdownProps {
-  trigger: React.ReactNode;
-  children: React.ReactNode;
+  trigger: ReactNode;
+  children: ReactNode;
   className?: string;
   align?: "start" | "end" | "center";
 }
 
-export function Dropdown({ trigger, children, className, align = "start" }: DropdownProps) {
+export function Dropdown({
+  trigger,
+  children,
+  className,
+  align = "start",
+}: DropdownProps) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
-      if (ref.current && !ref.current.contains(e.target as Node)) {
+      if (ref.current && !ref.current.contains(e.target as Node))
         setOpen(false);
-      }
     }
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
@@ -27,7 +31,13 @@ export function Dropdown({ trigger, children, className, align = "start" }: Drop
   return (
     <div
       ref={ref}
-      className={cn("dropdown", open && "dropdown-open", align === "end" && "dropdown-end", align === "center" && "dropdown-center", className)}
+      className={cn(
+        "dropdown",
+        open && "dropdown-open",
+        align === "end" && "dropdown-end",
+        align === "center" && "dropdown-center",
+        className,
+      )}
     >
       <div
         tabIndex={0}

@@ -114,9 +114,8 @@ export async function cancelOrderById(
 
   if (!order) return { error: "Order not found" };
 
-  if (order.status !== "pending") {
+  if (order.status !== "pending")
     return { error: "Only pending orders can be cancelled" };
-  }
 
   const items = await db
     .select()

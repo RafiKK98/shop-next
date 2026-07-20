@@ -1,13 +1,13 @@
-import { redirect } from "next/navigation";
-import Link from "next/link";
-import { auth } from "@/lib/auth";
+import { Breadcrumb, Button, Container, Section } from "@/components/ui";
+import { ROUTES, SITE } from "@/constants";
 import { db } from "@/db";
-import { orders, orderItems } from "@/db/schema";
-import { eq, and } from "drizzle-orm";
-import { Button, Container, Section, Breadcrumb } from "@/components/ui";
+import { orderItems, orders } from "@/db/schema";
+import { auth } from "@/lib/auth";
 import { formatCurrency } from "@/utils/format";
-import { SITE, ROUTES } from "@/constants";
+import { and, eq } from "drizzle-orm";
 import type { Metadata } from "next";
+import Link from "next/link";
+import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {
   title: `Order Confirmed | ${SITE.name}`,
@@ -25,7 +25,7 @@ export default async function CheckoutSuccessPage({ searchParams }: Props) {
   if (!session?.user?.id) redirect("/login?callbackUrl=/checkout");
 
   let order;
-  if (session_id) {
+  if (session_id)
     order = await db
       .select()
       .from(orders)
@@ -36,18 +36,14 @@ export default async function CheckoutSuccessPage({ searchParams }: Props) {
         ),
       )
       .then((r) => r[0] ?? null);
-  } else {
+  else
     order = await db
       .select()
       .from(orders)
       .where(
-        and(
-          eq(orders.id, directOrderId!),
-          eq(orders.userId, session.user.id),
-        ),
+        and(eq(orders.id, directOrderId!), eq(orders.userId, session.user.id)),
       )
       .then((r) => r[0] ?? null);
-  }
 
   if (!order) redirect("/");
 
@@ -92,7 +88,10 @@ export default async function CheckoutSuccessPage({ searchParams }: Props) {
             Order Confirmed!
           </h1>
           <p className="mt-2 text-base-content/60">
-            Thank you for your purchase.{isPaid ? " Your payment has been received." : " Your order is being processed."}
+            Thank you for your purchase.
+            {isPaid
+              ? " Your payment has been received."
+              : " Your order is being processed."}
           </p>
 
           <p className="mt-4 text-sm text-base-content/40">

@@ -1,10 +1,10 @@
 import "server-only";
 
-import { cache } from "react";
 import { db } from "@/db";
 import { categories, products } from "@/db/schema";
-import { and, asc, count, desc, eq, or, sql } from "drizzle-orm";
 import type { CategoryFormValues } from "@/lib/validations/category";
+import { and, asc, count, desc, eq, or, sql } from "drizzle-orm";
+import { cache } from "react";
 
 export interface CategoryListItem {
   id: string;
@@ -45,9 +45,8 @@ function logDbError(err: unknown, context: string): never {
   console.error(`  Table: ${e.table ?? "N/A"}`);
   console.error(`  Column: ${e.column ?? "N/A"}`);
 
-  if (process.env.NODE_ENV === "development") {
+  if (process.env.NODE_ENV === "development")
     console.error("  Full error:", err);
-  }
 
   throw err;
 }
@@ -83,15 +82,16 @@ export async function getAdminCategories(params: {
   const order = params.order ?? "desc";
 
   const whereConditions = [];
-  if (search) {
+  if (search)
     whereConditions.push(
       or(
         sql`${categories.name}::text ilike ${`%${search}%`}`,
         sql`${categories.slug}::text ilike ${`%${search}%`}`,
       ),
     );
-  }
-  const where = whereConditions.length > 0 ? and(...whereConditions) : undefined;
+
+  const where =
+    whereConditions.length > 0 ? and(...whereConditions) : undefined;
 
   const sortColumn =
     sort === "name"
@@ -157,16 +157,17 @@ export async function getCategoryProductCount(id: string): Promise<number> {
   return result;
 }
 
-export async function createCategoryDb(data: CategoryFormValues): Promise<void> {
+export async function createCategoryDb(
+  data: CategoryFormValues,
+): Promise<void> {
   const existing = await db
     .select({ id: categories.id })
     .from(categories)
     .where(eq(categories.slug, data.slug))
     .then((r) => r[0] ?? null);
 
-  if (existing) {
+  if (existing)
     throw new Error(`A category with slug "${data.slug}" already exists`);
-  }
 
   await db.insert(categories).values({
     name: data.name,
@@ -178,16 +179,18 @@ export async function createCategoryDb(data: CategoryFormValues): Promise<void> 
   });
 }
 
-export async function updateCategoryDb(id: string, data: CategoryFormValues): Promise<void> {
+export async function updateCategoryDb(
+  id: string,
+  data: CategoryFormValues,
+): Promise<void> {
   const existing = await db
     .select({ id: categories.id })
     .from(categories)
     .where(and(eq(categories.slug, data.slug), sql`${categories.id} != ${id}`))
     .then((r) => r[0] ?? null);
 
-  if (existing) {
+  if (existing)
     throw new Error(`A category with slug "${data.slug}" already exists`);
-  }
 
   const result = await db
     .update(categories)
@@ -203,12 +206,12 @@ export async function updateCategoryDb(id: string, data: CategoryFormValues): Pr
     .where(eq(categories.id, id))
     .returning({ id: categories.id });
 
-  if (result.length === 0) {
-    throw new Error("Category not found");
-  }
+  if (result.length === 0) throw new Error("Category not found");
 }
 
-export async function deleteCategoryDb(id: string): Promise<{ productCount: number }> {
+export async function deleteCategoryDb(
+  id: string,
+): Promise<{ productCount: number }> {
   const cat = await db
     .select({ id: categories.id, name: categories.name })
     .from(categories)
@@ -219,11 +222,10 @@ export async function deleteCategoryDb(id: string): Promise<{ productCount: numb
 
   const productCount = await getCategoryProductCount(id);
 
-  if (productCount > 0) {
+  if (productCount > 0)
     throw new Error(
       `Cannot delete "${cat.name}" because ${productCount} product(s) still belong to this category. Reassign or delete those products first.`,
     );
-  }
 
   await db.delete(categories).where(eq(categories.id, id));
   return { productCount: 0 };

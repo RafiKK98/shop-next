@@ -2,7 +2,7 @@
 
 import {
   createContext,
-  ReactNode,
+  type ReactNode,
   useCallback,
   useContext,
   useEffect,
@@ -42,14 +42,15 @@ const FOUC_SCRIPT = `
 
 export function ThemeScript() {
   return (
-    <script
-      id="theme-init"
-      dangerouslySetInnerHTML={{ __html: FOUC_SCRIPT }}
-    />
+    <script id="theme-init" dangerouslySetInnerHTML={{ __html: FOUC_SCRIPT }} />
   );
 }
 
-export function ThemeProvider({ children }: { children: ReactNode }) {
+interface ThemeProviderProps {
+  children: ReactNode;
+}
+
+export function ThemeProvider({ children }: ThemeProviderProps) {
   const [theme, setThemeState] = useState<Theme>(getInitialTheme());
 
   useEffect(() => {

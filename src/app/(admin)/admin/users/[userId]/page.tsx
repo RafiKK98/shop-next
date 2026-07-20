@@ -64,7 +64,7 @@ export default async function AdminUserDetailPage({
   const isSelf = session?.user?.id === userId;
 
   // Edit mode
-  if (isEditing) {
+  if (isEditing)
     return (
       <>
         <div className="mb-4">
@@ -96,7 +96,6 @@ export default async function AdminUserDetailPage({
         </div>
       </>
     );
-  }
 
   // Detail mode — fetch recent data
   const [recentOrders, recentWishlist] = await Promise.all([

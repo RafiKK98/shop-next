@@ -34,7 +34,7 @@ export function CartPageContent({ items }: CartPageContentProps) {
     });
   };
 
-  if (items.length === 0) {
+  if (items.length === 0)
     return (
       <div className="flex flex-1 items-center justify-center">
         <EmptyState
@@ -51,7 +51,6 @@ export function CartPageContent({ items }: CartPageContentProps) {
         />
       </div>
     );
-  }
 
   return (
     <div className="mx-auto max-w-5xl">

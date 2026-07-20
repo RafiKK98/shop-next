@@ -1,14 +1,14 @@
 "use client";
 
-import { useState, useTransition } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Eye, EyeOff } from "lucide-react";
-import { registerSchema, type RegisterInput } from "@/lib/validations/auth";
 import { registerAction } from "@/actions/auth";
 import { Button } from "@/components/ui";
-import Link from "next/link";
+import { registerSchema, type RegisterInput } from "@/lib/validations/auth";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Eye, EyeOff } from "lucide-react";
 import type { Route } from "next";
+import Link from "next/link";
+import { useState, useTransition } from "react";
+import { useForm } from "react-hook-form";
 
 interface RegisterFormProps {
   callbackUrl?: string;
@@ -21,7 +21,13 @@ export function RegisterForm({ callbackUrl = "/" }: RegisterFormProps) {
 
   const form = useForm<RegisterInput>({
     resolver: zodResolver(registerSchema),
-    defaultValues: { name: "", email: "", password: "", confirmPassword: "", terms: false },
+    defaultValues: {
+      name: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+      terms: false,
+    },
   });
 
   const onSubmit = form.handleSubmit((data) => {
@@ -36,9 +42,7 @@ export function RegisterForm({ callbackUrl = "/" }: RegisterFormProps) {
       fd.set("callbackUrl", callbackUrl);
 
       const result = await registerAction(fd);
-      if (result?.error) {
-        setServerError(result.error);
-      }
+      if (result?.error) setServerError(result.error);
     });
   });
 
@@ -112,7 +116,11 @@ export function RegisterForm({ callbackUrl = "/" }: RegisterFormProps) {
             onClick={() => setShowPassword(!showPassword)}
             aria-label={showPassword ? "Hide password" : "Show password"}
           >
-            {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+            {showPassword ? (
+              <EyeOff className="size-4" />
+            ) : (
+              <Eye className="size-4" />
+            )}
           </button>
         </div>
         {form.formState.errors.password && (
@@ -167,7 +175,9 @@ export function RegisterForm({ callbackUrl = "/" }: RegisterFormProps) {
       <p className="text-center text-sm text-base-content/60">
         Already have an account?{" "}
         <Link
-          href={`/login${callbackUrl !== "/" ? `?callbackUrl=${encodeURIComponent(callbackUrl)}` : ""}` as Route}
+          href={
+            `/login${callbackUrl !== "/" ? `?callbackUrl=${encodeURIComponent(callbackUrl)}` : ""}` as Route
+          }
           className="font-medium text-primary hover:underline"
         >
           Sign in

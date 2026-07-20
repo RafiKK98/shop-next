@@ -4,7 +4,7 @@ import { SORT_OPTIONS } from "@/constants";
 import type { PaginationInfo } from "@/lib/pagination";
 import type { Route } from "next";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useCallback } from "react";
+import { type ReactNode, useCallback } from "react";
 import { SearchInput } from "./search-input";
 
 interface ToolbarProps {
@@ -13,7 +13,7 @@ interface ToolbarProps {
   pagination: PaginationInfo;
   sortKey: string;
   searchQuery: string;
-  mobileFilterButton: React.ReactNode;
+  mobileFilterButton: ReactNode;
   onSortChange: (key: string) => void;
   onClearFilters: () => void;
   onSearchChange: (query: string) => void;

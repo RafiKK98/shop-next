@@ -1,5 +1,10 @@
 import { MainLayout } from "@/components/layout";
+import { type ReactNode } from "react";
 
-export default function PublicLayout({ children }: { children: React.ReactNode }) {
+interface PublicLayoutProps {
+  children: ReactNode;
+}
+
+export default function PublicLayout({ children }: PublicLayoutProps) {
   return <MainLayout>{children}</MainLayout>;
 }

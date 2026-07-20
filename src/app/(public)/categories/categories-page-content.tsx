@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { ROUTES } from "@/constants";
 import type { HomeCategory } from "@/actions/categories-page";
+import { ROUTES } from "@/constants";
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 export function CategoriesPageContent() {
   const [categories, setCategories] = useState<HomeCategory[] | null>(null);
@@ -17,13 +17,12 @@ export function CategoriesPageContent() {
     })();
   }, []);
 
-  if (categories === null) {
+  if (categories === null)
     return (
       <div className="flex min-h-[50vh] items-center justify-center">
         <span className="loading loading-spinner loading-lg" />
       </div>
     );
-  }
 
   return (
     <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">

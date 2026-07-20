@@ -1,19 +1,33 @@
 import { cn } from "@/utils/cn";
+import { type ReactNode } from "react";
 
 interface EmptyStateProps {
-  icon?: React.ReactNode;
+  icon?: ReactNode;
   title: string;
   description?: string;
-  action?: React.ReactNode;
+  action?: ReactNode;
   className?: string;
 }
 
-export function EmptyState({ icon, title, description, action, className }: EmptyStateProps) {
+export function EmptyState({
+  icon,
+  title,
+  description,
+  action,
+  className,
+}: EmptyStateProps) {
   return (
-    <div className={cn("flex flex-col items-center justify-center gap-3 py-16 text-center", className)}>
+    <div
+      className={cn(
+        "flex flex-col items-center justify-center gap-3 py-16 text-center",
+        className,
+      )}
+    >
       {icon && <div className="text-base-content/30">{icon}</div>}
       <h3 className="text-lg font-semibold">{title}</h3>
-      {description && <p className="max-w-sm text-sm text-base-content/60">{description}</p>}
+      {description && (
+        <p className="max-w-sm text-sm text-base-content/60">{description}</p>
+      )}
       {action && <div className="mt-2">{action}</div>}
     </div>
   );

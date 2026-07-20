@@ -36,7 +36,8 @@ export function ReviewForm({ productId, defaultValues }: ReviewFormProps) {
     },
   });
 
-  const currentRating = useWatch({ control: form.control, name: "rating" }) || hoverRating;
+  const currentRating =
+    useWatch({ control: form.control, name: "rating" }) || hoverRating;
 
   const onSubmit = form.handleSubmit((data) => {
     setServerError(null);
@@ -46,9 +47,7 @@ export function ReviewForm({ productId, defaultValues }: ReviewFormProps) {
       fd.set("rating", String(data.rating));
       fd.set("title", data.title ?? "");
       fd.set("comment", data.comment);
-      if (isEditing) {
-        fd.set("reviewId", defaultValues.reviewId!);
-      }
+      if (isEditing) fd.set("reviewId", defaultValues.reviewId!);
 
       const result = isEditing
         ? await updateReview(fd)

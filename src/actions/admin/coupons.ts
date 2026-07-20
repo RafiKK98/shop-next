@@ -1,6 +1,7 @@
 "use server";
 
 import { requireAdmin } from "@/lib/auth/guards";
+import { CACHE_TAGS } from "@/lib/cache";
 import { couponFormSchema } from "@/lib/validations/coupon";
 import {
   createCoupon,
@@ -8,7 +9,6 @@ import {
   updateCoupon,
 } from "@/services/admin/coupons";
 import { revalidatePath, updateTag } from "next/cache";
-import { CACHE_TAGS } from "@/lib/cache";
 import { redirect } from "next/navigation";
 
 export async function createCouponAction(formData: FormData) {
@@ -17,13 +17,12 @@ export async function createCouponAction(formData: FormData) {
   const raw = Object.fromEntries(formData);
   const parsed = couponFormSchema.safeParse(raw);
 
-  if (!parsed.success) {
+  if (!parsed.success)
     return {
       error: parsed.error.issues
         .map((e: { message: string }) => e.message)
         .join(", "),
     };
-  }
 
   const data = parsed.data;
 
@@ -42,9 +41,9 @@ export async function createCouponAction(formData: FormData) {
     });
   } catch (err) {
     const e = err as { message?: string; constraint?: string };
-    if (e.message?.includes("unique") || e.constraint?.includes("code")) {
+    if (e.message?.includes("unique") || e.constraint?.includes("code"))
       return { error: "A coupon with this code already exists" };
-    }
+
     return { error: "Failed to create coupon. Please try again." };
   }
 
@@ -62,13 +61,12 @@ export async function updateCouponAction(id: string, formData: FormData) {
   console.log("Raw: ", { raw });
   console.log("Parsed Edit: ", { parsed });
 
-  if (!parsed.success) {
+  if (!parsed.success)
     return {
       error: parsed.error.issues
         .map((e: { message: string }) => e.message)
         .join(", "),
     };
-  }
 
   const data = parsed.data;
   console.log("Parsed edit data: ", { data });
@@ -88,9 +86,9 @@ export async function updateCouponAction(id: string, formData: FormData) {
     console.log("success");
   } catch (err) {
     const e = err as { message?: string; constraint?: string };
-    if (e.message?.includes("unique") || e.constraint?.includes("code")) {
+    if (e.message?.includes("unique") || e.constraint?.includes("code"))
       return { error: "A coupon with this code already exists" };
-    }
+
     return { error: "Failed to update coupon. Please try again." };
   }
 

@@ -13,9 +13,8 @@ export const proxy = auth((req: NextAuthRequest) => {
   const isAuthenticated = !!req.auth;
   const role = req.auth?.user?.role;
 
-  if (isAuthenticated && AUTH_ROUTES.some((r) => pathname === r)) {
+  if (isAuthenticated && AUTH_ROUTES.some((r) => pathname === r))
     return NextResponse.redirect(new URL("/", req.url));
-  }
 
   const isProtected = PROTECTED_ROUTES.some((r) => pathname.startsWith(r));
   if (isProtected && !isAuthenticated) {
@@ -31,9 +30,7 @@ export const proxy = auth((req: NextAuthRequest) => {
       loginUrl.searchParams.set("callbackUrl", pathname);
       return NextResponse.redirect(loginUrl);
     }
-    if (role !== "admin") {
-      return NextResponse.redirect(new URL("/", req.url));
-    }
+    if (role !== "admin") return NextResponse.redirect(new URL("/", req.url));
   }
 
   return NextResponse.next();

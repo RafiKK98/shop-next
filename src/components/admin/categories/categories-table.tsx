@@ -7,7 +7,7 @@ import { ChevronDown, ChevronUp, Eye, Pencil, Search } from "lucide-react";
 import type { Route } from "next";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { type ChangeEvent, useState } from "react";
 import { CategoryDetailModal } from "./category-detail-modal";
 import { DeleteCategoryButton } from "./delete-category-button";
 
@@ -44,16 +44,14 @@ export function CategoriesTable({
     return `/admin/categories?${sp.toString()}`;
   };
 
-  const navigate = (url: string) => {
-    router.push(url as Route);
-  };
+  const navigate = (url: string) => router.push(url as Route);
 
   const toggleSort = (column: string) => {
     const newOrder = sort === column && order === "asc" ? "desc" : "asc";
     navigate(createUrl({ sort: column, order: newOrder, page: "1" }));
   };
 
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     const sp = new URLSearchParams(searchParams);
     if (value) sp.set("search", value);

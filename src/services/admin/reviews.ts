@@ -55,7 +55,7 @@ export async function getAdminReviews(params: {
   const order = params.order ?? "desc";
 
   const conditions = [];
-  if (search) {
+  if (search)
     conditions.push(
       or(
         like(products.title, `%${search}%`),
@@ -63,10 +63,8 @@ export async function getAdminReviews(params: {
         like(users.email, `%${search}%`),
       ),
     );
-  }
-  if (status) {
-    conditions.push(eq(reviews.status, status as ReviewStatus));
-  }
+
+  if (status) conditions.push(eq(reviews.status, status as ReviewStatus));
 
   const where = conditions.length > 0 ? and(...conditions) : undefined;
 

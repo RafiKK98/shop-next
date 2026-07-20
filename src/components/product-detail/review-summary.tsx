@@ -1,6 +1,6 @@
 import { Rating } from "@/components/ui";
-import { Star } from "lucide-react";
 import type { ReviewAggregate } from "@/services/reviews";
+import { Star } from "lucide-react";
 
 interface ReviewSummaryProps {
   aggregate: ReviewAggregate;
@@ -9,14 +9,13 @@ interface ReviewSummaryProps {
 export function ReviewSummary({ aggregate }: ReviewSummaryProps) {
   const { total, average, breakdown } = aggregate;
 
-  if (total === 0) {
+  if (total === 0)
     return (
       <div className="text-center">
         <p className="text-4xl font-bold text-base-content/20">—</p>
         <p className="mt-1 text-sm text-base-content/40">No reviews yet</p>
       </div>
     );
-  }
 
   return (
     <div className="flex flex-col items-center gap-4 sm:flex-row sm:items-start sm:gap-6">
@@ -25,8 +24,14 @@ export function ReviewSummary({ aggregate }: ReviewSummaryProps) {
         <p className="text-5xl font-bold tracking-tight">
           {average?.toFixed(1) ?? "—"}
         </p>
-        <Rating value={average ?? 0} size="sm" className="mt-1 justify-center" />
-        <p className="mt-1 text-sm text-base-content/50">{total} review{total !== 1 ? "s" : ""}</p>
+        <Rating
+          value={average ?? 0}
+          size="sm"
+          className="mt-1 justify-center"
+        />
+        <p className="mt-1 text-sm text-base-content/50">
+          {total} review{total !== 1 ? "s" : ""}
+        </p>
       </div>
 
       {/* Breakdown bars */}

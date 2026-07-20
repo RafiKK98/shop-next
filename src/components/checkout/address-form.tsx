@@ -1,13 +1,13 @@
 "use client";
 
-import { useState, useTransition } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import type { Resolver } from "react-hook-form";
-import { X } from "lucide-react";
-import { addressSchema, type AddressInput } from "@/lib/validations/checkout";
 import { createAddress, updateAddress } from "@/actions/address";
 import { Button } from "@/components/ui";
+import { addressSchema, type AddressInput } from "@/lib/validations/checkout";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { X } from "lucide-react";
+import { useState, useTransition } from "react";
+import type { Resolver } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import type { Address } from "./checkout-page";
 
 interface AddressFormProps {
@@ -16,7 +16,11 @@ interface AddressFormProps {
   onCancel: () => void;
 }
 
-export function AddressForm({ initialData, onSuccess, onCancel }: AddressFormProps) {
+export function AddressForm({
+  initialData,
+  onSuccess,
+  onCancel,
+}: AddressFormProps) {
   const [serverError, setServerError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
@@ -41,16 +45,11 @@ export function AddressForm({ initialData, onSuccess, onCancel }: AddressFormPro
     startTransition(async () => {
       const fd = new FormData();
       Object.entries(data).forEach(([key, value]) => {
-        if (key === "isDefault") {
-          fd.set(key, value ? "on" : "");
-        } else {
-          fd.set(key, String(value));
-        }
+        if (key === "isDefault") fd.set(key, value ? "on" : "");
+        else fd.set(key, String(value));
       });
 
-      if (initialData) {
-        fd.set("addressId", initialData.id);
-      }
+      if (initialData) fd.set("addressId", initialData.id);
 
       const result = initialData
         ? await updateAddress(fd)
@@ -87,9 +86,7 @@ export function AddressForm({ initialData, onSuccess, onCancel }: AddressFormPro
           className={`input w-full ${error ? "input-error" : ""}`}
           aria-invalid={!!error}
         />
-        {error && (
-          <span className="fieldset-label text-error">{error}</span>
-        )}
+        {error && <span className="fieldset-label text-error">{error}</span>}
       </fieldset>
     );
   };
@@ -119,12 +116,21 @@ export function AddressForm({ initialData, onSuccess, onCancel }: AddressFormPro
 
         <div className="grid gap-4 sm:grid-cols-2">
           {renderField("fullName", "Full Name", { placeholder: "John Doe" })}
-          {renderField("phone", "Phone Number", { placeholder: "+1 (555) 000-0000" })}
+          {renderField("phone", "Phone Number", {
+            placeholder: "+1 (555) 000-0000",
+          })}
         </div>
 
-        {renderField("label", "Address Label", { placeholder: "Home, Work, etc." })}
-        {renderField("street", "Address Line 1", { placeholder: "123 Main Street" })}
-        {renderField("addressLine2", "Address Line 2 (optional)", { required: false, placeholder: "Apt, Suite, etc." })}
+        {renderField("label", "Address Label", {
+          placeholder: "Home, Work, etc.",
+        })}
+        {renderField("street", "Address Line 1", {
+          placeholder: "123 Main Street",
+        })}
+        {renderField("addressLine2", "Address Line 2 (optional)", {
+          required: false,
+          placeholder: "Apt, Suite, etc.",
+        })}
 
         <div className="grid gap-4 sm:grid-cols-2">
           {renderField("city", "City", { placeholder: "New York" })}
@@ -153,7 +159,12 @@ export function AddressForm({ initialData, onSuccess, onCancel }: AddressFormPro
                 ? "Update Address"
                 : "Add Address"}
           </Button>
-          <Button type="button" variant="outline" onClick={onCancel} disabled={isPending}>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={onCancel}
+            disabled={isPending}
+          >
             Cancel
           </Button>
         </div>

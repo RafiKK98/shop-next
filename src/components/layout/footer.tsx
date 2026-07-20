@@ -1,10 +1,11 @@
-import { cacheLife } from "next/cache";
 import { Input } from "@/components/ui";
 import { ROUTES, SITE } from "@/constants";
 import { NAVIGATION } from "@/constants/navigation";
 import { Camera, Globe, Hash, Mail, Play } from "lucide-react";
-import Link from "next/link";
 import type { Route } from "next";
+import { cacheLife } from "next/cache";
+import Link from "next/link";
+import { type ReactNode } from "react";
 
 async function Copyright() {
   "use cache";
@@ -16,7 +17,7 @@ async function Copyright() {
   );
 }
 
-const socialIcons: Record<string, React.ReactNode> = {
+const socialIcons: Record<string, ReactNode> = {
   Facebook: <Globe size={18} />,
   Twitter: <Hash size={18} />,
   Instagram: <Camera size={18} />,

@@ -1,16 +1,16 @@
 "use client";
 
-import { useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
 import { updateUser } from "@/actions/admin/users";
 import { Button, Label } from "@/components/ui";
-import { notify, crud } from "@/lib/notifications";
+import { crud, notify } from "@/lib/notifications";
 import {
   USER_ROLE_LABEL,
   USER_STATUS_LABEL,
   type UserRole,
   type UserStatus,
 } from "@/services/admin/user-types";
+import { useRouter } from "next/navigation";
+import { type ChangeEvent, useState, useTransition } from "react";
 
 interface UserEditFormProps {
   userId: string;
@@ -27,10 +27,12 @@ const ROLE_OPTIONS = Object.entries(USER_ROLE_LABEL).map(([value, label]) => ({
   label,
 }));
 
-const STATUS_OPTIONS = Object.entries(USER_STATUS_LABEL).map(([value, label]) => ({
-  value,
-  label,
-}));
+const STATUS_OPTIONS = Object.entries(USER_STATUS_LABEL).map(
+  ([value, label]) => ({
+    value,
+    label,
+  }),
+);
 
 export function UserEditForm({
   userId,
@@ -45,7 +47,7 @@ export function UserEditForm({
   const [isPending, startTransition] = useTransition();
   const [serverError, setServerError] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
     setServerError(null);
 
@@ -139,7 +141,9 @@ export function UserEditForm({
                   disabled={isSelf && opt.value !== "admin"}
                 >
                   {opt.label}
-                  {isSelf && opt.value !== "admin" ? " (cannot demote self)" : ""}
+                  {isSelf && opt.value !== "admin"
+                    ? " (cannot demote self)"
+                    : ""}
                 </option>
               ))}
             </select>

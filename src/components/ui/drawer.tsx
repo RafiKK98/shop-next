@@ -1,13 +1,13 @@
 "use client";
 
 import { cn } from "@/utils/cn";
-import { useCallback, useEffect, useId, useRef } from "react";
+import { type ReactNode, useCallback, useEffect, useId, useRef } from "react";
 
 interface DrawerProps {
   open: boolean;
   onClose: () => void;
-  side: React.ReactNode;
-  children: React.ReactNode;
+  side: ReactNode;
+  children: ReactNode;
   className?: string;
   sideClassName?: string;
 }
@@ -25,17 +25,14 @@ export function Drawer({
   const checkboxRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (checkboxRef.current && checkboxRef.current.checked !== open) {
+    if (checkboxRef.current && checkboxRef.current.checked !== open)
       checkboxRef.current.checked = open;
-    }
   }, [open]);
 
   useEffect(() => {
-    if (open) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
+    if (open) document.body.style.overflow = "hidden";
+    else document.body.style.overflow = "";
+
     return () => {
       document.body.style.overflow = "";
     };
@@ -50,9 +47,7 @@ export function Drawer({
   }, [open, onClose]);
 
   const handleChange = useCallback(() => {
-    if (checkboxRef.current && !checkboxRef.current.checked) {
-      onClose();
-    }
+    if (checkboxRef.current && !checkboxRef.current.checked) onClose();
   }, [onClose]);
 
   return (

@@ -1,15 +1,15 @@
 "use server";
 import { requireAdmin } from "@/lib/auth/guards";
-import { updateStoreSettings } from "@/services/store-settings";
+import { CACHE_TAGS } from "@/lib/cache";
 import {
-  generalSettingsSchema,
   brandingSettingsSchema,
   commerceSettingsSchema,
-  seoSettingsSchema,
+  generalSettingsSchema,
   maintenanceSettingsSchema,
+  seoSettingsSchema,
 } from "@/lib/validations/store-settings";
+import { updateStoreSettings } from "@/services/store-settings";
 import { revalidatePath, updateTag } from "next/cache";
-import { CACHE_TAGS } from "@/lib/cache";
 import { z } from "zod";
 
 const validators = {
@@ -30,11 +30,12 @@ export async function saveSettingsAction(tab: string, formData: FormData) {
 
   const schema = validators[tab as keyof typeof validators] as z.ZodType;
   const parsed = schema.safeParse(raw);
-  if (!parsed.success) {
+  if (!parsed.success)
     return {
-      error: parsed.error!.issues.map((e: { message: string }) => e.message).join(", "),
+      error: parsed
+        .error!.issues.map((e: { message: string }) => e.message)
+        .join(", "),
     };
-  }
 
   const data = parsed.data as Record<string, unknown>;
 
@@ -71,9 +72,7 @@ export async function saveSettingsAction(tab: string, formData: FormData) {
   const input: Record<string, string> = {};
   for (const [key, value] of Object.entries(data)) {
     const dbKey = keyMap[key];
-    if (dbKey) {
-      input[dbKey] = String(value);
-    }
+    if (dbKey) input[dbKey] = String(value);
   }
 
   await updateStoreSettings(input);

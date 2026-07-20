@@ -1,13 +1,14 @@
-import { redirect } from "next/navigation";
-import { auth } from "@/lib/auth";
-import { AccountSidebar, AccountMobileNav } from "@/components/account";
+import { AccountMobileNav, AccountSidebar } from "@/components/account";
 import { Container, Section } from "@/components/ui";
+import { auth } from "@/lib/auth";
+import { redirect } from "next/navigation";
+import { type ReactNode } from "react";
 
-export default async function AccountLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+interface AccountLayoutProps {
+  children: ReactNode;
+}
+
+export default async function AccountLayout({ children }: AccountLayoutProps) {
   const session = await auth();
   if (!session?.user?.id) redirect("/login?callbackUrl=/account");
 

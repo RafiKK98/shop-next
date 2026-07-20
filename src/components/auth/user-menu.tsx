@@ -23,32 +23,24 @@ export function UserMenu({ user }: UserMenuProps) {
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node))
         setOpen(false);
-      }
     }
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  if (!user) {
+  if (!user)
     return (
       <div className="hidden items-center gap-2 md:flex">
-        <Link
-          href={ROUTES.login}
-          className="btn btn-ghost btn-sm"
-        >
+        <Link href={ROUTES.login} className="btn btn-ghost btn-sm">
           Sign In
         </Link>
-        <Link
-          href={ROUTES.register}
-          className="btn btn-primary btn-sm"
-        >
+        <Link href={ROUTES.register} className="btn btn-primary btn-sm">
           Register
         </Link>
       </div>
     );
-  }
 
   return (
     <div ref={menuRef} className="relative">

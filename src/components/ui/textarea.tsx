@@ -1,7 +1,7 @@
-import { forwardRef } from "react";
 import { cn } from "@/utils/cn";
+import { forwardRef, type TextareaHTMLAttributes } from "react";
 
-interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
+interface TextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
   label?: string;
   error?: string;
 }
@@ -20,13 +20,20 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
         <textarea
           ref={ref}
           id={textareaId}
-          className={cn("textarea w-full", error && "textarea-error", className)}
+          className={cn(
+            "textarea w-full",
+            error && "textarea-error",
+            className,
+          )}
           aria-invalid={!!error}
           aria-describedby={error ? `${textareaId}-error` : undefined}
           {...props}
         />
         {error && (
-          <span id={`${textareaId}-error`} className="fieldset-label text-error">
+          <span
+            id={`${textareaId}-error`}
+            className="fieldset-label text-error"
+          >
             {error}
           </span>
         )}

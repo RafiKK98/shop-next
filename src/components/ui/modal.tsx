@@ -1,13 +1,20 @@
 "use client";
 
-import { useEffect, useCallback, useRef } from "react";
 import { cn } from "@/utils/cn";
+import {
+  type HTMLAttributes,
+  type KeyboardEvent,
+  type ReactNode,
+  useCallback,
+  useEffect,
+  useRef,
+} from "react";
 
 interface ModalProps {
   open: boolean;
   onClose: () => void;
   className?: string;
-  children: React.ReactNode;
+  children: ReactNode;
 }
 
 export function Modal({ open, onClose, className, children }: ModalProps) {
@@ -16,18 +23,13 @@ export function Modal({ open, onClose, className, children }: ModalProps) {
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    if (open) {
-      el.showModal();
-    } else {
-      el.close();
-    }
+    if (open) el.showModal();
+    else el.close();
   }, [open]);
 
   const handleKeyDown = useCallback(
-    (e: React.KeyboardEvent) => {
-      if (e.key === "Escape") {
-        onClose();
-      }
+    (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
     },
     [onClose],
   );
@@ -46,7 +48,11 @@ export function Modal({ open, onClose, className, children }: ModalProps) {
   );
 }
 
-export function ModalBody({ className, children, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+export function ModalBody({
+  className,
+  children,
+  ...props
+}: HTMLAttributes<HTMLDivElement>) {
   return (
     <div className={cn("py-4", className)} {...props}>
       {children}
@@ -54,7 +60,11 @@ export function ModalBody({ className, children, ...props }: React.HTMLAttribute
   );
 }
 
-export function ModalActions({ className, children, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+export function ModalActions({
+  className,
+  children,
+  ...props
+}: HTMLAttributes<HTMLDivElement>) {
   return (
     <div className={cn("modal-action", className)} {...props}>
       {children}

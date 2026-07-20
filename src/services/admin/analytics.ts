@@ -1,10 +1,10 @@
 import "server-only";
 
-import { cacheLife, cacheTag } from "next/cache";
-import { CACHE_TAGS } from "@/lib/cache";
 import { db } from "@/db";
 import { categories, orderItems, orders, products, users } from "@/db/schema";
+import { CACHE_TAGS } from "@/lib/cache";
 import { and, count, desc, eq, gte, ne, sql } from "drizzle-orm";
+import { cacheLife, cacheTag } from "next/cache";
 
 // ── Types ────────────────────────────────────────────────────────────────
 
@@ -310,9 +310,8 @@ export async function getDashboardAnalytics(): Promise<DashboardAnalytics> {
   const chartMap = new Map<string, number>();
   for (const row of dailyRevenueRows) {
     const d = new Date(row.date);
-    if (d >= thirtyDaysAgo) {
+    if (d >= thirtyDaysAgo)
       chartMap.set(d.toISOString().slice(0, 10), Number(row.total));
-    }
   }
 
   const dailyRevenue: DailyRevenue[] = [];
